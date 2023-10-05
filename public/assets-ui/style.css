@@ -1,0 +1,176 @@
+
+
+
+.col-xs-6.scroll-container {
+  /* Pastikan konten di dalam elemen dapat di-scroll jika melebihi ukuran elemen */
+  overflow: auto;
+  
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 12rem;
+  height: 8rem;
+  margin: 5px;
+  position: relative; 
+  border-radius: 50px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+/* CSS untuk mengatur tata letak gambar */
+.card .card-img-top {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+
+.item-name-m{
+  height: 35px;
+  /* margin: 0px 100px 0px 0px; */
+  display: flex;
+  align-items: center;
+  border-radius: 15px 15px 0px 0px;
+  justify-content: center;;
+
+
+}
+.item-price-m {
+  /* background-color: #91D8E4; */
+  text-align: left;
+  border-radius: 0px 0px 15px 15px;
+  width: auto;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  /* justify-content: center; */
+}
+
+
+
+.item-price-m span {
+  margin: auto;
+  display: inline-block;
+  max-width: 100%;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.container-item {
+  /* border: 1px solid #1bb965; */
+  padding: 5px;
+  /* background-color: #D9D9D9; */
+  margin: 25px 10px 0px 10px;
+  border-radius: 10px 10px 0px 0px;
+}
+
+
+.card:hover {
+  transform: scale(1.1); /* menambahkan efek scaling saat hover */
+  transition: all 0.2s ease-in-out; /* menambahkan efek transisi selama 0.2 detik */
+}
+
+.scroll-container {
+  height: 600px; /* Tentukan tinggi maksimum kontainer */
+  overflow-y: auto; /* Tambahkan efek scroll ke bawah */
+  border: 1px solid #ccc; /* Untuk tampilan yang lebih baik */
+  padding: 10px; /* Untuk tampilan yang lebih baik */
+}
+
+.discount-badge {
+  position: absolute; /* Menggunakan posisi absolut untuk menempatkan elemen ini di pojok atas kanan */
+  top: 0px; /* Sesuaikan dengan jarak vertikal dari atas */
+  right: 9px; /* Sesuaikan dengan jarak horizontal dari kanan */
+  background-color: #FE0000; /* Atur warna latar belakang sesuai keinginan Anda */
+  color: white; /* Atur warna teks sesuai keinginan Anda */
+  padding: 5px 10px; /* Sesuaikan dengan ukuran padding yang diinginkan */
+  border-radius: 0 0 50% 0; /* Atur radius sudut untuk membuatnya lebih berbentuk oval */
+  font-size: 12px; /* Sesuaikan ukuran teks sesuai keinginan Anda */
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center; 
+  height: 100%;
+  padding: 8px 12px;
+  margin-top: 0px;
+}
+
+.product-name {
+  color: black;
+  font-family: 'Sans-serif';
+  /* font-weight: bold;  */
+  background-color: #9BE8D8;
+  padding: 5px 10px;
+  border-radius: 10px;
+  margin-bottom: 5px; /* Beri jarak antara nama produk dan harga */
+  white-space: normal; /* Teks tidak diperbolehkan pindah ke baris baru */
+  overflow: hidden; /* Potong teks yang melebihi lebar kontainer */
+  /* text-overflow: ellipsis; */
+  max-height: 40px;
+  
+  display: flex;
+  align-items: center; /* Mengatur teks berada di tengah vertikal */
+  justify-content: center; /* Mengatur teks berada di tengah horizontal */
+}
+
+.product-price {
+  margin: 0;
+  color: #F86F03;
+  font-family: 'Sans-serif';
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 10px;
+  white-space: nowrap; /* Teks tidak diperbolehkan pindah ke baris baru */
+  overflow: hidden; /* Potong teks yang melebihi lebar kontainer */
+  text-overflow: ellipsis; /* Tambahkan titik elipsis (...) untuk menandakan teks dipotong */
+}
+
+.product-name {
+  font-size: 10px;
+  
+}
+
+.product-price {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.card img {
+  display: block;
+  height: 160px;
+  width: 100%;
+  object-fit: cover;
+  margin-top: 5px;
+  border: 2px solid #ccc; /* Atur tebal dan warna border sesuai keinginan Anda */
+  border-radius: 10px; /* Sesuaikan radius sudut agar sesuai dengan kartu */
+}
+
+.input-cell {
+  text-align: center;
+  position: relative;
+}
+
+.jumlah-produk {
+  width: 80px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.jumlah-produk:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
