@@ -43,4 +43,5 @@ class DataSiswa extends Model
         return $this->hasMany(DataNilai::class, 'id_siswa', 'id_siswa');
     }
 
+   
 }

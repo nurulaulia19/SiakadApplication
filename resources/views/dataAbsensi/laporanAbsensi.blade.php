@@ -178,12 +178,18 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($dataAd as $key => $absensi)
+                                                @foreach ($dataAd as $key => $item)
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $absensi->nis }}</td>
-                                                        <td>{{ $absensi->nama }}</td>
-                                                        <td>{{ $absensi->tanggal }}</td>
+                                                        <td>{{ $item->nis_siswa }}</td>
+                                                        <td>
+                                                            @if ($item->guruPelajaran && $item->guruPelajaran->siswa)
+                                                                {{ $item->guruPelajaran->siswa->nama_siswa }}
+                                                            @else
+                                                                Data Siswa Tidak Ditemukan
+                                                            @endif
+                                                        </td>                                                        
+                                                        <td>{{ $item->tanggal }}</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

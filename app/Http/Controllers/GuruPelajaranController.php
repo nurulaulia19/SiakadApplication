@@ -909,7 +909,7 @@ class GuruPelajaranController extends Controller
         // dd($nis_siswa);
         $dataSekolah = Sekolah::all();
         $dataAd = AbsensiDetail::join('data_guru_pelajaran', 'data_absensi_detail.id_gp', '=', 'data_guru_pelajaran.id_gp')
-            ->with('guruPelajaran.mapel', 'siswa', 'kategoriNilai')
+            ->with('guruPelajaran.siswa')
             ->where('id_sekolah', $id_sekolah)
             ->where('id_kelas', $id_kelas)
             ->where('tahun_ajaran', $tahun_ajaran)
@@ -952,7 +952,7 @@ class GuruPelajaranController extends Controller
         // dd($nis_siswa);
         $dataSekolah = Sekolah::all();
         $dataAd = AbsensiDetail::join('data_guru_pelajaran', 'data_absensi_detail.id_gp', '=', 'data_guru_pelajaran.id_gp')
-            // ->with('guruPelajaran.mapel', 'siswa', 'kategoriNilai')
+            ->with('guruPelajaran.siswa')
             ->where('id_sekolah', $id_sekolah)
             ->where('id_kelas', $id_kelas)
             ->where('tahun_ajaran', $tahun_ajaran)
