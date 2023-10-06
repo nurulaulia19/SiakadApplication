@@ -25,6 +25,8 @@ use App\Exports\DetailNilaiExport;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\GuruPelajaranJadwal;
+use App\Models\PelajaranKelas;
+use App\Models\PelajaranKelasList;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -905,15 +907,18 @@ class GuruPelajaranController extends Controller
         $id_sekolah = $request->input('id_sekolah');
         $id_kelas = $request->input('id_kelas');
         $tahun_ajaran = $request->input('tahun_ajaran');
+        // $id_gp = $request->input('id_gp');
 
         // dd($nis_siswa);
         $dataSekolah = Sekolah::all();
-        $dataAd = AbsensiDetail::join('data_guru_pelajaran', 'data_absensi_detail.id_gp', '=', 'data_guru_pelajaran.id_gp')
-            ->with('guruPelajaran.siswa')
-            ->where('id_sekolah', $id_sekolah)
-            ->where('id_kelas', $id_kelas)
-            ->where('tahun_ajaran', $tahun_ajaran)
-            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')->get();
+        $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
+        ->with('guruPelajaran.mapel', 'siswa')
+        ->where('dgp.id_sekolah', $id_sekolah)
+        ->where('dgp.id_kelas', $id_kelas)
+        ->where('dgp.tahun_ajaran', $tahun_ajaran)
+        // ->where('dgp.id_gp', $id_gp)
+        ->get();
+
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -948,15 +953,20 @@ class GuruPelajaranController extends Controller
         $id_sekolah = $request->input('id_sekolah');
         $id_kelas = $request->input('id_kelas');
         $tahun_ajaran = $request->input('tahun_ajaran');
+        $id_pelajaran = $request->input('id_pelajaran');
+
 
         // dd($nis_siswa);
         $dataSekolah = Sekolah::all();
-        $dataAd = AbsensiDetail::join('data_guru_pelajaran', 'data_absensi_detail.id_gp', '=', 'data_guru_pelajaran.id_gp')
-            ->with('guruPelajaran.siswa')
-            ->where('id_sekolah', $id_sekolah)
-            ->where('id_kelas', $id_kelas)
-            ->where('tahun_ajaran', $tahun_ajaran)
-            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')->get();
+        $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
+            ->with('guruPelajaran.mapel', 'siswa')
+            ->where('dgp.id_sekolah', $id_sekolah)
+            ->where('dgp.id_kelas', $id_kelas)
+            ->where('dgp.tahun_ajaran', $tahun_ajaran)
+            ->when($id_pelajaran, function ($query) use ($id_pelajaran) {
+                $query->where('dgp.id_pelajaran', $id_pelajaran);
+            })
+            ->get();
 
     
 
@@ -988,6 +998,26 @@ class GuruPelajaranController extends Controller
 
         return view('dataAbsensi.laporanAbsensi', compact('dataAd', 'dataSekolah','menuItemsWithSubmenus','id_sekolah','id_kelas','tahun_ajaran'));
     }
+
+    public function getMapelByKelas(Request $request)
+    {
+        $kelasID = $request->input('kelasID');
+        $sekolahID = $request->input('sekolahID');
+        $tahunAjaranID = $request->input('tahunAjaranID');
+
+        // Ubah 'id_pelajaran' menjadi 'id_kelas' dalam query berikut
+        $pels = PelajaranKelas::where('id_kelas', $kelasID)
+        ->where('id_sekolah', $sekolahID)
+        ->where('tahun_ajaran', $tahunAjaranID)->first();
+
+        $mapels= PelajaranKelasList::join('data_pelajaran', 'data_pelajaran.id_pelajaran', '=', 'data_pelajaran_kelas_list.id_pelajaran')
+        ->where('id_pk', $pels->id_pk)->select('data_pelajaran_kelas_list.id_pelajaran', 'nama_pelajaran')->get();
+
+       
+
+        return response()->json($mapels);
+    }
+
 
 }
 

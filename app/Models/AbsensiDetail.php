@@ -29,5 +29,10 @@ class AbsensiDetail extends Model
         return $this->belongsTo(DataAbsensi::class, 'id_absensi', 'id_absensi');
     }
 
+    public function siswa()
+    {
+        return $this->belongsTo(DataSiswa::class, 'nis_siswa', 'nis_siswa');
+    }
+
     
 }

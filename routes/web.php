@@ -227,6 +227,8 @@ Route::delete('/admin/dataAbsensi/destroy/{id_absensi}', [GuruPelajaranControlle
 Route::get('/admin/dataAbsensi/laporanAbsensi', [GuruPelajaranController::class,'laporanAbsensi'])->name('dataAbsensi.laporanAbsensi');
 Route::post('/admin/dataAbsensi/tampilkanAbsensi', [GuruPelajaranController::class,'tampilkanAbsensi'])->name('dataAbsensi.tampilkanAbsensi');
 
+Route::get('/admin/dataAbsensi/get-mapel-by-kelas', [GuruPelajaranController::class, 'getMapelByKelas'])->name('dataAbsensi.getMapelByKelas');
+
 
 
 // guru pelajaran jadwal

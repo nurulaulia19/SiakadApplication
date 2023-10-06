@@ -23,7 +23,7 @@
 					    <div class="row">
                             <div class="panel">
                                 <div class="panel-heading">
-                                    <h3 class="panel-title">Cek Nilai</h3>
+                                    <h3 class="panel-title">Laporan Absensi</h3>
                                 </div>
                         
                                 <!--Horizontal Form-->
@@ -34,7 +34,7 @@
                                         <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="id_sekolah">Nama Sekolah</label>
                                             <div class="col-sm-9">
-                                                <select name="id_sekolah" id="id_sekolah" class="form-control" onchange="handleSekolahChange(this.value)">
+                                                <select name="id_sekolah" id="id_sekolah" class="form-control" onchange="handleSekolahChange(this.value);">
                                                     <option disabled selected>Pilih Sekolah</option>
                                                     @foreach ($dataSekolah as $item)
                                                         <option value="{{ $item->id_sekolah }}">{{ $item->nama_sekolah }}</option>
@@ -63,7 +63,7 @@
                                         <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="tahun_ajaran">Tahun Ajaran</label>
                                             <div class="col-sm-9">
-                                                <select name="tahun_ajaran" id="tahun_ajaran" class="form-control" required>
+                                                <select name="tahun_ajaran" id="tahun_ajaran" class="form-control" onchange="handleMapelChange()" required>
                                                     <option disabled selected>Pilih Tahun Ajaran</option>
                                                     @php
                                                         $currentYear = date('Y');
@@ -82,29 +82,12 @@
                                         <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="id_pelajaran">Mata Pelajaran</label>
                                             <div class="col-sm-9">
-                                                <div class="checkbox-container" style="display: flex; flex-direction: column;">
-                                                    <div id="id_pelajaran">
-                                                    </div>
-                                                </div>
-                                                @error('id_pelajaran')
-                                                    <span class="alert text-danger">
-                                                        {{ $message }}
-                                                    </span>
-                                                @enderror
+                                                <select name="id_pelajaran" id="id_pelajaran" class="form-control">
+                                                    <option disabled selected>Pilih Mata Pelajaran</option>
+                                                    <!-- Opsi mata pelajaran akan ditambahkan melalui JavaScript -->
+                                                </select>
                                             </div>
-                                        </div>
-                                        {{-- <div class="form-group d-flex mb-3">
-                                            <label class="col-sm-3 control-label" for="nis_siswa">Nis / Nama Siswa</label>
-                                            <div class="col-sm-9">
-                                                <select name="nis_siswa[]" id="demo-cs-multiselect" class="form-control" data-placeholder="Pilih Siswa...">
-					                            </select>
-                                                @error('nis_siswa')
-                                                <span class="alert text-danger">
-                                                    {{ $message }}
-                                                </span>
-                                                @enderror
-                                            </div>
-                                        </div> --}}
+                                        </div>  
                                     </div>
                                     <div class="panel-footer text-right">
                                         <button type="submit" class="btn btn-primary">TAMPILKAN</button>
@@ -121,7 +104,7 @@
                                 <div class="panel-body">
                                     <div class="table-responsive">
                                         <div style="display: flex; justify-content: space-between;">
-                                            {{-- @if ($dataNilai)
+                                            {{-- @if ($dataAd)
                                             <table class="table" style="width: 21%; max-width: 21%;">
                                                 <tbody>
                                                     <!-- Menampilkan informasi mata pelajaran -->
@@ -174,23 +157,33 @@
                                                     <th>No</th>
                                                     <th>Nis</th>
                                                     <th>Nama</th>
-                                                    <th>Tanggal</th>
+                                                    @php
+                                                        $previousDate = null;
+                                                    @endphp
+                                                    @foreach ($dataAd as $item)
+                                                        @if ($previousDate !== $item->tanggal)
+                                                            <th>{{ $item->tanggal }}</th>
+                                                            @php
+                                                                $previousDate = $item->tanggal;
+                                                            @endphp
+                                                        @endif
+                                                    @endforeach
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach ($dataAd as $key => $item)
-                                                    <tr>
-                                                        <td>{{ $key + 1 }}</td>
-                                                        <td>{{ $item->nis_siswa }}</td>
-                                                        <td>
-                                                            @if ($item->guruPelajaran && $item->guruPelajaran->siswa)
-                                                                {{ $item->guruPelajaran->siswa->nama_siswa }}
-                                                            @else
-                                                                Data Siswa Tidak Ditemukan
-                                                            @endif
-                                                        </td>                                                        
-                                                        <td>{{ $item->tanggal }}</td>
-                                                    </tr>
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $item->nis_siswa ?? 'Data tidak ditemukan' }}</td>
+                                                    <td>
+                                                        @if(isset($item->siswa))
+                                                            {{ $item->siswa->nama_siswa }}
+                                                        @else
+                                                            Data tidak ditemukan
+                                                        @endif
+                                                    </td>                                                        
+                                                    <td>{{ $item->keterangan }}</td>
+                                                </tr>                                                
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -227,11 +220,11 @@
     {{-- filter data kelas dan data siswa berdasarkan id sekolah --}}
     <script>
         function handleSekolahChange(sekolahID) {
-            // var  = $('#sekolah').val();  
-            let token = $("meta[name='csrf-token']").attr("content");  
+            let token = $("meta[name='csrf-token']").attr("content");
+            
             if (sekolahID) {
-                 // Mengambil data siswa berdasarkan sekolah
-                 $.ajax({
+                // Mengambil data kelas berdasarkan sekolah
+                $.ajax({
                     type: "GET",
                     url: "{{ route('kenaikanKelas.getkelas') }}",
                     data: {
@@ -239,91 +232,69 @@
                         "_token": token
                     },
                     dataType: 'JSON',
-                    success: function(res) {  
-                        console.log(res);             
+                    success: function(res) {
+                        console.log(res);
                         if (res) {
                             $("#id_kelas").empty();
                             $("#id_kelas").append('<option disabled selected>Pilih Kelas</option>');
                             $.each(res, function(nama_kelas, id_kelas) {
                                 $("#id_kelas").append('<option value="'+id_kelas+'">'+nama_kelas+'</option>');
                             });
+
+                            // Kosongkan atau atur ulang elemen <select> pelajaran ketika sekolah berubah
+                            $("#id_pelajaran").empty();
+                            $("#id_pelajaran").append('<option disabled selected>Pilih Mata Pelajaran</option>');
                         } else {
                             $("#id_kelas").empty();
+                            $("#id_pelajaran").empty(); // Jika data tidak ditemukan, kosongkan elemen <select> pelajaran
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error: " + error); // Menampilkan pesan kesalahan ke konsol
-                    }
-                });
-
-                 $.ajax({
-                    type: "GET",
-                    url: "{{ route('kenaikanKelas.getsiswa') }}",
-                    data: {
-                        'sekolahID': sekolahID,
-                        "_token": token
-                    },
-                    dataType: 'JSON',
-                    beforeSend: function(){ 
-                      $('ul.chosen-results').empty(); 
-                      $("#demo-cs-multiselect").empty(); 
-                    },
-                    success: function(res2) { 
-                                     
-                        if (res2) {
-                            console.log(res2);
-                            $("#demo-cs-multiselect").empty();
-                            $("#demo-cs-multiselect").append('<option disabled selected>Pilih Siswa...</option>');
-                            $.each(res2, function(nama_siswa, nis_siswa) {
-                                console.log(nama_siswa);
-                                // $("#demo-cs-multiselect").append('<option value="'+id_siswa+'">'+nama_siswa+'</option>');
-                                $("#demo-cs-multiselect").append('<option value="' + nis_siswa + '">' + nis_siswa + ' | ' + nama_siswa + '</option>');
-
-                            });
-                            $("#demo-cs-multiselect").trigger("chosen:updated");
-                        } else {
-                            $("#demo-cs-multiselect").empty();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error: " + error); // Menampilkan pesan kesalahan ke konsol
+                        console.error("Error: " + error);
                     }
                 });
             } else {
-                $("#demo-cs-multiselect").empty();
-            }      
+                // Jika tidak ada sekolah yang dipilih, kosongkan elemen <select> kelas dan pelajaran
+                $("#id_kelas").empty();
+                $("#id_pelajaran").empty();
+            }
+        }
+       
             
+        function handleMapelChange() {
+            let token = $("meta[name='csrf-token']").attr("content");  
             $.ajax({
                 type: "GET",
-                url: "{{ route('mapelKelas.getMapel') }}",
+                url: "{{ route('dataAbsensi.getMapelByKelas') }}",
                 data: {
-                    'sekolahID': sekolahID,
+                    'kelasID': $("#id_kelas").val(),
+                    'sekolahID': $("#id_sekolah").val(),
+                    'tahunAjaranID': $("#tahun_ajaran").val(),
                     "_token": token
                 },
                 dataType: 'JSON',
                 success: function(res) {
-                    console.log(res);
+                    console.log("Hasil Mapel:", res); // Log data yang diterima
                     if (res) {
-                        // Hapus semua elemen di dalam #id_pelajaran
-                        $("#id_pelajaran").empty();
-                        
-                        // Tambahkan daftar mata pelajaran yang diterima dari server
-                        $.each(res, function(namaPelajaran, idPelajaran) {
-                            let checkBoxElement = $("<div class='form-check'>"+
-                                "<input class='form-check-input' name='id_pelajaran[]' type='checkbox' value='"+idPelajaran+"' id='id_pelajaran_"+idPelajaran+"'>"+
-                                "<label class='form-check-label'>"+namaPelajaran+"</label>"+
-                            "</div>");
-                            $("#id_pelajaran").append(checkBoxElement);
+                        var selectElement = $("#id_pelajaran");
+                        selectElement.empty();
+                        selectElement.append("<option value='' disabled selected>Pilih Mata Pelajaran</option>");
+
+                        // Iterasi melalui data pelajaran dan tambahkan pilihan ke elemen <select>
+                        $.each(res, function(index, pelajaran) {
+                            selectElement.append("<option value='" + pelajaran.id_pelajaran + "'>" + pelajaran.nama_pelajaran + "</option>");
                         });
                     } else {
+                        console.log("Data tidak ditemukan."); // Log jika data tidak ditemukan
                         $("#id_pelajaran").empty();
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.error("Error: " + error);
+                    console.error("Error status:", status); // Log status error
+                    console.error("Error message:", error); // Log pesan kesalahan
                 }
             });
-            
         }
+
     </script>
 @endsection
