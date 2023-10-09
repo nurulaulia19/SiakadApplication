@@ -750,11 +750,11 @@ class GuruPelajaranController extends Controller
         return @$dataAd->keterangan;
     }
 
-    public function cekNilai()
+    public function cekNilai(Request $request)
     {
         $dataSekolah = Sekolah::all();
         $dataSiswa = DataSiswa::all();
-
+        $id_sekolah = $request->input('id_sekolah');
         // Check if the form has been submitted
         if (request()->isMethod('post')) {
             $id_sekolah = request()->input('id_sekolah');
@@ -768,6 +768,11 @@ class GuruPelajaranController extends Controller
             // If the form hasn't been submitted yet, initialize $dataNilai as an empty array
             $dataNilai = [];
         }
+
+        $dataKategori = KategoriNilai::where('id_sekolah', $id_sekolah)
+            ->orderBy('id_kn', 'desc')
+            ->get();
+
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -794,25 +799,31 @@ class GuruPelajaranController extends Controller
                     'subMenus' => $subMenus,
                 ];
             }
-        return view('dataNilai.cekNilai', compact('dataSekolah','dataSiswa','dataNilai','menuItemsWithSubmenus'));
+        return view('dataNilai.cekNilai', compact('dataSekolah','dataSiswa','dataNilai','menuItemsWithSubmenus','dataKategori'));
     }
 
     public function tampilkanNilai(Request $request)
     {
         $id_sekolah = $request->input('id_sekolah');
-        // dd($id_sekolah);
         $nis_siswa = $request->input('nis_siswa');
-        
-
-        // dd($nis_siswa);
+    
         $dataSekolah = Sekolah::all();
+        
         $dataNilai = DataNilai::join('data_guru_pelajaran', 'data_nilai.id_gp', '=', 'data_guru_pelajaran.id_gp')
-            ->with('guruPelajaran.mapel', 'siswa', 'kategoriNilai')
+            ->with(['guruPelajaran.mapel', 'siswa', 'kategoriNilai', 'guruPelajaran.user'])
             ->whereIn('nis_siswa', $nis_siswa)
             ->where('id_sekolah', $id_sekolah)
-            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')->get();
+            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')
+            ->groupBy('data_nilai.id_gp')
+            ->get();
 
-    
+
+        $dataKategori = KategoriNilai::where('id_sekolah', $id_sekolah)
+            ->orderBy('id_kn', 'desc')
+            ->get();
+
+        // Mengambil user_id dari guru yang mengajar mata pelajaran yang ditampilkan dalam query
+        $user_ids = $dataNilai->pluck('guruPelajaran.user.user_id')->unique();
 
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -840,7 +851,7 @@ class GuruPelajaranController extends Controller
                 ];
             }
 
-        return view('dataNilai.cekNilai', compact('nis_siswa', 'dataNilai', 'dataSekolah','menuItemsWithSubmenus','id_sekolah'));
+        return view('dataNilai.cekNilai', compact('nis_siswa', 'dataNilai', 'dataSekolah','menuItemsWithSubmenus','id_sekolah','dataKategori'));
     }
 
     public function exportNilaiToPDF(Request $request, $id_sekolah, $nis_siswa)
@@ -852,8 +863,13 @@ class GuruPelajaranController extends Controller
             ->with('guruPelajaran.mapel', 'siswa', 'kategoriNilai')
             ->where('nis_siswa', $nis_siswa)
             ->where('id_sekolah', $id_sekolah)
-            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')->get();
+            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')
+            ->groupBy('data_nilai.id_gp')
+            ->get();
         
+        $dataKategori = KategoriNilai::where('id_sekolah', $id_sekolah)
+            ->orderBy('id_kn', 'desc')
+            ->get();
         
         $paperSize = $request->input('paper_size', 'A4');
 
@@ -869,7 +885,7 @@ class GuruPelajaranController extends Controller
         $pdf = new Dompdf($pdfOptions);
 
         // Render the view with data and get the HTML content
-        $htmlContent = View::make('dataNilai.eksportDetailNilai', compact('dataSekolah','dataNilai'))->render();
+        $htmlContent = View::make('dataNilai.eksportDetailNilai', compact('dataSekolah','dataNilai','dataKategori'))->render();
 
         $pdf->loadHtml($htmlContent);
 
@@ -888,18 +904,24 @@ class GuruPelajaranController extends Controller
             ->with('guruPelajaran.mapel', 'siswa', 'kategoriNilai')
             ->where('nis_siswa', $nis_siswa)
             ->where('id_sekolah', $id_sekolah)
-            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')->get();
+            ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')
+            ->groupBy('data_nilai.id_gp')
+            ->get();
 
             $dataNilai2 = DataNilai::join('data_guru_pelajaran', 'data_nilai.id_gp', '=', 'data_guru_pelajaran.id_gp')
             ->with('guruPelajaran.mapel', 'siswa', 'kategoriNilai')
             ->where('nis_siswa', $nis_siswa)
             ->where('id_sekolah', $id_sekolah)
             ->orderBy('data_guru_pelajaran.tahun_ajaran', 'desc')
+            ->groupBy('data_nilai.id_gp')
             ->groupBy('kategori')->get();
-
+        
+        $dataKategori = KategoriNilai::where('id_sekolah', $id_sekolah)
+            ->orderBy('id_kn', 'desc')
+            ->get();
         // dd($dataNilai2);
 
-        return Excel::download(new DetailNilaiExport($dataSekolah, $dataNilai, $dataNilai2), 'data-detail-nilai.xlsx');
+        return Excel::download(new DetailNilaiExport($dataSekolah, $dataNilai, $dataNilai2, $dataKategori), 'data-detail-nilai.xlsx');
     }
 
     public function laporanAbsensi(Request $request)
@@ -919,6 +941,9 @@ class GuruPelajaranController extends Controller
         // ->where('dgp.id_gp', $id_gp)
         ->get();
 
+
+        $uniqueDates = collect($dataAd)->pluck('tanggal')->unique();
+
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -945,7 +970,7 @@ class GuruPelajaranController extends Controller
                     'subMenus' => $subMenus,
                 ];
             }
-        return view('dataAbsensi.laporanAbsensi', compact('dataAd', 'dataSekolah','menuItemsWithSubmenus','id_sekolah','id_kelas','tahun_ajaran'));
+        return view('dataAbsensi.laporanAbsensi', compact('dataAd', 'dataSekolah','menuItemsWithSubmenus','id_sekolah','id_kelas','tahun_ajaran','uniqueDates'));
     }
 
     public function tampilkanAbsensi(Request $request)
@@ -954,10 +979,20 @@ class GuruPelajaranController extends Controller
         $id_kelas = $request->input('id_kelas');
         $tahun_ajaran = $request->input('tahun_ajaran');
         $id_pelajaran = $request->input('id_pelajaran');
-
+       
 
         // dd($nis_siswa);
         $dataSekolah = Sekolah::all();
+        // $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
+        //     ->with('guruPelajaran.mapel','siswa')
+        //     ->where('dgp.id_sekolah', $id_sekolah)
+        //     ->where('dgp.id_kelas', $id_kelas)
+        //     ->where('dgp.tahun_ajaran', $tahun_ajaran)
+        //     ->when($id_pelajaran, function ($query) use ($id_pelajaran) {
+        //         $query->where('dgp.id_pelajaran', $id_pelajaran);
+        //     })
+        //     ->get();
+        
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
             ->with('guruPelajaran.mapel', 'siswa')
             ->where('dgp.id_sekolah', $id_sekolah)
@@ -966,10 +1001,13 @@ class GuruPelajaranController extends Controller
             ->when($id_pelajaran, function ($query) use ($id_pelajaran) {
                 $query->where('dgp.id_pelajaran', $id_pelajaran);
             })
+            // ->groupBy('nis_siswa')
             ->get();
-
+            // dd($dataAd);
     
-
+        $uniqueDates = collect($dataAd)->pluck('tanggal')->unique();
+        
+        
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
             $user = DataUser::find($user_id);
@@ -996,7 +1034,7 @@ class GuruPelajaranController extends Controller
                 ];
             }
 
-        return view('dataAbsensi.laporanAbsensi', compact('dataAd', 'dataSekolah','menuItemsWithSubmenus','id_sekolah','id_kelas','tahun_ajaran'));
+        return view('dataAbsensi.laporanAbsensi', compact('dataAd', 'dataSekolah','menuItemsWithSubmenus','id_sekolah','id_kelas','tahun_ajaran','uniqueDates'));
     }
 
     public function getMapelByKelas(Request $request)
@@ -1018,6 +1056,8 @@ class GuruPelajaranController extends Controller
         return response()->json($mapels);
     }
 
+
+  
 
 }
 

@@ -119,7 +119,7 @@
             </tr>
         </tbody>
     </table>
-    <table rulles="all" class="table table-bordered" style="margin-top: 10px; border: 1px solid black;">
+    {{-- <table rulles="all" class="table table-bordered" style="margin-top: 10px; border: 1px solid black;">
         <thead>
             <tr>
                 <th>No</th>
@@ -194,6 +194,64 @@
                             @if ($nilai !== null)
                                 {{ $nilai }}
                             @endif
+                        </td>
+                    @endforeach
+                </tr>
+            @endforeach
+        </tbody>
+    </table> --}}
+    <table class="table table-bordered" style="margin-top: 10px">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Tahun Ajaran</th>
+                <th>Nama Kelas</th>
+                <th>Nama Guru</th>
+                <th>Mata Pelajaran</th>
+                
+                @foreach ($dataKategori as $item)
+                    <th>Nilai {{ $item->kategori }}</th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($dataNilai as $item)
+                <tr>
+                    <td style="vertical-align: middle;">{{ $loop->iteration }}</td> 
+                    <td style="vertical-align: middle;">
+                        @if ($item->guruPelajaran)
+                            {{ $item->guruPelajaran->tahun_ajaran }}
+                        @else
+                            Data Guru Pelajaran Tidak Ditemukan
+                        @endif
+                    </td> 
+                    <td style="vertical-align: middle;">
+                        @if ($item->guruPelajaran)
+                            {{ $item->guruPelajaran->kelas->nama_kelas }}
+                        @else
+                            Data Guru Pelajaran Tidak Ditemukan
+                        @endif
+                    </td> 
+                    <td style="vertical-align: middle;">
+                        @if ($item->guruPelajaran)
+                            {{ $item->guruPelajaran->user->user_name }}
+                        @else
+                            Data Guru Pelajaran Tidak Ditemukan
+                        @endif
+                    </td> 
+                    <td style="vertical-align: middle;">
+                        @if ($item->guruPelajaran)
+                            {{ $item->guruPelajaran->mapel->nama_pelajaran }}
+                        @else
+                            Data Guru Pelajaran Tidak Ditemukan
+                        @endif
+                    </td>
+                    @foreach ($dataKategori as $item2)
+                        <td style="vertical-align: middle;">
+                            @php
+                                $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($item->id_gp, $item2->id_kn, $item->nis_siswa);
+                            @endphp
+                            {{ $nilai }}
                         </td>
                     @endforeach
                 </tr>

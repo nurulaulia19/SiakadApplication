@@ -104,46 +104,54 @@
                                 <div class="panel-body">
                                     <div class="table-responsive">
                                         <div style="display: flex; justify-content: space-between;">
-                                            {{-- @if ($dataAd)
-                                            <table class="table" style="width: 21%; max-width: 21%;">
-                                                <tbody>
-                                                    <!-- Menampilkan informasi mata pelajaran -->
-                                                    <tr>
-                                                        <th style="width: 50%; border: none;">Nama Sekolah<span style="float: right;">:</span></th>
-                                                        <th style="width: 50%; border: none;">
-                                                            @if (count($dataNilai) > 0 && $dataNilai[0]->guruPelajaran)
-                                                                {{ $dataNilai[0]->guruPelajaran->sekolah->nama_sekolah }}
-                                                            @else
-                                                                Data Guru Pelajaran Tidak Ditemukan
-                                                            @endif
-                                                        </th>
-                                                    </tr>
-                                                    
-                                                    <!-- Menampilkan informasi siswa -->
-                                                    <tr>
-                                                        <th style="width: 50%; border: none;">Nis Siswa<span style="float: right;">:</span></th>
-                                                        <th style="width: 50%; border: none;">
-                                                            @if (count($dataNilai) > 0)
-                                                                {{ $dataNilai[0]->nis_siswa }}
-                                                            @else
-                                                                Data Guru Pelajaran Tidak Ditemukan
-                                                            @endif
-                                                        </th>                                                        
-                                                    </tr>
-                                                    
-                                                    <tr>
-                                                        <th style="width: 50%; border: none;">Nama Siswa<span style="float: right;">:</span></th>
-                                                        <th style="width: 50%; border: none;">
-                                                            @if (count($dataNilai) > 0 && $dataNilai[0]->siswa)
-                                                                {{ $dataNilai[0]->siswa->nama_siswa }}
-                                                            @else
-                                                                Data Guru Pelajaran Tidak Ditemukan
-                                                            @endif
-                                                        </th>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                            @endif --}}
+                                            @if (count($dataAd) > 0)
+                                                <table class="table" style="width: 21%; max-width: 21%;">
+                                                    <tbody>
+                                                        <!-- Menampilkan informasi mata pelajaran -->
+                                                        <tr>
+                                                            <th style="width: 50%; border: none;">Nama Sekolah<span style="float: right;">:</span></th>
+                                                            <th style="width: 50%; border: none;">
+                                                                @if (isset($dataAd[0]->guruPelajaran->sekolah))
+                                                                    {{ $dataAd[0]->guruPelajaran->sekolah->nama_sekolah }}
+                                                                @else
+                                                                    Data Sekolah Tidak Ditemukan
+                                                                @endif
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="width: 50%; border: none;">Nama Kelas<span style="float: right;">:</span></th>
+                                                            <th style="width: 50%; border: none;">
+                                                                @if (isset($dataAd[0]->guruPelajaran->kelas))
+                                                                    {{ $dataAd[0]->guruPelajaran->kelas->nama_kelas }}
+                                                                @else
+                                                                    Data Kelas Tidak Ditemukan
+                                                                @endif
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="width: 50%; border: none;">Tahun Ajaran<span style="float: right;">:</span></th>
+                                                            <th style="width: 50%; border: none;">
+                                                                @if (isset($dataAd[0]->guruPelajaran->tahun_ajaran))
+                                                                    {{ $dataAd[0]->guruPelajaran->tahun_ajaran }}
+                                                                @else
+                                                                    Tahun Ajaran Tidak Ditemukan
+                                                                @endif
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="width: 50%; border: none;">Mata Pelajaran<span style="float: right;">:</span></th>
+                                                            <th style="width: 50%; border: none;">
+                                                                @if (isset($dataAd[0]->guruPelajaran->mapel))
+                                                                    {{ $dataAd[0]->guruPelajaran->mapel->nama_pelajaran }}
+                                                                @else
+                                                                    Data Pelajaran Tidak Ditemukan
+                                                                @endif
+                                                            </th>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            @endif
+
                                             {{-- @if ($dataKk)
                                             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
                                                 <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportNilai.pdf', ['id_sekolah' => $id_sekolah[0], 'nis_siswa' => $nis_siswa[0]]) }}" class="btn btn-sm btn-danger">Export to PDF</a>
@@ -157,23 +165,15 @@
                                                     <th>No</th>
                                                     <th>Nis</th>
                                                     <th>Nama</th>
-                                                    @php
-                                                        $previousDate = null;
-                                                    @endphp
-                                                    @foreach ($dataAd as $item)
-                                                        @if ($previousDate !== $item->tanggal)
-                                                            <th>{{ $item->tanggal }}</th>
-                                                            @php
-                                                                $previousDate = $item->tanggal;
-                                                            @endphp
-                                                        @endif
+                                                    @foreach ($uniqueDates as $tanggal)
+                                                    <th>{{ $tanggal }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($dataAd as $key => $item)
+                                                @foreach ($dataAd as $item)
                                                 <tr>
-                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $loop->iteration  }}</td>
                                                     <td>{{ $item->nis_siswa ?? 'Data tidak ditemukan' }}</td>
                                                     <td>
                                                         @if(isset($item->siswa))
@@ -182,13 +182,38 @@
                                                             Data tidak ditemukan
                                                         @endif
                                                     </td>                                                        
-                                                    <td>{{ $item->keterangan }}</td>
+                                                    {{-- @foreach ($uniqueDates as $tanggal)
+                                                    <td>
+                                                        @php
+                                                        $keterangan = App\Http\Controllers\GuruPelajaranController::getAbsensiDetail($item->id_gp, $item->id_absensi, $tanggal, $item->nis_siswa);
+                                                        @endphp
+                                                        @if ($item->tanggal == $tanggal)
+                                                            {{ $item->keterangan }}
+                                                        @endif
+                                                    </td>
+                                                    @endforeach --}}
+
+                                                    @foreach ($uniqueDates as $tanggal)
+                                                    <td>
+                                                        @php
+                                                        $keterangan = App\Http\Controllers\GuruPelajaranController::getAbsensiDetail($item->id_gp, $item->id_absensi, $tanggal, $item->nis_siswa);
+                                                        @endphp
+                                                        {{ $keterangan ?? '' }}
+                                                    </td>
+                                                    @endforeach
+
+                                                    {{-- @foreach ($dataKategori as $item2)
+                                                    <td style="vertical-align: middle;">
+                                                        @php
+                                                            $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($item->id_gp, $item2->id_kn, $item->nis_siswa);
+                                                        @endphp
+                                                        {{ $nilai }}
+                                                    </td>
+                                                    @endforeach --}}
                                                 </tr>                                                
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                        
-                                        
                                     </div>
                                 </div>
                             </div>

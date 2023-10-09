@@ -117,12 +117,8 @@
                                             @endif
                                             @if ($dataNilai)
                                             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-                                                {{-- <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportNilai.pdf', ['id_nilai' => $id_nilai]) }}" class="btn btn-sm btn-danger">Export to PDF</a>
-                                                <a style="height: 35px; font-size: 13px;" href="{{ route('exportNilai.excel', ['id_nilai' => $id_nilai]) }}" class="btn btn-success">Export to Excel</a> --}}
                                                 <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportNilai.pdf', ['id_sekolah' => $id_sekolah[0], 'nis_siswa' => $nis_siswa[0]]) }}" class="btn btn-sm btn-danger">Export to PDF</a>
                                                 <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportNilai.excel', ['id_sekolah' => $id_sekolah[0], 'nis_siswa' => $nis_siswa[0]]) }}" class="btn btn-sm btn-success">Export to Excel</a>
-                                                {{-- <a style="height: 35px; font-size: 13px;" class="btn btn-success">Export to Excel</a> --}}
-                                                
                                             </div> 
                                             @endif                                           
                                         </div>
@@ -135,38 +131,13 @@
                                                     <th>Nama Guru</th>
                                                     <th>Mata Pelajaran</th>
                                                     
-                                                    @php
-                                                        $categories = []; // Inisialisasi array kategori
-                                                    @endphp
-                                                    @foreach ($dataNilai as $item)
-                                                        @php
-                                                            // Periksa apakah kategori belum ditambahkan ke array
-                                                            $kategori = $item->kategoriNilai->kategori;
-                                                            if (!in_array($kategori, $categories)) {
-                                                                $categories[] = $kategori; // Tambahkan kategori ke array
-                                                            }
-                                                        @endphp
-                                                    @endforeach
-                                                    @foreach ($categories as $category)
-                                                        <th>Nilai {{ $category }}</th>
+                                                    @foreach ($dataKategori as $item)
+                                                        <th>Nilai {{ $item->kategori }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @php
-                                                    // Kelompokkan nilai-nilai berdasarkan mata pelajaran dan kategori
-                                                    $nilaiByMapelCategory = [];
-                                                    foreach ($dataNilai as $item) {
-                                                        $mapel = $item->guruPelajaran->mapel->nama_pelajaran;
-                                                        $kategori = $item->kategoriNilai->kategori;
-                                                        if (!isset($nilaiByMapelCategory[$mapel])) {
-                                                            $nilaiByMapelCategory[$mapel] = [];
-                                                        }
-                                                        $nilaiByMapelCategory[$mapel][$kategori] = $item['nilai'];
-                                                    }
-                                                @endphp
-                                        
-                                                @foreach ($nilaiByMapelCategory as $mapel => $nilaiByCategory)
+                                                @foreach ($dataNilai as $item)
                                                     <tr>
                                                         <td style="vertical-align: middle;">{{ $loop->iteration }}</td> 
                                                         <td style="vertical-align: middle;">
@@ -191,16 +162,18 @@
                                                             @endif
                                                         </td> 
                                                         <td style="vertical-align: middle;">
-                                                            {{ $mapel }}
+                                                            @if ($item->guruPelajaran)
+                                                                {{ $item->guruPelajaran->mapel->nama_pelajaran }}
+                                                            @else
+                                                                Data Guru Pelajaran Tidak Ditemukan
+                                                            @endif
                                                         </td>
-                                                        @foreach ($categories as $category)
+                                                        @foreach ($dataKategori as $item2)
                                                             <td style="vertical-align: middle;">
                                                                 @php
-                                                                    $nilai = $nilaiByCategory[$category] ?? null;
+                                                                    $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($item->id_gp, $item2->id_kn, $item->nis_siswa);
                                                                 @endphp
-                                                                @if ($nilai !== null)
-                                                                    {{ $nilai }}
-                                                                @endif
+                                                                {{ $nilai }}
                                                             </td>
                                                         @endforeach
                                                     </tr>
