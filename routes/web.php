@@ -224,11 +224,13 @@ Route::get('/admin/dataAbsensi/detail/{id_gp}', [GuruPelajaranController::class,
 Route::post('/admin/dataAbsensi/store', [GuruPelajaranController::class, 'storeAbsensi'])->name('dataAbsensi.store');
 Route::post('/admin/dataAbsensiDetail/store', [GuruPelajaranController::class, 'storeAbsensiDetail'])->name('dataAbsensiDetail.store');
 Route::delete('/admin/dataAbsensi/destroy/{id_absensi}', [GuruPelajaranController::class, 'destroyAbsensi'])->name('dataAbsensi.destroy');
+
+// laporan absensi
 Route::get('/admin/dataAbsensi/laporanAbsensi', [GuruPelajaranController::class,'laporanAbsensi'])->name('dataAbsensi.laporanAbsensi');
 Route::post('/admin/dataAbsensi/tampilkanAbsensi', [GuruPelajaranController::class,'tampilkanAbsensi'])->name('dataAbsensi.tampilkanAbsensi');
-
 Route::get('/admin/dataAbsensi/get-mapel-by-kelas', [GuruPelajaranController::class, 'getMapelByKelas'])->name('dataAbsensi.getMapelByKelas');
-
+Route::get('/export/absensi/pdf/{id_sekolah}/{id_kelas}/{tahun_ajaran}/{id_pelajaran}', [GuruPelajaranController::class, 'exportAbsensiToPDF'])->name('exportAbsensi.pdf');
+Route::get('/export/absensi/excel', [GuruPelajaranController::class, 'exportAbsensiToExcel'])->name('exportAbsensi.excel');
 
 
 // guru pelajaran jadwal

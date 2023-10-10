@@ -152,12 +152,30 @@
                                                 </table>
                                             @endif
 
-                                            {{-- @if ($dataKk)
+                                            @if (count($dataAd) > 0)
                                             <div style="display: flex; justify-content: flex-end; align-items: flex-end;">
-                                                <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportNilai.pdf', ['id_sekolah' => $id_sekolah[0], 'nis_siswa' => $nis_siswa[0]]) }}" class="btn btn-sm btn-danger">Export to PDF</a>
-                                                <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportNilai.excel', ['id_sekolah' => $id_sekolah[0], 'nis_siswa' => $nis_siswa[0]]) }}" class="btn btn-sm btn-success">Export to Excel</a>
+                                                {{-- <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.pdf', ['id_sekolah' => $id_sekolah[0], 'id_kelas' => $id_kelas[0], 'tahun_ajaran' => $tahun_ajaran[0], 'id_pelajaran' => $id_pelajaran[0]]) }}" class="btn btn-sm btn-danger">Export to PDF</a> --}}
+                                                <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.pdf', [
+                                                        'id_sekolah' => $id_sekolah,
+                                                        'id_kelas' => $id_kelas,
+                                                        'tahun_ajaran' => $tahun_ajaran,
+                                                        'id_pelajaran' => $id_pelajaran,
+                                                    ]) }}" class="btn btn-sm btn-danger">
+                                                    Export to PDF
+                                                </a>
+
+                                                {{-- <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.pdf', [
+                                                        'id_sekolah' => $id_sekolah[0],
+                                                        'id_kelas' => $id_kelas[0],
+                                                        'tahun_ajaran' => $tahun_ajaran[0],
+                                                        'id_pelajaran' => $id_pelajaran[0],
+                                                        'id_gp' => $dataAd[0]->id_gp // Include id_gp
+                                                    ]) }}" class="btn btn-sm btn-danger">Export to PDF
+                                                </a> --}}
+
+                                                <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.excel') }}" class="btn btn-sm btn-success">Export to Excel</a>
                                             </div> 
-                                            @endif                                            --}}
+                                            @endif                                           
                                         </div>
                                         <table class="table table-striped" style="margin-top: 10px">
                                             <thead>
@@ -165,8 +183,14 @@
                                                     <th>No</th>
                                                     <th>Nis</th>
                                                     <th>Nama</th>
+                                                    {{-- @foreach ($uniqueDates as $tanggal)
+                                                    <th>{{ $tanggal->tanggal }}</th>
+                                                    @endforeach --}}
                                                     @foreach ($uniqueDates as $tanggal)
-                                                    <th>{{ $tanggal }}</th>
+                                                        @php
+                                                            $tanggalDatabase = date('d-m-Y', strtotime($tanggal->tanggal));
+                                                        @endphp
+                                                        <th>{{ $tanggalDatabase }}</th>
                                                     @endforeach
                                                 </tr>
                                             </thead>
@@ -181,35 +205,17 @@
                                                         @else
                                                             Data tidak ditemukan
                                                         @endif
-                                                    </td>                                                        
-                                                    {{-- @foreach ($uniqueDates as $tanggal)
-                                                    <td>
-                                                        @php
-                                                        $keterangan = App\Http\Controllers\GuruPelajaranController::getAbsensiDetail($item->id_gp, $item->id_absensi, $tanggal, $item->nis_siswa);
-                                                        @endphp
-                                                        @if ($item->tanggal == $tanggal)
-                                                            {{ $item->keterangan }}
-                                                        @endif
-                                                    </td>
-                                                    @endforeach --}}
-
+                                                    </td>   
                                                     @foreach ($uniqueDates as $tanggal)
                                                     <td>
                                                         @php
-                                                        $keterangan = App\Http\Controllers\GuruPelajaranController::getAbsensiDetail($item->id_gp, $item->id_absensi, $tanggal, $item->nis_siswa);
+                                                        $keterangan = App\Http\Controllers\GuruPelajaranController::getKeterangan($item->id_gp, $tanggal->tanggal, $item->nis_siswa);
                                                         @endphp
                                                         {{ $keterangan ?? '' }}
                                                     </td>
                                                     @endforeach
 
-                                                    {{-- @foreach ($dataKategori as $item2)
-                                                    <td style="vertical-align: middle;">
-                                                        @php
-                                                            $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($item->id_gp, $item2->id_kn, $item->nis_siswa);
-                                                        @endphp
-                                                        {{ $nilai }}
-                                                    </td>
-                                                    @endforeach --}}
+                                                    
                                                 </tr>                                                
                                                 @endforeach
                                             </tbody>
