@@ -163,17 +163,14 @@
                                                     ]) }}" class="btn btn-sm btn-danger">
                                                     Export to PDF
                                                 </a>
-
-                                                {{-- <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.pdf', [
-                                                        'id_sekolah' => $id_sekolah[0],
-                                                        'id_kelas' => $id_kelas[0],
-                                                        'tahun_ajaran' => $tahun_ajaran[0],
-                                                        'id_pelajaran' => $id_pelajaran[0],
-                                                        'id_gp' => $dataAd[0]->id_gp // Include id_gp
-                                                    ]) }}" class="btn btn-sm btn-danger">Export to PDF
-                                                </a> --}}
-
-                                                <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.excel') }}" class="btn btn-sm btn-success">Export to Excel</a>
+                                                <a style="margin-right: 10px; height: 35px; font-size: 13px;" href="{{ route('exportAbsensi.excel', [
+                                                        'id_sekolah' => $id_sekolah,
+                                                        'id_kelas' => $id_kelas,
+                                                        'tahun_ajaran' => $tahun_ajaran,
+                                                        'id_pelajaran' => $id_pelajaran,
+                                                    ]) }}" class="btn btn-sm btn-success">
+                                                    Export to Excel
+                                                </a>
                                             </div> 
                                             @endif                                           
                                         </div>
@@ -183,9 +180,6 @@
                                                     <th>No</th>
                                                     <th>Nis</th>
                                                     <th>Nama</th>
-                                                    {{-- @foreach ($uniqueDates as $tanggal)
-                                                    <th>{{ $tanggal->tanggal }}</th>
-                                                    @endforeach --}}
                                                     @foreach ($uniqueDates as $tanggal)
                                                         @php
                                                             $tanggalDatabase = date('d-m-Y', strtotime($tanggal->tanggal));

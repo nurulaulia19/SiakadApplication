@@ -230,7 +230,7 @@ Route::get('/admin/dataAbsensi/laporanAbsensi', [GuruPelajaranController::class,
 Route::post('/admin/dataAbsensi/tampilkanAbsensi', [GuruPelajaranController::class,'tampilkanAbsensi'])->name('dataAbsensi.tampilkanAbsensi');
 Route::get('/admin/dataAbsensi/get-mapel-by-kelas', [GuruPelajaranController::class, 'getMapelByKelas'])->name('dataAbsensi.getMapelByKelas');
 Route::get('/export/absensi/pdf/{id_sekolah}/{id_kelas}/{tahun_ajaran}/{id_pelajaran}', [GuruPelajaranController::class, 'exportAbsensiToPDF'])->name('exportAbsensi.pdf');
-Route::get('/export/absensi/excel', [GuruPelajaranController::class, 'exportAbsensiToExcel'])->name('exportAbsensi.excel');
+Route::get('/export/absensi/excel/{id_sekolah}/{id_kelas}/{tahun_ajaran}/{id_pelajaran}', [GuruPelajaranController::class, 'exportAbsensiToExcel'])->name('exportAbsensi.excel');
 
 
 // guru pelajaran jadwal

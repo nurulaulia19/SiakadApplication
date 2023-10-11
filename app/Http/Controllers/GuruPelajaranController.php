@@ -20,13 +20,14 @@ use App\Models\DataPelajaran;
 use App\Models\GuruPelajaran;
 use App\Models\KategoriNilai;
 use App\Models\KenaikanKelas;
+use App\Exports\AbsensiExport;
+use App\Models\PelajaranKelas;
 use Illuminate\Validation\Rule;
 use App\Exports\DetailNilaiExport;
+use App\Models\PelajaranKelasList;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\GuruPelajaranJadwal;
-use App\Models\PelajaranKelas;
-use App\Models\PelajaranKelasList;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -943,6 +944,7 @@ class GuruPelajaranController extends Controller
 
         // dd($nis_siswa);
         $dataSekolah = Sekolah::all();
+        // dd($dataSekolah);
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
         ->with('guruPelajaran.mapel', 'siswa')
         ->where('dgp.id_sekolah', $id_sekolah)
@@ -953,16 +955,6 @@ class GuruPelajaranController extends Controller
 
 
         $uniqueDates = collect($dataAd)->pluck('tanggal')->unique();
-        // if (count($dataAd) > 0) {
-        //     // Fetch $uniqueDates
-        //     $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
-    
-        //     // Pass $uniqueDates and $dataAd to the view
-        //     return view('dataAbsensi.laporanAbsensi', ['dataAd' => $dataAd, 'uniqueDates' => $uniqueDates]);
-        // } else {
-        //     // Handle the case when $dataAd is empty
-        //     return view('dataAbsensi.laporanAbsensi', ['dataAd' => $dataAd]);
-        // }
 
 
         // MENU
@@ -1003,6 +995,7 @@ class GuruPelajaranController extends Controller
        
 
         $dataSekolah = Sekolah::all();
+        dd($dataSekolah);
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
             ->with('guruPelajaran.mapel','siswa')
             ->where('dgp.id_sekolah', $id_sekolah)
@@ -1015,20 +1008,26 @@ class GuruPelajaranController extends Controller
             ->get();
             // dd($dataAd);
     
-        $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
-        // dd($dataAd[0]->id_gp);
-
-        if (empty($dataAd)) {
-            // Redirect back to the previous page with an error message
-            return view('dataAbsensi.laporanAbsensi')->with('error', 'No data available.');
-        }
-        
-        // Rest of your code that uses $uniqueDates
+            // $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
         
 
-// Rest of your code that uses $uniqueDates
+            // if (empty($dataAd)) {
+            //     // Redirect back to the previous page with an error message
+            //     return view('dataAbsensi.laporanAbsensi')->with('error', 'No data available.');
+            // }
 
-        
+            if ($dataAd->isEmpty()) {
+                // Data kosong, arahkan ke halaman sebelumnya atau halaman lain
+                return view('dataAbsensi.laporanAbsensi')->with('error', 'No data available.');
+            } else {
+                $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
+                // Lanjutkan pemrosesan data jika data tidak kosong
+                // ...
+            }
+
+            
+
+            
         
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -1081,16 +1080,7 @@ class GuruPelajaranController extends Controller
 
     public function exportAbsensiToPDF(Request $request, $id_sekolah, $id_kelas, $tahun_ajaran, $id_pelajaran)
     {
-        // $id_gp = $request->input('id_gp');
-        // $id_sekolah = $request->input('id_sekolah');
-        // $id_kelas = $request->input('id_kelas');
-        // $tahun_ajaran = $request->input('tahun_ajaran');
-        // $id_pelajaran = $request->input('id_pelajaran');
-        
-        // $id_gp = $request->input('id_gp');
        
-
-        // $dataSekolah = Sekolah::all();
         $dataSekolah = Sekolah::where('id_sekolah', $id_sekolah)->first();
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
             ->with('guruPelajaran.mapel','siswa')
@@ -1102,40 +1092,8 @@ class GuruPelajaranController extends Controller
             })
             ->groupBy('data_absensi_detail.nis_siswa')
             ->get();
-            // dd($id_sekolah, $id_kelas, $tahun_ajaran, $id_pelajaran);
-            // dd($dataAd);
     
         $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
-        // dd($dataAd[0]->id_gp);
-
-        // if (!empty($dataAd) && isset($dataAd[0]->id_gp)) {
-        //     // Data is available and id_gp is set, proceed with PDF export
-        //     $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
-    
-        //     // Rest of your PDF export code
-        //     // ...
-        // } else {
-        //     // Handle the case where $dataAd is empty or id_gp is not set
-        //     return redirect()->back()->with('error', 'No valid data available for PDF export.');
-        // }
-        
-        // dd($uniqueDates);
-        // if (count($dataAd) > 0) {
-        //     $id_gp = $dataAd[0]->id_gp;
-        //     $uniqueDates = DataAbsensi::where('id_gp', $id_gp)->get();
-        
-        //     // Check if $uniqueDates has data
-        //     if ($uniqueDates->count() > 0) {
-        //         // Process and export PDF
-        //     } else {
-        //         // Handle the case when $uniqueDates is empty
-        //         return redirect()->back()->with('error', 'No data available for PDF export.');
-        //     }
-        // } else {
-        //     // Handle the case when $dataAd is empty
-        //     return redirect()->back()->with('error', 'No data available for PDF export.');
-        // }
-        
 
         $paperSize = $request->input('paper_size', 'A4');
 
@@ -1151,7 +1109,7 @@ class GuruPelajaranController extends Controller
         $pdf = new Dompdf($pdfOptions);
 
         // Render the view with data and get the HTML content
-        $htmlContent = View::make('dataAbsensi.eksportAbsensi', compact('dataSekolah','dataAd','uniqueDates','id_sekolah','id_kelas','tahun_ajaran','id_pelajaran'))->render();
+        $htmlContent = View::make('dataAbsensi.eksportAbsensi', compact('dataSekolah','dataAd','uniqueDates'))->render();
 
         $pdf->loadHtml($htmlContent);
 
@@ -1161,6 +1119,26 @@ class GuruPelajaranController extends Controller
 
         return $pdf->stream('data-absensi.pdf');
     } 
+
+    public function exportAbsensiToExcel($id_sekolah, $id_kelas, $tahun_ajaran, $id_pelajaran)
+    {
+        $dataSekolah = Sekolah::where('id_sekolah', $id_sekolah)->first();
+        
+        $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
+            ->with('guruPelajaran.mapel','siswa')
+            ->where('dgp.id_sekolah', $id_sekolah)
+            ->where('dgp.id_kelas', $id_kelas)
+            ->where('dgp.tahun_ajaran', $tahun_ajaran)
+            ->when($id_pelajaran, function ($query) use ($id_pelajaran) {
+                $query->where('dgp.id_pelajaran', $id_pelajaran);
+            })
+            ->groupBy('data_absensi_detail.nis_siswa')
+            ->get();
+    
+        $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
+
+        return Excel::download(new AbsensiExport($dataSekolah, $dataAd, $uniqueDates), 'data-absensi.xlsx');
+    }
   
 
 }
