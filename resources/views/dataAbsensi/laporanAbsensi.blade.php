@@ -99,6 +99,7 @@
                                 
                             </div>
                         </div>
+                        @if (count($dataAd) > 0)
                         <div class="row">
                             <div class="panel">
                                 <div class="panel-body">
@@ -218,6 +219,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                         @if(session('error'))
 							<div class="alert alert-danger">
                                 {{ session('error') }}

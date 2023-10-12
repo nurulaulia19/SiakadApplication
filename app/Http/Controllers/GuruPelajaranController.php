@@ -995,7 +995,7 @@ class GuruPelajaranController extends Controller
        
 
         $dataSekolah = Sekolah::all();
-        dd($dataSekolah);
+        // dd($dataSekolah);
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
             ->with('guruPelajaran.mapel','siswa')
             ->where('dgp.id_sekolah', $id_sekolah)
@@ -1006,28 +1006,15 @@ class GuruPelajaranController extends Controller
             })
             ->groupBy('data_absensi_detail.nis_siswa')
             ->get();
-            // dd($dataAd);
-    
-            // $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
-        
-
-            // if (empty($dataAd)) {
-            //     // Redirect back to the previous page with an error message
-            //     return view('dataAbsensi.laporanAbsensi')->with('error', 'No data available.');
-            // }
-
+            
             if ($dataAd->isEmpty()) {
                 // Data kosong, arahkan ke halaman sebelumnya atau halaman lain
-                return view('dataAbsensi.laporanAbsensi')->with('error', 'No data available.');
+                return redirect()->route('dataAbsensi.laporanAbsensi')->with('error', 'No data available.');
             } else {
                 $uniqueDates = DataAbsensi::where('id_gp', $dataAd[0]->id_gp)->get();
-                // Lanjutkan pemrosesan data jika data tidak kosong
-                // ...
+                
             }
 
-            
-
-            
         
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 

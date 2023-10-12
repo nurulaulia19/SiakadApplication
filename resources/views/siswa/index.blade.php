@@ -39,7 +39,7 @@
 													</a>
 													
 					                            </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-md-3">
                                                     <form action="{{ route('siswa.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <label for="tahun_filter">Filter Tahun Masuk</label>
@@ -55,10 +55,20 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-md-1">
+                                                    <div class="btn-group">
+                                                        <a href="{{ route('exportSiswa.pdf', ['tahun' => $selectedYear]) }}" class="btn btn-danger">
+                                                            <i style="font-size: 18px" class="fas fa-file-pdf"></i>
+                                                        </a>
+                                                        <a href="{{ route('exportSiswa.excel', ['tahun' => $selectedYear]) }}" style="margin-left: 15px" class="btn btn-success">
+                                                            <i style="font-size: 18px" class="fas fa-file-excel"></i>
+                                                        </a>                                                                                                               
+                                                    </div>
+                                                </div> 
+                                                <div class="col-md-2">
                                                     <form action="{{ route('siswa.index') }}" method="GET">
                                                         <div class="input-group">
-                                                            <input type="text" name="search" class="form-control" placeholder="Cari berdasarkan NIS dan Nama Siswa..." value="{{ request('search') }}">
+                                                            <input type="text" name="search" class="form-control" placeholder="NIS dan Nama Siswa..." value="{{ request('search') }}">
                                                             <input type="hidden" name="tahun_filter" value="{{ $selectedYear }}">
                                                             <span class="input-group-btn">
                                                                 <button class="btn btn-primary" type="submit">Cari</button>

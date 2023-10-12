@@ -182,6 +182,9 @@ Route::get('/admin/siswa/edit/{id}', [DataSiswaController::class, 'edit'])->name
 Route::post('/siswa/store', [DataSiswaController::class, 'store']);
 Route::get('/admin/siswa/destroy/{id}', [DataSiswaController::class,'destroy'])->name('siswa.destroy');
 
+Route::get('/export-pdf/{tahun?}', [DataSiswaController::class, 'exportPDF'])->name('exportSiswa.pdf');
+Route::get('/export-excel/{tahun?}', [DataSiswaController::class, 'exportExcel'])->name('exportSiswa.excel');
+
 
 // data kenaikan kelas
 Route::put('/admin/kenaikanKelas/update/{id}', [KenaikanKelasController::class, 'update'])->name('kenaikanKelas.update');
@@ -228,6 +231,7 @@ Route::delete('/admin/dataAbsensi/destroy/{id_absensi}', [GuruPelajaranControlle
 // laporan absensi
 Route::get('/admin/dataAbsensi/laporanAbsensi', [GuruPelajaranController::class,'laporanAbsensi'])->name('dataAbsensi.laporanAbsensi');
 Route::post('/admin/dataAbsensi/tampilkanAbsensi', [GuruPelajaranController::class,'tampilkanAbsensi'])->name('dataAbsensi.tampilkanAbsensi');
+// Route::match(['get', 'post'], '/admin/dataAbsensi/tampilkanAbsensi', [GuruPelajaranController::class, 'tampilkanAbsensi'])->name('dataAbsensi.tampilkanAbsensi');
 Route::get('/admin/dataAbsensi/get-mapel-by-kelas', [GuruPelajaranController::class, 'getMapelByKelas'])->name('dataAbsensi.getMapelByKelas');
 Route::get('/export/absensi/pdf/{id_sekolah}/{id_kelas}/{tahun_ajaran}/{id_pelajaran}', [GuruPelajaranController::class, 'exportAbsensiToPDF'])->name('exportAbsensi.pdf');
 Route::get('/export/absensi/excel/{id_sekolah}/{id_kelas}/{tahun_ajaran}/{id_pelajaran}', [GuruPelajaranController::class, 'exportAbsensiToExcel'])->name('exportAbsensi.excel');

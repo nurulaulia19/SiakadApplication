@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
+use Barryvdh\DomPDF\PDF;
 use App\Models\Data_Menu;
 use App\Models\DataSiswa;
-use App\Models\Sekolah;
 use Illuminate\Support\Str;
+use App\Exports\SiswaExport;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 
 class DataSiswaController extends Controller
@@ -290,4 +295,51 @@ class DataSiswaController extends Controller
         $dataSiswa->delete();
         return redirect()->route('siswa.index')->with('success', 'Terdelet');
     }
+
+    public function exportPDF(Request $request, $tahun = null)
+    {
+        // Ambil data siswa berdasarkan tahun yang dipilih jika tahun ada, atau ambil semua data jika tidak ada tahun yang dipilih
+        if ($tahun) {
+            $dataSiswa = DataSiswa::where('tahun_masuk', $tahun)->get();
+        } else {
+            $dataSiswa = DataSiswa::all();
+        }
+
+        // Buat opsi PDF
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+
+        // Inisialisasi Dompdf dengan opsi yang telah ditentukan
+        $pdf = new Dompdf($pdfOptions);
+
+        // Render view dengan data siswa ke dalam HTML
+        $htmlContent = view('siswa.eksportSiswa', compact('dataSiswa','tahun'))->render();
+
+        // Muat konten HTML ke dalam Dompdf
+        $pdf->loadHtml($htmlContent);
+
+        // Atur ukuran kertas dan orientasi
+        $pdf->setPaper('A4', 'portrait');
+
+        // Render PDF
+        $pdf->render();
+
+        // Kembalikan PDF untuk diunduh
+        return $pdf->stream('data-siswa.pdf');
+    }
+
+    public function exportExcel($tahun = null)
+    {
+        // Lakukan pemrosesan jika perlu berdasarkan tahun yang diberikan
+        if ($tahun) {
+            $dataSiswa = DataSiswa::where('tahun_masuk', $tahun)->get();
+        } else {
+            $dataSiswa = DataSiswa::all();
+        }
+
+        // Panggil kelas eksport yang telah Anda buat
+        return Excel::download(new SiswaExport($tahun, $dataSiswa), 'data-siswa.xlsx');
+    }
+
+
 }
