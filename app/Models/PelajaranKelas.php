@@ -32,20 +32,8 @@ class PelajaranKelas extends Model
         return $this->hasMany(PelajaranKelasList::class, 'id_pk', 'id_pk')->with('sekolah', 'mapel');;
     }
 
-    // public static function boot()
-    // {
-    //     parent::boot();
-
-    //     static::saving(function ($model) {
-    //         $existingEntry = self::where([
-    //             'tahun_ajaran' => $model->tahun_ajaran,
-    //             'id_kelas' => $model->id_kelas,
-    //             'id_sekolah' => $model->id_sekolah,
-    //         ])->first();
-
-    //         if ($existingEntry) {
-    //             throw new \Exception('Kelas sudah ada.');
-    //         }
-    //     });
-    // }
+    public function user()
+    {
+        return $this->belongsTo(DataUser::class, 'user_id', 'user_id');
+    }
 }

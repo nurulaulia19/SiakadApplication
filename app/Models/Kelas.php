@@ -36,5 +36,10 @@ class Kelas extends Model
     {
         return $this->hasMany(GuruPelajaran::class, 'id_kelas', 'id_kelas');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(DataUser::class, 'user_id', 'user_id');
+    }
 }
 

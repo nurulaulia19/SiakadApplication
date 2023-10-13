@@ -7,6 +7,7 @@ use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
+use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use App\Models\DataPelajaran;
 use App\Models\PelajaranKelas;
@@ -20,7 +21,18 @@ class PelajaranKelasController extends Controller
      */
     public function index()
     {
-        $dataPk = PelajaranKelas::with('kelas','sekolah','mapelList')->orderBy('id_pk', 'DESC')->paginate(10);
+        // $dataPk = PelajaranKelas::with('kelas','sekolah','mapelList')->orderBy('id_pk', 'DESC')->paginate(10);
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil data Pelajaran Kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        $dataPk = PelajaranKelas::join('data_kelas', 'data_kelas.id_kelas', '=', 'pelajaran_kelas.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+            ->with('kelas', 'sekolah', 'mapelList') // Load relasi yang dibutuhkan
+            ->where('akses_sekolah.user_id', $user_id)
+            ->orderBy('pelajaran_kelas.id_pk', 'DESC')
+            ->paginate(10);
+
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -68,7 +80,15 @@ class PelajaranKelasController extends Controller
         $dataPk = PelajaranKelas::all();
         $dataPelajaran = DataPelajaran::all();
         $dataKelas = Kelas::all();
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
 
         
         // MENU
@@ -188,7 +208,15 @@ class PelajaranKelasController extends Controller
     {
         
         $dataPk = PelajaranKelas::all();
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
        
         $selectedMapelId = PelajaranKelasList::where('id_pk', $id_pk)->pluck('id_pelajaran')->toArray();
         // $selectedMapelId = PelajaranKelas::where('id_pk', $id_pk)->first()->id_pelajaran;

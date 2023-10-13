@@ -14,6 +14,7 @@ use App\Models\DataNilai;
 use App\Models\DataSiswa;
 use App\Models\DataAbsensi;
 use App\Exports\NilaiExport;
+use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use App\Models\AbsensiDetail;
 use App\Models\DataPelajaran;
@@ -38,7 +39,18 @@ class GuruPelajaranController extends Controller
      */
     public function index()
     {
-        $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
+        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil data Guru Pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
+            ->where('akses_sekolah.user_id', $user_id)
+            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+            ->paginate(10);
+
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -92,7 +104,15 @@ class GuruPelajaranController extends Controller
             $query->where('role_id', $guruRoleId);
         })->get();
 
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
+
         $dataKelas = Kelas::all();
 
         // MENU
@@ -177,7 +197,15 @@ class GuruPelajaranController extends Controller
     public function edit($id_gp)
     {
         
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
        
         $guruRoleId = Role::where('role_name', 'guru')->value('role_id'); // Mendapatkan ID peran "guru"
 

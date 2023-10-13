@@ -7,6 +7,7 @@ use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
+use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use App\Models\DataPelajaran;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,16 @@ class DataPelajaranController extends Controller
      */
     public function index()
     {
-        $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('kode_pelajaran', 'DESC')->paginate(10);
+        // $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('kode_pelajaran', 'DESC')->paginate(10);
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil data pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
+        $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->orderBy('data_pelajaran.kode_pelajaran', 'DESC')
+            ->paginate(10);
+
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -66,14 +76,17 @@ class DataPelajaranController extends Controller
     public function create()
     {
         $dataPelajaran = DataPelajaran::all();
-        // $dataUser = DataUser::all();
         $guruRoleId = Role::where('role_name', 'guru')->value('role_id'); // Mendapatkan ID peran "guru"
+        // $dataSekolah = Sekolah::all();
 
-        // $dataUser = DataUser::whereHas('role', function ($query) use ($guruRoleId) {
-        //     $query->where('role_id', $guruRoleId);
-        // })->get();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
 
-        $dataSekolah = Sekolah::all();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -132,14 +145,15 @@ class DataPelajaranController extends Controller
      */
     public function edit($id_pelajaran)
     {
-        $dataSekolah = Sekolah::all();
-        // $dataUser = DataUser::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
 
-        // $guruRoleId = Role::where('role_name', 'guru')->value('role_id'); // Mendapatkan ID peran "guru"
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
 
-        // $dataUser = DataUser::whereHas('role', function ($query) use ($guruRoleId) {
-        //     $query->where('role_id', $guruRoleId);
-        // })->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
 
         $dataPelajaran = DataPelajaran::where('id_pelajaran', $id_pelajaran)->first();
     

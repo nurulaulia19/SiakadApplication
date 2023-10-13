@@ -38,7 +38,7 @@
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a>
 					                            </div>
-                                                <div class="col-sm-2">
+                                                {{-- <div class="col-sm-2">
                                                     <form action="{{ route('kenaikanKelas.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <label for="sekolah_filter">Filter Sekolah</label>
@@ -53,7 +53,32 @@
                                                             <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
                                                         </div>
                                                     </form>
+                                                </div> --}}
+                                                <div class="col-sm-2">
+                                                    <form action="{{ route('kenaikanKelas.index') }}" method="GET">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <label for="sekolah_filter">Filter Sekolah</label>
+                                                                </div>
+                                                                <div class="col-7">
+                                                                    <select name="sekolah_filter" id="sekolah_filter" class="form-control">
+                                                                        <option value="">Tampilkan Semua</option>
+                                                                        @foreach ($dataSekolah as $sekolah)
+                                                                            <option value="{{ $sekolah->id_sekolah }}" {{ $sekolahFilter == $sekolah->id_sekolah ? 'selected' : '' }}>
+                                                                                {{ $sekolah->nama_sekolah }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-3">
+                                                                    <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                 </div>
+                                                
                                                 <div class="col-sm-2">
                                                     <form action="{{ route('kenaikanKelas.index') }}" method="GET">
                                                         <div class="form-group">
@@ -67,7 +92,7 @@
                                                                     </option>
                                                                 @endforeach
                                                             </select>
-                                                            <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
+                                                            <button type="submit" class="btn btn-sm btn-primary mt-1" style="margin-left: 5px">Filter</button>
                                                         </div>
                                                     </form>
                                                 </div>

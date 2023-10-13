@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\TransaksiDetailAditional;
 use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\AksesCabangController;
+use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\JasaController;
 use App\Http\Controllers\CabangController;
 use App\Http\Controllers\ChartController;
@@ -255,3 +256,11 @@ Route::get('/admin/dataNilai/cekNilai', [GuruPelajaranController::class,'cekNila
 Route::post('/admin/dataNilai/tampilkanNilai', [GuruPelajaranController::class,'tampilkanNilai'])->name('dataNilai.tampilkanNilai');
 Route::get('/export/nilai/pdf/{id_sekolah}/{nis_siswa}', [GuruPelajaranController::class, 'exportNilaiToPDF'])->name('exportNilai.pdf');
 Route::get('/export/nilai/excel/{id_sekolah}/{nis_siswa}', [GuruPelajaranController::class, 'exportNilaiToExcel'])->name('exportNilai.excel');
+
+// akses sekolah
+Route::get('/admin/aksessekolah', [AksesSekolahController::class,'index'])->name('aksessekolah.index');
+Route::put('/admin/aksessekolah/update/{id}', [AksesSekolahController::class, 'update'])->name('aksessekolah.update');
+Route::get('/admin/aksessekolah/create', [AksesSekolahController::class, 'create'])->name('aksessekolah.create');
+Route::get('/admin/aksessekolah/edit/{id}', [AksesSekolahController::class, 'edit'])->name('aksessekolah.edit');
+Route::post('/aksessekolah/store', [AksesSekolahController::class, 'store']);
+Route::get('/admin/aksessekolah/destroy/{id}', [AksesSekolahController::class,'destroy'])->name('aksessekolah.destroy');

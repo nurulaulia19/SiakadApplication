@@ -12,6 +12,7 @@ use App\Models\Data_Menu;
 use App\Models\DataSiswa;
 use Illuminate\Support\Str;
 use App\Exports\SiswaExport;
+use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -39,18 +40,38 @@ class DataSiswaController extends Controller
 
         $dataSiswaQuery = DB::table('data_siswa');
 
-        $dataSiswaList = DataSiswa::with('sekolah') // Eager load the 'sekolah' relationship
-        ->when($selectedYear, function ($query) use ($selectedYear) {
-            $query->where('tahun_masuk', '=', $selectedYear);
-        })
-        ->when($searchTerm, function ($query) use ($searchTerm) {
-            $query->where(function ($subQuery) use ($searchTerm) {
-                $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
-            });
-        })
-        ->orderBy('id_siswa', 'DESC')
-        ->paginate(10);
+        // $dataSiswaList = DataSiswa::with('sekolah') // Eager load the 'sekolah' relationship
+        // ->when($selectedYear, function ($query) use ($selectedYear) {
+        //     $query->where('tahun_masuk', '=', $selectedYear);
+        // })
+        // ->when($searchTerm, function ($query) use ($searchTerm) {
+        //     $query->where(function ($subQuery) use ($searchTerm) {
+        //         $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
+        //             ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
+        //     });
+        // })
+        // ->orderBy('id_siswa', 'DESC')
+        // ->paginate(10);
+
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil data Data Siswa yang berhubungan dengan sekolah yang terkait dengan pengguna
+        $dataSiswaList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+            ->with('sekolah') // Load relasi yang dibutuhkan
+            ->when($selectedYear, function ($query) use ($selectedYear) {
+                $query->where('tahun_masuk', '=', $selectedYear);
+            })
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
+                });
+            })
+            ->where('akses_sekolah.user_id', $user_id) // Filter berdasarkan user yang memiliki akses sekolah
+            ->orderBy('data_siswa.id_siswa', 'DESC')
+            ->paginate(10);
+
             
         // $dataSiswaList = $dataSiswaQuery->orderBy('id_siswa', 'DESC')->with('sekolah')->paginate(10);
         
@@ -102,7 +123,15 @@ class DataSiswaController extends Controller
     public function create()
     {
         $dataSiswa = DataSiswa::all();
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
 
         // sidebar menu
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -197,7 +226,15 @@ class DataSiswaController extends Controller
     public function edit($id_siswa)
     {
         $dataSiswa = DataSiswa::where('id_siswa', $id_siswa)->first();
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'

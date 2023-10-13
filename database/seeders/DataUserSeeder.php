@@ -95,16 +95,16 @@ class DataUserSeeder extends Seeder
             
         ]);
 
-        DataUser::create([
-            'user_id' => 4,
-            'user_name' => 'agat',
-            'user_email' => 'agat@gmail.com',
-            'user_password' => bcrypt('@Nurulauliaseptiani9@gmail.com'),
-            'user_gender' => 'male',
-            'user_photo' => 'agat.jpg',
-            'role_id' => $curut->id,
-            'user_token' => 123
+        // DataUser::create([
+        //     'user_id' => 4,
+        //     'user_name' => 'agat',
+        //     'user_email' => 'agat@gmail.com',
+        //     'user_password' => bcrypt('@Nurulauliaseptiani9@gmail.com'),
+        //     'user_gender' => 'male',
+        //     'user_photo' => 'agat.jpg',
+        //     'role_id' => $curut->id,
+        //     'user_token' => 123
             
-        ]);
+        // ]);
     }
 }

@@ -36,4 +36,9 @@ class DataPelajaran extends Model
     {
         return $this->hasMany(DataNilai::class, 'id_pelajaran', 'id_pelajaran');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(DataUser::class, 'user_id', 'user_id');
+    }
 }

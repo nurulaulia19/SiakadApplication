@@ -56,4 +56,9 @@ class Sekolah extends Model
     {
         return $this->hasMany(DataNilai::class, 'id_sekolah', 'id_sekolah');
     }
+
+    public function aksesSekolah()
+    {
+        return $this->hasMany(AksesSekolah::class, 'id_sekolah', 'id_sekolah');
+    }
 }

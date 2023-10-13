@@ -70,6 +70,7 @@
                                 
                             </div>
                         </div>
+                        @if ($dataNilai)
                         <div class="row">
                             <div class="panel">
                                 <div class="panel-body">
@@ -185,6 +186,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                         @if(session('error'))
 							<div class="alert alert-danger">
                                 {{ session('error') }}

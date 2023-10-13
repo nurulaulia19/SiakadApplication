@@ -49,4 +49,24 @@ class DataUser extends Authenticatable
     {
         return $this->hasMany(GuruPelajaran::class, 'user_id', 'user_id');
     }
+
+    public function aksesSekolah()
+    {
+        return $this->hasMany(AksesSekolah::class, 'user_id', 'user_id');
+    }
+
+    public function kelas()
+    {
+        return $this->hasMany(Kelas::class, 'user_id', 'user_id');
+    }
+
+    public function pelajaran()
+    {
+        return $this->hasMany(DataPelajaran::class, 'user_id', 'user_id');
+    }
+
+    public function mapelKelas()
+    {
+        return $this->hasMany(PelajaranKelas::class, 'user_id', 'user_id');
+    }
 }

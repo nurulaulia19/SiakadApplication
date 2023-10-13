@@ -7,6 +7,7 @@ use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
+use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,8 +17,16 @@ class KelasController extends Controller
      * Display a listing of the resource.
      */
     public function index() {
-        // $dataKelas = Kelas::with('sekolah')->get();
-        $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
+        // $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
+
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        $dataKelas = Kelas::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->orderBy('data_kelas.id_kelas', 'DESC')
+            ->paginate(10);
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -64,7 +73,16 @@ class KelasController extends Controller
     public function create()
     {
         $dataKelas = Kelas::all();
-        $dataSekolah= Sekolah::all();
+        // $dataSekolah= Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // dd($dataSekolah);
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -121,7 +139,17 @@ class KelasController extends Controller
      */
     public function edit($id_kelas)
     {
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // dd($user_id);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+       
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // dd($dataSekolah);
+
         $dataKelas = Kelas::where('id_kelas', $id_kelas)->first();
     
         // MENU
