@@ -16,65 +16,65 @@ class MenuController extends Controller
         $dataMenu = Data_Menu::leftJoin('data_menu AS menuSub', 'data_menu.menu_sub', '=', 'menuSub.menu_id')
             ->select('menuSub.menu_name AS submenu_name', 'data_menu.*')->paginate(10);
     
-        // $user_id = auth()->user()->user_id;
-        // $user = DataUser::findOrFail($user_id);
-        // $menu_ids = $user->role->roleMenus->pluck('menu_id');
+        $user_id = auth()->user()->user_id;
+        $user = DataUser::findOrFail($user_id);
+        $menu_ids = $user->role->roleMenus->pluck('menu_id');
 
-        // $menu_route_name = request()->route()->getName(); // Nama route dari URL yang diminta
+        $menu_route_name = request()->route()->getName(); // Nama route dari URL yang diminta
 
-        // // Ambil menu berdasarkan menu_link yang sesuai dengan nama route
-        // $requested_menu = Data_Menu::where('menu_link', $menu_route_name)->first();
-        // // dd($requested_menu);
+        // Ambil menu berdasarkan menu_link yang sesuai dengan nama route
+        $requested_menu = Data_Menu::where('menu_link', $menu_route_name)->first();
+        // dd($requested_menu);
 
-        // // Periksa izin akses berdasarkan menu_id dan user_id
-        // if (!$requested_menu || !$menu_ids->contains($requested_menu->menu_id)) {
-        //     return redirect()->back()->with('error', 'You do not have permission to access this menu.');
-        // }
+        // Periksa izin akses berdasarkan menu_id dan user_id
+        if (!$requested_menu || !$menu_ids->contains($requested_menu->menu_id)) {
+            return redirect()->back()->with('error', 'You do not have permission to access this menu.');
+        }
 
-        // $mainMenus = Data_Menu::where('menu_category', 'master menu')
-        //     ->whereIn('menu_id', $menu_ids)
-        //     ->get();
+        $mainMenus = Data_Menu::where('menu_category', 'master menu')
+            ->whereIn('menu_id', $menu_ids)
+            ->get();
 
-        // $menuItemsWithSubmenus = [];
+        $menuItemsWithSubmenus = [];
 
-        // foreach ($mainMenus as $mainMenu) {
-        //     $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
-        //         ->where('menu_category', 'sub menu')
-        //         ->whereIn('menu_id', $menu_ids)
-        //         ->orderBy('menu_position')
-        //         ->get();
-
-        //     $menuItemsWithSubmenus[] = [
-        //         'mainMenu' => $mainMenu,
-        //         'subMenus' => $subMenus,
-        //     ];
-        // }
-
-        $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
-
-            $user = DataUser::find($user_id);
-            $role_id = $user->role_id;
-
-            $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
-
-            $mainMenus = Data_Menu::where('menu_category', 'master menu')
+        foreach ($mainMenus as $mainMenu) {
+            $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                ->where('menu_category', 'sub menu')
                 ->whereIn('menu_id', $menu_ids)
+                ->orderBy('menu_position')
                 ->get();
 
-            $menuItemsWithSubmenus = [];
+            $menuItemsWithSubmenus[] = [
+                'mainMenu' => $mainMenu,
+                'subMenus' => $subMenus,
+            ];
+        }
 
-            foreach ($mainMenus as $mainMenu) {
-                $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
-                    ->where('menu_category', 'sub menu')
-                    ->whereIn('menu_id', $menu_ids)
-                    ->orderBy('menu_position')
-                    ->get();
+        // $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
-                $menuItemsWithSubmenus[] = [
-                    'mainMenu' => $mainMenu,
-                    'subMenus' => $subMenus,
-                ];
-            }
+        //     $user = DataUser::find($user_id);
+        //     $role_id = $user->role_id;
+
+        //     $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
+
+        //     $mainMenus = Data_Menu::where('menu_category', 'master menu')
+        //         ->whereIn('menu_id', $menu_ids)
+        //         ->get();
+
+        //     $menuItemsWithSubmenus = [];
+
+        //     foreach ($mainMenus as $mainMenu) {
+        //         $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+        //             ->where('menu_category', 'sub menu')
+        //             ->whereIn('menu_id', $menu_ids)
+        //             ->orderBy('menu_position')
+        //             ->get();
+
+        //         $menuItemsWithSubmenus[] = [
+        //             'mainMenu' => $mainMenu,
+        //             'subMenus' => $subMenus,
+        //         ];
+        //     }
 
 
         return view('menu.index', compact('dataMenu','menuItemsWithSubmenus'));

@@ -77,4 +77,11 @@ class GuruPelajaran extends Model
     {
         return $this->hasMany(AbsensiDetail::class, 'id_gp', 'id_gp');
     }
+
+        // Dalam model GuruPelajaran
+    public function aksesSekolah()
+    {
+        return $this->belongsTo(AksesSekolah::class, 'user_id_sekolah'); // Ganti 'user_id_sekolah' sesuai dengan kolom yang sesuai di tabel 'GuruPelajaran'
+    }
+
 }

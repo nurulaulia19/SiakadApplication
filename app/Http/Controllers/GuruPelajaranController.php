@@ -41,15 +41,27 @@ class GuruPelajaranController extends Controller
     {
         // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
-
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
         // Menggunakan Eloquent untuk mengambil data Guru Pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
+        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->paginate(10);
         $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
             ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
-            ->where('akses_sekolah.user_id', $user_id)
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
             ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
             ->paginate(10);
+
 
 
         // menu
@@ -310,7 +322,29 @@ class GuruPelajaranController extends Controller
     }
 
     public function nilai(Request $request) {
-        $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil data Guru Pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
+        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->paginate(10);
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
+            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+            ->paginate(10);
+
         $id_kn = $request->input('id_kn');
         // dd($id_kn);
         // MENU
@@ -565,7 +599,29 @@ class GuruPelajaranController extends Controller
     }
 
     public function absensi(Request $request) {
-        $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        // Menggunakan Eloquent untuk mengambil data Guru Pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
+        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->paginate(10);
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
+            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+            ->paginate(10);
+
         $id_kn = $request->input('id_kn');
         // dd($id_kn);
         // MENU
@@ -790,7 +846,12 @@ class GuruPelajaranController extends Controller
 
     public function cekNilai(Request $request)
     {
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
         $dataSiswa = DataSiswa::all();
         $id_sekolah = $request->input('id_sekolah');
         // Check if the form has been submitted
@@ -845,7 +906,12 @@ class GuruPelajaranController extends Controller
         $id_sekolah = $request->input('id_sekolah');
         $nis_siswa = $request->input('nis_siswa');
     
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
         
         $dataNilai = DataNilai::join('data_guru_pelajaran', 'data_nilai.id_gp', '=', 'data_guru_pelajaran.id_gp')
             ->with(['guruPelajaran.mapel', 'siswa', 'kategoriNilai', 'guruPelajaran.user'])
@@ -860,8 +926,16 @@ class GuruPelajaranController extends Controller
             ->orderBy('id_kn', 'desc')
             ->get();
 
+        if ($dataNilai->isEmpty()) {
+            // Data kosong, arahkan ke halaman sebelumnya atau halaman lain
+            return redirect()->route('dataNilai.cekNilai')->with('error', 'No data available.');
+        } else {
+            $user_ids = $dataNilai->pluck('guruPelajaran.user.user_id')->unique();
+                
+        }
+
         // Mengambil user_id dari guru yang mengajar mata pelajaran yang ditampilkan dalam query
-        $user_ids = $dataNilai->pluck('guruPelajaran.user.user_id')->unique();
+        // $user_ids = $dataNilai->pluck('guruPelajaran.user.user_id')->unique();
 
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -971,7 +1045,14 @@ class GuruPelajaranController extends Controller
         // $id_gp = $request->input('id_gp');
 
         // dd($nis_siswa);
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
+
+
         // dd($dataSekolah);
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
         ->with('guruPelajaran.mapel', 'siswa')
@@ -980,7 +1061,6 @@ class GuruPelajaranController extends Controller
         ->where('dgp.tahun_ajaran', $tahun_ajaran)
         // ->where('dgp.id_gp', $id_gp)
         ->get();
-
 
         $uniqueDates = collect($dataAd)->pluck('tanggal')->unique();
 
@@ -1022,7 +1102,12 @@ class GuruPelajaranController extends Controller
         $id_pelajaran = $request->input('id_pelajaran');
        
 
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
         // dd($dataSekolah);
         $dataAd = AbsensiDetail::join('data_guru_pelajaran as dgp', 'data_absensi_detail.id_gp', '=', 'dgp.id_gp')
             ->with('guruPelajaran.mapel','siswa')

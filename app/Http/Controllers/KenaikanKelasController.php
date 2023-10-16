@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Validation\Rule;
 use App\Models\Kelas;
 use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
 use App\Models\DataSiswa;
+use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use App\Models\KenaikanKelas;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class KenaikanKelasController extends Controller
 {
@@ -21,19 +22,55 @@ class KenaikanKelasController extends Controller
      */
     public function index(Request $request)
     {
-        $dataSekolah = Sekolah::all();
-        $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
+
+        $user = auth()->user();
+        $user_id = $user->user_id;
+
+        // Dapatkan ID sekolah yang terkait dengan pengguna yang sedang login
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
+
+        // $dataSekolah = Sekolah::all();
+        $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->get();
+
+        // $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
+        $tahunAjarans = KenaikanKelas::whereIn('id_sekolah', $sekolahUser)
+            ->distinct()
+            ->pluck('tahun_ajaran');
+
+    
         $search = $request->input('search');
         $sekolahFilter = $request->input('sekolah_filter');
         $tahunAjaranFilter = $request->input('tahun_ajaran_filter');
 
         
+        // $dataKk = KenaikanKelas::orderBy('id_kk', 'desc')
+        //     ->when(isset($search), function ($query) use ($search) {
+        //         $query->where('nis_siswa', 'LIKE', '%' . $search . '%');
+        //     })
+        //     ->when(isset($sekolahFilter) && !empty($sekolahFilter), function ($query) use ($sekolahFilter) {
+        //         $query->where('id_sekolah', $sekolahFilter);
+        //     })
+        //     ->when(isset($tahunAjaranFilter) && !empty($tahunAjaranFilter), function ($query) use ($tahunAjaranFilter) {
+        //         $query->where('tahun_ajaran', $tahunAjaranFilter);
+        //     })
+        //     ->select('id_sekolah', 'id_kelas', 'tahun_ajaran', DB::raw('GROUP_CONCAT(id_kk, ", ") as id_kk'), DB::raw('GROUP_CONCAT(nis_siswa SEPARATOR ", ") as nis_siswa'))
+        //     ->groupBy('id_sekolah', 'id_kelas', 'tahun_ajaran')
+        //     ->paginate(10);
+
+        
+
         $dataKk = KenaikanKelas::orderBy('id_kk', 'desc')
             ->when(isset($search), function ($query) use ($search) {
                 $query->where('nis_siswa', 'LIKE', '%' . $search . '%');
             })
-            ->when(isset($sekolahFilter) && !empty($sekolahFilter), function ($query) use ($sekolahFilter) {
-                $query->where('id_sekolah', $sekolahFilter);
+            ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+                $query->where(function ($subQuery) use ($sekolahUser) {
+                    foreach ($sekolahUser as $id_sekolah) {
+                        $subQuery->orWhere('id_sekolah', $id_sekolah);
+                    }
+                });
             })
             ->when(isset($tahunAjaranFilter) && !empty($tahunAjaranFilter), function ($query) use ($tahunAjaranFilter) {
                 $query->where('tahun_ajaran', $tahunAjaranFilter);
@@ -42,7 +79,6 @@ class KenaikanKelasController extends Controller
             ->groupBy('id_sekolah', 'id_kelas', 'tahun_ajaran')
             ->paginate(10);
 
-        
 
         // sidebar menu
         $user_id = auth()->user()->user_id;
@@ -91,7 +127,12 @@ class KenaikanKelasController extends Controller
         $dataKk = KenaikanKelas::all();
         $dataSiswa = DataSiswa::all();
         $dataKelas = Kelas::all();
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
         
 
         
@@ -185,11 +226,14 @@ class KenaikanKelasController extends Controller
         
         $dataKelas = Kelas::where('id_sekolah', $dataKk->id_sekolah)->get();
         // dd($dataKelas);
-        $dataSekolah = Sekolah::all();
+        // $dataSekolah = Sekolah::all();
       
-        // $dataPk = PelajaranKelas::where('id_pk', $id_pk)->first();
-        // $dataPelajaran = DataPelajaran::where('id_sekolah', $dataPk->id_sekolah)->get();
-        // $dataKelas = Kelas::where('id_sekolah', $dataPk->id_sekolah)->get();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
     
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'

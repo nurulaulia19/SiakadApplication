@@ -33,15 +33,27 @@
 					                <div class="panel-body">
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
-					                            <div class="col-sm-6 table-toolbar-left">
+					                            <div class="col-sm-4 table-toolbar-left">
 													<a href="{{ route('siswa.create') }}" class="btn btn-purple">
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a>
 													
 					                            </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-5">
                                                     <form action="{{ route('siswa.index') }}" method="GET">
                                                         <div class="form-group">
+                                                            <label for="school_filter">Filter Sekolah</label>
+                                                            <select name="school_filter" id="school_filter" class="form-control">
+                                                                <option value="">Tampilkan Semua</option>
+                                                                @foreach ($dataSekolah as $sekolah)
+                                                                    <option value="{{ $sekolah->id_sekolah }}" {{ $sekolah->id_sekolah == $selectedSchool ? 'selected' : '' }}>
+                                                                        {{ $sekolah->nama_sekolah }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
+                                                        <div class="form-group" style="margin-left:10px" >
                                                             <label for="tahun_filter">Filter Tahun Masuk</label>
                                                             <select name="tahun_filter" id="tahun_filter" class="form-control">
                                                                 <option value="">Tampilkan Semua</option>
@@ -51,16 +63,17 @@
                                                                     </option>
                                                                 @endforeach
                                                             </select>
-                                                            <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
                                                         </div>
+                                                        <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
                                                     </form>
                                                 </div>
+                                                
                                                 <div class="col-md-1">
                                                     <div class="btn-group">
-                                                        <a href="{{ route('exportSiswa.pdf', ['tahun' => $selectedYear]) }}" class="btn btn-danger">
+                                                        <a href="{{ route('exportSiswa.pdf', ['tahun' => $selectedYear, 'school_filter' => $selectedSchool]) }}" class="btn btn-danger">
                                                             <i style="font-size: 18px" class="fas fa-file-pdf"></i>
                                                         </a>
-                                                        <a href="{{ route('exportSiswa.excel', ['tahun' => $selectedYear]) }}" style="margin-left: 15px" class="btn btn-success">
+                                                        <a href="{{ route('exportSiswa.excel', ['tahun' => $selectedYear, 'school_filter' => $selectedSchool]) }}" style="margin-left: 15px" class="btn btn-success">
                                                             <i style="font-size: 18px" class="fas fa-file-excel"></i>
                                                         </a>                                                                                                               
                                                     </div>

@@ -46,7 +46,7 @@
 					                            <thead>
 					                                <tr>
 					                                    <th>No</th>
-					                                    <th>Nama Cabang</th>
+					                                    <th>Nama Sekolah</th>
                                                         <th>Admin</th>
 					                                </tr>
 					                            </thead>

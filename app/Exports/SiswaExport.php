@@ -16,10 +16,14 @@ class SiswaExport implements FromView, WithStyles
     use Exportable;
 
     private $tahun;
+    private $dataSiswa;
+    private $selectedSchool;
 
-    public function __construct($tahun = null)
+    public function __construct($tahun, $dataSiswa, $selectedSchool)
     {
         $this->tahun = $tahun;
+        $this->dataSiswa = $dataSiswa;
+        $this->selectedSchool = $selectedSchool;
     }
 
     public function view(): View
@@ -29,6 +33,10 @@ class SiswaExport implements FromView, WithStyles
         // If $tahun is provided, filter the data
         if ($this->tahun) {
             $dataSiswaQuery->where('tahun_masuk', $this->tahun);
+        }
+
+        if ($this->selectedSchool) {
+            $dataSiswaQuery = $dataSiswaQuery->where('id_sekolah', $this->selectedSchool);
         }
 
         $dataSiswa = $dataSiswaQuery->get(); // Fetch the data
