@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class DataSiswaController extends Controller
 {
@@ -452,23 +454,156 @@ class DataSiswaController extends Controller
         return Excel::download(new SiswaExport($tahun, $dataSiswa, $selectedSchool), 'data-siswa.xlsx');
     }
 
-    // public function login(Request $request)
-    // {
-    //     $credentials = $request->validate([
-    //         'nis_siswa' => 'required',
-    //         'password' => 'required',
-    //     ]);
+    public function editProfilSiswa()
+    {
+        // $dataRole = Role::all();
+        $dataSiswa = Auth::guard('siswa')->user();
+        Log::info($dataSiswa);
         
-    //     $siswa = DataSiswa::where('nis_siswa', $credentials['nis_siswa'])->first();
-        
-    //     if ($siswa && Hash::check($credentials['password'], $siswa->password)) {
-    //         Auth::guard('siswa')->login($siswa);
-    //         return redirect()->intended('siswa/dashboard');
-    //     }
-        
-    //     return back()->withErrors([
-    //         'nis_siswa' => 'Invalid credentials.',
-    //     ]);
-    // }
 
+        // menu
+        $id_siswa = auth()->user()->id_siswa; // Menggunakan 'id_siswa' sebagai pengganti 'user_id'
+        // dd($id_siswa);
+
+        $user = DataSiswa::find($id_siswa); // Menggunakan model 'DataSiswa' untuk mengambil data siswa
+        
+        // Lanjutkan dengan mengakses role_id dan lainnya sesuai kebutuhan
+        $role_id = $user->role_id;
+        
+        $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
+        
+        $mainMenus = Data_Menu::where('menu_category', 'master menu')
+            ->whereIn('menu_id', $menu_ids)
+            ->get();
+        
+        $menuItemsWithSubmenus = [];
+        
+        foreach ($mainMenus as $mainMenu) {
+            $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                ->where('menu_category', 'sub menu')
+                ->whereIn('menu_id', $menu_ids)
+                ->orderBy('menu_position')
+                ->get();
+        
+            $menuItemsWithSubmenus[] = [
+                'mainMenu' => $mainMenu,
+                'subMenus' => $subMenus,
+            ];
+        }
+        return view('profilSiswa.edit', compact('dataSiswa','menuItemsWithSubmenus'));
+    }
+
+
+    public function updateProfilSiswa(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'foto_siswa' => 'file|mimes:jpeg,jpg,png',
+        ]);
+
+       
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $siswa = Auth::guard('siswa')->user(); // Mengambil data admin yang sedang login
+
+        $siswaData = [
+            'nama_siswa' => $request->nama_siswa,
+            'tempat_lahir' => $request->tempat_lahir,
+            'tanggal_lahir' => $request->tanggal_lahir,
+        
+        ];
+
+        
+
+        if ($request->hasFile('foto_siswa')) {
+            $file = $request->file('foto_siswa');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = Str::random(40) . '.' . $extension;
+            $file->storeAs('public/photos', $fileName);
+            $siswaData['foto_siswa'] = $fileName;
+        }
+
+        DB::table('data_siswa')
+            ->where('id_siswa', $siswa->id_siswa)
+            ->update($siswaData);
+
+        return redirect()->route('profilSiswa.edit')->with('success', 'Siswa profile updated successfully');
+    }
+
+    public function editSiswaPassword()
+    {
+        $dataSiswa = Auth::guard('siswa')->user();
+        Log::info($dataSiswa);
+
+        // menu
+        $id_siswa = auth()->user()->id_siswa; // Menggunakan 'id_siswa' sebagai pengganti 'user_id'
+        // dd($id_siswa);
+
+        $user = DataSiswa::find($id_siswa); // Menggunakan model 'DataSiswa' untuk mengambil data siswa
+        
+        // Lanjutkan dengan mengakses role_id dan lainnya sesuai kebutuhan
+        $role_id = $user->role_id;
+        
+        $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
+        
+        $mainMenus = Data_Menu::where('menu_category', 'master menu')
+            ->whereIn('menu_id', $menu_ids)
+            ->get();
+        
+        $menuItemsWithSubmenus = [];
+        
+        foreach ($mainMenus as $mainMenu) {
+            $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                ->where('menu_category', 'sub menu')
+                ->whereIn('menu_id', $menu_ids)
+                ->orderBy('menu_position')
+                ->get();
+        
+            $menuItemsWithSubmenus[] = [
+                'mainMenu' => $mainMenu,
+                'subMenus' => $subMenus,
+            ];
+        }
+
+        return view('passwordSiswa.edit', compact('dataSiswa','menuItemsWithSubmenus'));
+    }
+
+
+    public function updateSiswaPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => [
+                'required',
+                // 'string',
+                // 'min:6',
+                // 'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\#?!@$%^&*-]).{6,}$/',
+                // 'confirmed',
+            ],
+        ], [
+            'new_password.regex' => 'Password harus diisi',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $siswa = Auth::guard('siswa')->user(); 
+
+        // Memeriksa apakah current password sesuai dengan yang ada di database
+        if (!Hash::check($request->current_password, $siswa->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Incorrect current password']);
+        }
+
+        // Jika semua validasi berhasil, update password baru
+        DB::table('data_siswa')
+            ->where('id_siswa', $siswa->id_siswa)
+            ->update([
+                'password' => Hash::make($request->new_password),
+            ]);
+
+        return redirect()->route('passwordSiswa.edit')->with('success', 'Password updated successfully');
+    }
 }

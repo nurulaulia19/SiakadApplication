@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\DataUser;
-use Illuminate\Support\Facades\Hash;
+use App\Models\DataSiswa;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 class LoginController extends Controller
 {
 
@@ -29,6 +31,39 @@ class LoginController extends Controller
     return back()->withErrors([
         'user_name' => 'Invalid credentials.',
     ]);
+
+    // coba login
+    // $credentials = $request->validate([
+    //     'user_name' => 'required',
+    //     'user_password' => 'required',
+    //     'user_type' => 'required', // Tambahkan validasi untuk user_type
+    // ]);
+
+    // $userType = $credentials['user_type'];
+
+    // if ($userType === 'user') {
+    //     $user = DataUser::where('user_name', $credentials['user_name'])->first();
+
+    //     if ($user && Hash::check($credentials['user_password'], $user->user_password)) {
+    //         Auth::login($user);
+    //         return redirect()->intended('admin/home');
+    //     }
+    // } elseif ($userType === 'siswa') {
+    //     $siswa = DataSiswa::where('nis_siswa', $credentials['user_name'])->first();
+    
+    //     if ($siswa && Hash::check($credentials['user_password'], $siswa->password)) { // Sesuaikan dengan kolom password siswa di tabel
+    //         Auth::login($siswa);
+    //         return redirect()->intended('siswa/dashboard');
+    //     }
+    // }
+    
+
+    // return back()->withErrors([
+    //     'user_name' => 'Invalid credentials.',
+    // ]);
+    // akhir coba login
+
+    // token
     // $credentials = $request->validate([
     //     'user_name' => 'required',
     //     'user_password' => 'required',

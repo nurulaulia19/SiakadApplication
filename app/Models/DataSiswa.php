@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class DataSiswa extends Model
+
+class DataSiswa extends Model implements Authenticatable
 {
     use HasFactory;
     protected $table = "data_siswa";
@@ -48,4 +51,28 @@ class DataSiswa extends Model
         return $this->hasMany(DataNilai::class, 'nis_siswa', 'nis_siswa');
     }
    
+    public function getAuthIdentifierName() {
+        return 'nis_siswa';
+    }
+    
+    public function getAuthIdentifier() {
+        return $this->nis_siswa; // Mengembalikan nilai dari atribut 'nis_siswa'
+    }    
+
+    public function getAuthPassword() {
+        return $this->password; // Sesuaikan dengan nama kolom password
+    }
+
+    public function getRememberToken() {
+        return null; // Jika tidak menggunakan fitur "Remember Me"
+    }
+
+    public function setRememberToken($value) {
+        // Jika tidak menggunakan fitur "Remember Me"
+    }
+
+    public function getRememberTokenName() {
+        // Jika tidak menggunakan fitur "Remember Me"
+    }
+    
 }

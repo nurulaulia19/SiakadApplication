@@ -37,6 +37,8 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\SekolahController;
 use App\Models\GuruPelajaran;
 use App\Models\TransaksiDetail;
+use App\Http\Controllers\SiswaAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -264,3 +266,31 @@ Route::get('/admin/aksessekolah/create', [AksesSekolahController::class, 'create
 Route::get('/admin/aksessekolah/edit/{id}', [AksesSekolahController::class, 'edit'])->name('aksessekolah.edit');
 Route::post('/aksessekolah/store', [AksesSekolahController::class, 'store']);
 Route::get('/admin/aksessekolah/destroy/{id}', [AksesSekolahController::class,'destroy'])->name('aksessekolah.destroy');
+
+// login siswa
+// Route::get('siswa/login', [Auth\SiswaLoginController::class,'showLoginForm'])->name('siswa.login');
+// Route::post('siswa/login', [Auth\SiswaLoginController::class,'login'])->name('siswa.login.submit');
+
+// Route::group(['prefix' => 'siswa', 'as' => 'siswa.', 'namespace' => 'Siswa'], function () {
+//     Route::get('/login', [SiswaAuthController::class, 'showLoginForm'])->name('login');
+//     Route::post('/login', [SiswaAuthController::class, 'login'])->name('login.submit');
+// });
+
+// login siswa
+Route::get('/siswa/login', [SiswaAuthController::class, 'showLoginForm'])->name('siswa.login');
+Route::post('/siswa/submit', [SiswaAuthController::class, 'login'])->name('siswa.submit');
+
+// tampilan siswa
+Route::get('/siswa/home', [App\Http\Controllers\HomeSiswaController::class, 'index'])->name('siswa.home');
+
+// edit profil siswa
+Route::middleware(['auth:siswa'])->group(function () {
+    Route::get('/profilSiswa/edit', [DataSiswaController::class, 'editProfilSiswa'])->name('profilSiswa.edit');
+    Route::put('/profilSiswa/update', [DataSiswaController::class, 'updateProfilSiswa'])->name('profilSiswa.update');
+});
+
+// edit password siswa
+Route::middleware(['auth:siswa'])->group(function () {
+    Route::get('/passwordSiswa/edit', [DataSiswaController::class, 'editSiswaPassword'])->name('passwordSiswa.edit');
+    Route::put('/passwordSiswa/update', [DataSiswaController::class, 'updateSiswaPassword'])->name('passwordSiswa.update');
+});

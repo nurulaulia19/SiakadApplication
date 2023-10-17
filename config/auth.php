@@ -43,7 +43,7 @@ return [
         ],
         'siswa' => [ // Nama custom guard untuk siswa
             'driver' => 'session',
-            'provider' => 'data_siswa', // Nama custom provider untuk siswa
+            'provider' => 'siswas', // Nama custom provider untuk siswa
         ],
     ],
 
@@ -104,6 +104,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'siswas' => [
+            'provider' => 'siswas',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

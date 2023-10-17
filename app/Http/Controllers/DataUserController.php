@@ -401,40 +401,40 @@ class DataUserController extends Controller
 
 
     public function updatePassword(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'current_password' => 'required',
-        'new_password' => [
-            'required',
-            'string',
-            'min:6',
-            'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\#?!@$%^&*-]).{6,}$/',
-            'confirmed',
-        ],
-    ], [
-        'new_password.regex' => 'The password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
-    ]);
-
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    $user = Auth::user(); // Mengambil data admin yang sedang login
-
-    // Memeriksa apakah current password sesuai dengan yang ada di database
-    if (!Hash::check($request->current_password, $user->user_password)) {
-        return redirect()->back()->withErrors(['current_password' => 'Incorrect current password']);
-    }
-
-    // Jika semua validasi berhasil, update password baru
-    DB::table('data_user')
-        ->where('user_id', $user->user_id)
-        ->update([
-            'user_password' => Hash::make($request->new_password),
+    {
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required',
+            'new_password' => [
+                'required',
+                'string',
+                'min:6',
+                'regex:/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[\#?!@$%^&*-]).{6,}$/',
+                'confirmed',
+            ],
+        ], [
+            'new_password.regex' => 'The password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.',
         ]);
 
-    return redirect()->route('password.edit')->with('success', 'Password updated successfully');
-}
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = Auth::user(); // Mengambil data admin yang sedang login
+
+        // Memeriksa apakah current password sesuai dengan yang ada di database
+        if (!Hash::check($request->current_password, $user->user_password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Incorrect current password']);
+        }
+
+        // Jika semua validasi berhasil, update password baru
+        DB::table('data_user')
+            ->where('user_id', $user->user_id)
+            ->update([
+                'user_password' => Hash::make($request->new_password),
+            ]);
+
+        return redirect()->route('password.edit')->with('success', 'Password updated successfully');
+    }
     
 
 

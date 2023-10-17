@@ -16,20 +16,20 @@
 		                <h1 class="h3">Account Login</h1>
 		                <p>Sign In to your account</p>
 		            </div>
-		            <form method="POST" action="{{ route('login') }}">
+		            <form method="POST" action="{{ route('siswa.submit') }}">
 						@csrf
 		                <div class="form-group">
 
-		                    <input id="user_name" type="text" class="form-control @error('user_name') is-invalid @enderror" name="user_name" value="{{ old('user_name') }}" required autocomplete="user_name" autofocus placeholder="username">
-                                    @error('user_name')
+		                    <input id="nis_siswa" type="text" class="form-control @error('nis_siswa') is-invalid @enderror" name="nis_siswa" value="{{ old('nis_siswa') }}" required autocomplete="nis_siswa" autofocus placeholder="nis siswa">
+                                    @error('nis_siswa')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                     @enderror
 		                </div>
 		                <div class="form-group">
-		                    <input id="user_password" type="password" class="form-control @error('user_password') is-invalid @enderror" name="user_password" required autocomplete="user_password" placeholder="password">
-                                @error('user_password')
+		                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="password" placeholder="password">
+                                @error('password')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
