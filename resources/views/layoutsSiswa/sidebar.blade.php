@@ -50,23 +50,50 @@
 					<ul id="mainnav-menu" class="list-group">
 			
 						
-						{{-- <li class="list-header">Navigation</li>
+						{{-- <li class="list-header">Navigation</li> --}}
 			
 						
-						<li class="{{ request()->is('admin/home*') ? 'active-sub' : '' }}">
-							<a href="#">
+						<li class="{{ request()->is('siswa/home*') ? 'active-sub' : '' }}">
+							<a href="{{ route('siswa.home') }}">
 								<i class="demo-pli-home"></i>
-								<span class="menu-title">Home</span>
+								<span class="menu-title">Dashboard</span>
+							</a>
+						</li>
+						<li class="{{ request()->is('siswa/jadwal*') ? 'active-sub' : '' }}">
+							<a href={{ route('jadwal.index') }}>
+								<i class="far fa-clock"></i>
+								<span class="menu-title">Jadwal</span>
+								{{-- <i class="arrow"></i> --}}
+							</a>
+
+								{{-- <ul class="collapse {{ request()->is('admin/home*') ? 'in' : '' }}">
+									<li class="{{ request()->is('admin/home*') ? 'active-link' : '' }}"><a href="{{ route('admin.home') }}">Jadwal</a></li>
+								</ul> --}}
+						</li>
+						<li class="{{ request()->is('siswa/nilai*') ? 'active-sub' : '' }}">
+							<a href="#">
+								<i class="fas fa-chart-bar"></i>
+								<span class="menu-title">Nilai</span>
 								<i class="arrow"></i>
 							</a>
 
-								
 								<ul class="collapse {{ request()->is('admin/home*') ? 'in' : '' }}">
-									<li class="{{ request()->is('admin/home*') ? 'active-link' : '' }}"><a href="{{ route('admin.home') }}">Home</a></li>
+									<li class="{{ request()->is('admin/home*') ? 'active-link' : '' }}"><a href="{{ route('admin.home') }}">Nilai</a></li>
+								</ul>
+						</li>
+						<li class="{{ request()->is('siswa/absensi*') ? 'active-sub' : '' }}">
+							<a href="#">
+								<i class="fas fa-user"></i>
+								<span class="menu-title">Absensi</span>
+								<i class="arrow"></i>
+							</a>
+
+								<ul class="collapse {{ request()->is('admin/home*') ? 'in' : '' }}">
+									<li class="{{ request()->is('admin/home*') ? 'active-link' : '' }}"><a href="{{ route('admin.home') }}">Absensi</a></li>
 								</ul>
 						</li>
 
-						<li class="{{ request()->is('admin/role*','admin/user*') ? 'active-sub' : '' }}">
+						{{-- <li class="{{ request()->is('admin/role*','admin/user*') ? 'active-sub' : '' }}">
 							<a href="#">
 								<i class="fas fa-user"></i>
 								<span class="menu-title">Master User</span>
@@ -142,7 +169,7 @@
 									</ul>
 							</li> --}}
 
-							{{-- <hr>  --}}
+							{{-- <hr> 
 							@php
 								$iconsByMenuName = [
 									'Home' => 'fas fa-home',
@@ -193,7 +220,7 @@
 									</ul>
 								@endif
 							</li>
-							@endforeach
+							@endforeach --}}
 						</ul>
 				</div>
 			</div>

@@ -1,43 +1,44 @@
 <?php
 
 use App\Models\RoleMenu;
+use App\Models\GuruPelajaran;
 use App\Mail\VerificationCode;
+use App\Models\TransaksiDetail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JasaController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ChartController;
+use App\Http\Controllers\KelasController;
+use App\Http\Controllers\MapelController;
+use App\Http\Controllers\PrintController;
+use App\Http\Controllers\CabangController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\SekolahController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DataTokoController;
 use App\Http\Controllers\DataUserController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\DataNilaiController;
+use App\Http\Controllers\DataSiswaController;
+use App\Http\Controllers\SiswaAuthController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DataProdukController;
+use App\Http\Controllers\AksesCabangController;
+use App\Http\Controllers\JadwalSiswaController;
+use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DataPelajaranController;
+use App\Http\Controllers\GuruPelajaranController;
+use App\Http\Controllers\KategoriNilaiController;
+use App\Http\Controllers\KenaikanKelasController;
+use App\Http\Controllers\PelajaranKelasController;
 use App\Http\Controllers\TransaksiDetailAditional;
 use App\Http\Controllers\TransaksiDetailController;
-use App\Http\Controllers\AksesCabangController;
-use App\Http\Controllers\AksesSekolahController;
-use App\Http\Controllers\JasaController;
-use App\Http\Controllers\CabangController;
-use App\Http\Controllers\ChartController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\DataNilaiController;
-use App\Http\Controllers\DataPelajaranController;
-use App\Http\Controllers\DataSiswaController;
-use App\Http\Controllers\DataTokoController;
-use App\Http\Controllers\GuruPelajaranController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
-use App\Http\Controllers\KategoriNilaiController;
-use App\Http\Controllers\KelasController;
-use App\Http\Controllers\KenaikanKelasController;
-use App\Http\Controllers\MapelController;
-use App\Http\Controllers\PelajaranKelasController;
-use App\Http\Controllers\PrintController;
-use App\Http\Controllers\ProfilController;
-use App\Http\Controllers\SekolahController;
-use App\Models\GuruPelajaran;
-use App\Models\TransaksiDetail;
-use App\Http\Controllers\SiswaAuthController;
 
 
 /*
@@ -294,3 +295,10 @@ Route::middleware(['auth:siswa'])->group(function () {
     Route::get('/passwordSiswa/edit', [DataSiswaController::class, 'editSiswaPassword'])->name('passwordSiswa.edit');
     Route::put('/passwordSiswa/update', [DataSiswaController::class, 'updateSiswaPassword'])->name('passwordSiswa.update');
 });
+
+// sidebar siswa
+// jadwal
+Route::get('/siswa/jadwal', [JadwalSiswaController::class,'index'])->name('jadwal.index');
+// Route::post('/admin/dataJadwal/store', [JadwalSiswaController::class, 'storeJadwal'])->name('dataJadwal.store');
+// Route::post('/admin/dataJadwalDetail/store', [JadwalSiswaController::class, 'storeAbsensiDetail'])->name('dataJadwalDetail.store');
+// Route::delete('/admin/dataJadwal/destroy/{id_absensi}', [JadwalSiswaController::class, 'destroyAbsensi'])->name('dataJadwal.destroy');
