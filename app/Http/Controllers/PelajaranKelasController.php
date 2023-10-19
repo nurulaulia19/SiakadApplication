@@ -13,6 +13,7 @@ use App\Models\DataPelajaran;
 use App\Models\PelajaranKelas;
 use App\Models\PelajaranKelasList;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class PelajaranKelasController extends Controller
 {
@@ -153,7 +154,7 @@ class PelajaranKelasController extends Controller
     public function store(Request $request)
 {
     $customMessages = [
-        'id_kelas.unique' => 'nama kelas sudah ada.',
+        'id_sekolah.unique' => 'data sudah ada.',
         'id_sekolah.required' => 'nama sekolah tidak boleh kosong.',
         'id_pelajaran.required' => 'mata pelajaran tidak boleh kosong.',
         'tahun_ajaran.required' => 'tahun ajaran tidak boleh kosong.',
@@ -161,9 +162,20 @@ class PelajaranKelasController extends Controller
     ];
 
     $validatedData = $request->validate([
-        'id_kelas' => 'required|unique:pelajaran_kelas,id_kelas',
+        // 'id_kelas' => 'required|unique:pelajaran_kelas,id_kelas',
+        // 'tahun_ajaran' => 'required',
+        // 'id_sekolah' => 'required',
+        // 'id_pelajaran' => 'required',
+        'id_sekolah' => [
+            'required',
+            Rule::unique('pelajaran_kelas')->where(function ($query) use ($request) {
+                return $query->where('id_sekolah', $request->id_sekolah)
+                    ->where('id_kelas', $request->id_kelas)
+                    ->where('tahun_ajaran', $request->tahun_ajaran);
+            }),
+        ],
+        'id_kelas' => 'required',
         'tahun_ajaran' => 'required',
-        'id_sekolah' => 'required',
         'id_pelajaran' => 'required',
 
     ],$customMessages);
@@ -171,7 +183,8 @@ class PelajaranKelasController extends Controller
     try {
         $dataPk = PelajaranKelas::create([
             'tahun_ajaran' => $request->tahun_ajaran,
-            'id_kelas' => $validatedData['id_kelas'],
+            // 'id_kelas' => $validatedData['id_kelas'],
+            'id_kelas' => $request->id_kelas,
             'id_sekolah' => $request->id_sekolah,
         ]);
 
@@ -188,7 +201,7 @@ class PelajaranKelasController extends Controller
         return redirect()->route('mapelKelas.index')->with('success', 'Mata Pelajaran Perkelas insert successfully');
     } catch (\Exception $e) {
         // Tangkap pengecualian validasi dan berikan pesan error
-        return redirect()->back()->with('error', 'Error: Kelas sudah ada.');
+        return redirect()->back()->with('error', 'Error: Data sudah ada.');
     }
 }
 
@@ -289,12 +302,19 @@ class PelajaranKelasController extends Controller
     public function update(Request $request, $id_pk)
 {
     $customMessages = [
-        'id_kelas.unique' => 'nama kelas sudah ada.',
+        'id_sekolah.unique' => 'Data sudah ada.',
         // Add other custom error messages as needed
     ];
 
     $validatedData = $request->validate([
-        'id_kelas' => 'required|unique:pelajaran_kelas,id_kelas,' . $id_pk . ',id_pk',
+        'id_sekolah' => [
+            'required',
+            Rule::unique('pelajaran_kelas')->ignore($id_pk, 'id_pk')->where(function ($query) use ($request) {
+                return $query->where('id_sekolah', $request->id_sekolah)
+                    ->where('id_kelas', $request->id_kelas)
+                    ->where('tahun_ajaran', $request->tahun_ajaran);
+            }),
+        ],
         
 
     ],$customMessages);
@@ -302,7 +322,7 @@ class PelajaranKelasController extends Controller
     try {
         PelajaranKelasList::where('id_pk', $id_pk)->delete();
         DB::table('pelajaran_kelas')->where('id_pk', $id_pk)->update([
-            'id_kelas' => $validatedData['id_kelas'],
+            'id_kelas' => $request->id_kelas,
             'tahun_ajaran' => $request->tahun_ajaran,
             'id_sekolah' => $request->id_sekolah,
             'created_at' => now(),
