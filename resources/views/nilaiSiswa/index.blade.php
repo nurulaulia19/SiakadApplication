@@ -70,16 +70,16 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                {{-- <div class="col-md-1" style="margin-top: 20px">
+                                                <div class="col-md-1" style="margin-top: 20px">
                                                     <div class="btn-group">
-                                                        <a href="{{ route('exportJadwalSiswa.pdf') }}" class="btn btn-danger">
+                                                        <a href="{{ route('exportNilaiSiswa.pdf') }}" class="btn btn-danger">
                                                             <i style="font-size: 18px" class="fas fa-file-pdf"></i>
                                                         </a>
-                                                        <a href="{{ route('exportJadwalSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
+                                                        <a href="{{ route('exportNilaiSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
                                                             <i style="font-size: 18px" class="fas fa-file-excel"></i>
                                                         </a>                                                                                                               
                                                     </div>
-                                                </div>  --}}
+                                                </div> 
 
 					                        </div>
 					                    </div>
@@ -90,7 +90,10 @@
                                                         <th>No</th>
                                                         <th>Nama Pelajaran</th>
                                                         <th>Nama Guru</th>
-                                                        <th>Nilai</th>
+                                                        @foreach ($dataKategori as $item)
+                                                            <th>Nilai {{ $item->kategori }}</th>
+                                                        @endforeach
+
 					                                </tr>
 					                            </thead>
                                                 <tbody>
@@ -108,17 +111,15 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                        {{-- <td>{{ $nilai }}</td> --}}
-                                                        <td>
-                                                            @foreach ($guruPelajaran as $guruMapel)
-                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    @foreach ($guruMapel->nilai as $nilai)
+                                                        @foreach ($guruPelajaran as $guruMapel)
+                                                            @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                @foreach ($guruMapel->nilai as $nilai)
+                                                                    <td>
                                                                         {{ $nilai->nilai }}
-                                                                        <br>
-                                                                    @endforeach
-                                                                @endif
-                                                            @endforeach
-                                                        </td>
+                                                                    </td>
+                                                                 @endforeach
+                                                            @endif
+                                                        @endforeach
                                                     </tr>
                                                 @endforeach
                                                 </tbody>
