@@ -71,15 +71,10 @@
 								</ul> --}}
 						</li>
 						<li class="{{ request()->is('siswa/nilai*') ? 'active-sub' : '' }}">
-							<a href="#">
+							<a href="{{ route('nilai.index') }}">
 								<i class="fas fa-chart-bar"></i>
 								<span class="menu-title">Nilai</span>
-								<i class="arrow"></i>
 							</a>
-
-								<ul class="collapse {{ request()->is('admin/home*') ? 'in' : '' }}">
-									<li class="{{ request()->is('admin/home*') ? 'active-link' : '' }}"><a href="{{ route('admin.home') }}">Nilai</a></li>
-								</ul>
 						</li>
 						<li class="{{ request()->is('siswa/absensi*') ? 'active-sub' : '' }}">
 							<a href="#">

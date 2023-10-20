@@ -25,7 +25,7 @@
 					        <div class="col-xs-12">
 					            <div class="panel">
 					                <div class="panel-heading">
-					                    <h3 class="panel-title">Data Jadwal</h3>
+					                    <h3 class="panel-title">Data Nilai</h3>
 					                </div>
 					
 					                <!--Data Table-->
@@ -70,7 +70,7 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                <div class="col-md-1" style="margin-top: 20px">
+                                                {{-- <div class="col-md-1" style="margin-top: 20px">
                                                     <div class="btn-group">
                                                         <a href="{{ route('exportJadwalSiswa.pdf') }}" class="btn btn-danger">
                                                             <i style="font-size: 18px" class="fas fa-file-pdf"></i>
@@ -79,7 +79,7 @@
                                                             <i style="font-size: 18px" class="fas fa-file-excel"></i>
                                                         </a>                                                                                                               
                                                     </div>
-                                                </div> 
+                                                </div>  --}}
 
 					                        </div>
 					                    </div>
@@ -90,11 +90,14 @@
                                                         <th>No</th>
                                                         <th>Nama Pelajaran</th>
                                                         <th>Nama Guru</th>
-                                                        <th>Jadwal</th>
+                                                        <th>Nilai</th>
 					                                </tr>
 					                            </thead>
                                                 <tbody>
-                                                    @foreach ($pelajaran as $mapel)
+                                                @foreach ($pelajaran as $mapel)
+                                                {{-- @php
+                                                $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($dataGp->id_gp, $kategori->id_kn, $item->nis_siswa);
+                                                @endphp --}}
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $mapel->nama_pelajaran }}</td>
@@ -105,11 +108,12 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
+                                                        {{-- <td>{{ $nilai }}</td> --}}
                                                         <td>
                                                             @foreach ($guruPelajaran as $guruMapel)
                                                                 @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    @foreach ($guruMapel->guruMapelJadwal as $jadwal)
-                                                                        {{ $jadwal->hari }} - {{ $jadwal->jam_mulai }} to {{ $jadwal->jam_selesai }}
+                                                                    @foreach ($guruMapel->nilai as $nilai)
+                                                                        {{ $nilai->nilai }}
                                                                         <br>
                                                                     @endforeach
                                                                 @endif
@@ -117,7 +121,6 @@
                                                         </td>
                                                     </tr>
                                                 @endforeach
-                                                
                                                 </tbody>
 					                        </table>
 					                    </div>

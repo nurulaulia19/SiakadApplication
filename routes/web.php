@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\RoleMenu;
+use FontLib\Table\Type\name;
 use App\Models\GuruPelajaran;
 use App\Mail\VerificationCode;
 use App\Models\TransaksiDetail;
@@ -39,6 +40,7 @@ use App\Http\Controllers\PelajaranKelasController;
 use App\Http\Controllers\TransaksiDetailAditional;
 use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
+use App\Http\Controllers\NilaiSiswaController;
 
 
 /*
@@ -299,6 +301,10 @@ Route::middleware(['auth:siswa'])->group(function () {
 // sidebar siswa
 // jadwal
 Route::get('/siswa/jadwal', [JadwalSiswaController::class,'index'])->name('jadwal.index');
-// Route::post('/admin/dataJadwal/store', [JadwalSiswaController::class, 'storeJadwal'])->name('dataJadwal.store');
-// Route::post('/admin/dataJadwalDetail/store', [JadwalSiswaController::class, 'storeAbsensiDetail'])->name('dataJadwalDetail.store');
-// Route::delete('/admin/dataJadwal/destroy/{id_absensi}', [JadwalSiswaController::class, 'destroyAbsensi'])->name('dataJadwal.destroy');
+Route::get('/exportjadwal-pdf', [JadwalSiswaController::class, 'exportPDF'])->name('exportJadwalSiswa.pdf');
+Route::get('/exportjadwal-excel', [JadwalSiswaController::class, 'exportExcel'])->name('exportJadwalSiswa.excel');
+
+// nilai
+Route::get('/siswa/nilai', [NilaiSiswaController::class,'index'])->name('nilai.index');
+Route::get('/exportnilai-pdf', [NilaiSiswaController::class, 'exportPDF'])->name('exportNilaiSiswa.pdf');
+Route::get('/exportnilai-excel', [NilaiSiswaController::class, 'exportExcel'])->name('exportNilaiSiswa.excel');
