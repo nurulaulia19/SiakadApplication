@@ -28,8 +28,10 @@ use App\Http\Controllers\SiswaAuthController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DataProdukController;
+use App\Http\Controllers\NilaiSiswaController;
 use App\Http\Controllers\AksesCabangController;
 use App\Http\Controllers\JadwalSiswaController;
+use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DataPelajaranController;
@@ -40,7 +42,6 @@ use App\Http\Controllers\PelajaranKelasController;
 use App\Http\Controllers\TransaksiDetailAditional;
 use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
-use App\Http\Controllers\NilaiSiswaController;
 
 
 /*
@@ -308,3 +309,8 @@ Route::get('/exportjadwal-excel', [JadwalSiswaController::class, 'exportExcel'])
 Route::get('/siswa/nilai', [NilaiSiswaController::class,'index'])->name('nilai.index');
 Route::get('/exportnilai-pdf', [NilaiSiswaController::class, 'exportPDF'])->name('exportNilaiSiswa.pdf');
 Route::get('/exportnilai-excel', [NilaiSiswaController::class, 'exportExcel'])->name('exportNilaiSiswa.excel');
+
+// nilai
+Route::get('/siswa/absensi', [AbsensiSiswaController::class,'index'])->name('absensi.index');
+Route::get('/exportabsensi-pdf', [AbsensiSiswaController::class, 'exportPDF'])->name('exportAbsensiSiswa.pdf');
+Route::get('/exportabsensi-excel', [AbsensiSiswaController::class, 'exportExcel'])->name('exportAbsensiSiswa.excel');

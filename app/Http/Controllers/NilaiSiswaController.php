@@ -154,6 +154,8 @@ class NilaiSiswaController extends Controller
         
         $idSiswa = $siswa->id_siswa;
 
+        $dataSekolah = $siswa->sekolah;
+        // dd($dataSekolah);
         if ($siswa) {
             $nisSiswa = $siswa->nis_siswa;
         
@@ -277,7 +279,7 @@ class NilaiSiswaController extends Controller
 
 
         if (isset($guruPelajaran)) {
-            $htmlContent = view('nilaiSiswa.eksportNilaiSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','dataKategori'))->render();
+            $htmlContent = view('nilaiSiswa.eksportNilaiSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','dataKategori','dataSekolah','siswa'))->render();
         } else {
             $htmlContent = view('nilaiSiswa.eksportNilaiSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas','dataKategori'))->render();
         }
@@ -303,7 +305,7 @@ class NilaiSiswaController extends Controller
         $siswa = auth()->guard('siswa')->user();
         
         $idSiswa = $siswa->id_siswa;
-
+        $dataSekolah = $siswa->sekolah;
         if ($siswa) {
             $nisSiswa = $siswa->nis_siswa;
         
@@ -420,10 +422,10 @@ class NilaiSiswaController extends Controller
 
         if (isset($guruPelajaran)) {
             // Jika guruPelajaran memiliki data, maka lakukan ekspor dengan view
-            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori), 'nilai-siswa.xlsx');
+            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori, $dataSekolah, $siswa), 'nilai-siswa.xlsx');
         } else {
             // Jika guruPelajaran kosong, maka hanya lakukan ekspor data lainnya tanpa view
-            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, [], $dataKategori), 'nilai-siswa.xlsx');
+            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, [], $dataKategori, $dataSekolah, $siswa), 'nilai-siswa.xlsx');
         }
     // Panggil kelas eksport yang telah Anda buat
     // return Excel::download(new JadwalSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran), 'jadwal-siswa.xlsx');

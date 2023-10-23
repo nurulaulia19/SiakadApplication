@@ -55,7 +55,7 @@
             text-transform: capitalize;
         }
 
-        .info-table {
+        /* .info-table {
             width: 100%;
             border-collapse: collapse;
         }
@@ -71,7 +71,7 @@
             width: 60%;
             border: none;
             padding: 8px;
-        }
+        } */
         
     </style>
 </head>
@@ -79,10 +79,46 @@
     @if(empty($guruPelajaran))
         <h3>{{ $message }}</h3>
     @else
-        <h3 style="text-align: center">Nilai Kelas {{ $namaKelas }} Tahun Ajaran {{ $tahunAjaranFilter }}</h3>
+        {{-- <h3 style="text-align: center">Nilai Kelas {{ $namaKelas }} Tahun Ajaran {{ $tahunAjaranFilter }}</h3> --}}
+        @if ($dataSekolah->nama_sekolah) <p> {{ $dataSekolah->nama_sekolah }}</p>
+        @else
+            <p>Nama Sekolah Tidak Ditemukan</p>
+        @endif
+        @if ($dataSekolah->alamat) <p> {{ $dataSekolah->alamat }}</p>
+        @else
+            <p>Nama Sekolah Tidak Ditemukan</p>
+        @endif
+
+    <h3 class="mb-3">Laporan Detail Nilai Siswa </h3>
+    <table class="info-table">
+        <tbody>
+            <!-- Menampilkan informasi siswa -->
+            <tr>
+                <th>Nis Siswa<span style="float: right;">:</span></th>
+                <td>
+                    @if ($siswa)
+                        {{ $siswa->nis_siswa }}
+                    @else
+                        Data Siswa Tidak Ditemukan
+                    @endif
+                </td>
+            </tr>
+            
+            <tr>
+                <th>Nama Siswa<span style="float: right;">:</span></th>
+                <td>
+                    @if ($siswa)
+                        {{ $siswa->nama_siswa }}
+                    @else
+                        Data Siswa Tidak Ditemukan
+                    @endif
+                </td>
+            </tr>
+        </tbody>
+    </table>
     @endif
 
-    <p>&nbsp;</p>
+    {{-- <p>&nbsp;</p> --}}
     @if(empty($guruPelajaran))
         <p></p>
     @else
@@ -113,7 +149,7 @@
                         @endif
                     @endforeach
                 </td>
-                @foreach ($guruPelajaran as $guruMapel)
+                {{-- @foreach ($guruPelajaran as $guruMapel)
                     @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
                         @foreach ($guruMapel->nilai as $nilai)
                             <td style="border:1px solid #000; text-align:center; vertical-align:middle;">
@@ -121,7 +157,20 @@
                             </td>
                          @endforeach
                     @endif
-                @endforeach
+                @endforeach --}}
+                @if (count($guruPelajaran) > 0)
+                    @foreach ($guruPelajaran as $guruMapel)
+                        @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                            @foreach ($guruMapel->nilai as $nilai)
+                                <td style="border:1px solid #000; text-align:center; vertical-align:middle;">
+                                    {{ $nilai->nilai ?? '' }}
+                                </td>
+                            @endforeach
+                        @endif
+                    @endforeach
+                @else
+                    <td style="border:1px solid #000; text-align:center; vertical-align:middle;"></td>
+                @endif
             </tr>
         @endforeach
         </tbody>

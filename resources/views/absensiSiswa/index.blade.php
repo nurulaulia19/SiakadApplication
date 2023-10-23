@@ -25,7 +25,7 @@
 					        <div class="col-xs-12">
 					            <div class="panel">
 					                <div class="panel-heading">
-					                    <h3 class="panel-title">Data Nilai</h3>
+					                    <h3 class="panel-title">Data Absensi</h3>
 					                </div>
 					
 					                <!--Data Table-->
@@ -38,7 +38,7 @@
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a> --}}
 					                            </div>
-                                                <div class="col-md-1">
+                                                {{-- <div class="col-md-1">
                                                     <form action="{{ route('jadwal.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <label for="tahun_ajaran_filter">Filter Tahun Ajaran</label>
@@ -69,13 +69,13 @@
                                                             </div>
                                                         </div>
                                                     </form>
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-md-1" style="margin-top: 20px">
                                                     <div class="btn-group">
-                                                        <a href="{{ route('exportNilaiSiswa.pdf') }}" class="btn btn-danger">
+                                                        <a href="{{ route('exportAbsensiSiswa.pdf') }}" class="btn btn-danger">
                                                             <i style="font-size: 18px" class="fas fa-file-pdf"></i>
                                                         </a>
-                                                        <a href="{{ route('exportNilaiSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
+                                                        <a href="{{ route('exportAbsensiSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
                                                             <i style="font-size: 18px" class="fas fa-file-excel"></i>
                                                         </a>                                                                                                               
                                                     </div>
@@ -90,17 +90,15 @@
                                                         <th>No</th>
                                                         <th>Nama Pelajaran</th>
                                                         <th>Nama Guru</th>
-                                                        @foreach ($dataKategori as $item)
+                                                        <th>Kehadiran</th>
+                                                        {{-- @foreach ($dataKategori as $item)
                                                             <th>Nilai {{ $item->kategori }}</th>
-                                                        @endforeach
+                                                        @endforeach --}}
 
 					                                </tr>
 					                            </thead>
-                                                <tbody>
+                                                {{-- <tbody>
                                                 @foreach ($pelajaran as $mapel)
-                                                {{-- @php
-                                                $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($dataGp->id_gp, $kategori->id_kn, $item->nis_siswa);
-                                                @endphp --}}
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td>{{ $mapel->nama_pelajaran }}</td>
@@ -111,15 +109,6 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                        {{-- @foreach ($guruPelajaran as $guruMapel)
-                                                            @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                @foreach ($guruMapel->nilai as $nilai)
-                                                                    <td>
-                                                                        {{ $nilai->nilai }}
-                                                                    </td>
-                                                                 @endforeach
-                                                            @endif
-                                                        @endforeach --}}
                                                         @if (count($guruPelajaran) > 0)
                                                             @foreach ($guruPelajaran as $guruMapel)
                                                                 @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
@@ -135,7 +124,7 @@
                                                         @endif
                                                     </tr>
                                                 @endforeach
-                                                </tbody>
+                                                </tbody> --}}
 					                        </table>
 					                    </div>
                                         {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}

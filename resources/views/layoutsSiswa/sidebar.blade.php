@@ -77,15 +77,10 @@
 							</a>
 						</li>
 						<li class="{{ request()->is('siswa/absensi*') ? 'active-sub' : '' }}">
-							<a href="#">
+							<a href="{{ route('absensi.index') }}">
 								<i class="fas fa-user"></i>
 								<span class="menu-title">Absensi</span>
-								<i class="arrow"></i>
 							</a>
-
-								<ul class="collapse {{ request()->is('admin/home*') ? 'in' : '' }}">
-									<li class="{{ request()->is('admin/home*') ? 'active-link' : '' }}"><a href="{{ route('admin.home') }}">Absensi</a></li>
-								</ul>
 						</li>
 
 						{{-- <li class="{{ request()->is('admin/role*','admin/user*') ? 'active-sub' : '' }}">

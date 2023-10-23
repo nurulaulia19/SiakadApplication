@@ -19,8 +19,10 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
     protected $namaKelas;
     protected $guruPelajaran;
     protected $dataKategori;
+    protected $dataSekolah;
+    protected $siswa;
 
-    public function __construct($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori)
+    public function __construct($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori, $dataSekolah, $siswa)
     {
         $this->tahunAjaranFilter = $tahunAjaranFilter;
         $this->kelasFilter = $kelasFilter;
@@ -29,6 +31,8 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
         $this->namaKelas = $namaKelas;
         $this->guruPelajaran = $guruPelajaran;
         $this->dataKategori = $dataKategori;
+        $this->dataSekolah = $dataSekolah;
+        $this->siswa = $siswa;
     }
 
 
@@ -50,6 +54,8 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
             'message' => $this->message,
             'namaKelas' => $this->namaKelas,
             'dataKategori' => $this->dataKategori,
+            'dataSekolah' => $this->dataSekolah,
+            'siswa' => $this->siswa,
         ];
     
         // Periksa apakah $guruPelajaran memiliki data sebelum menambahkannya ke $viewData
@@ -79,7 +85,15 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
 
     public function styles(Worksheet $sheet){
         $sheet->mergeCells('A1:E1');
-        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->mergeCells('A2:E2');
+        $sheet->mergeCells('A3:E3');
+        // $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1:A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
+
+        $sheet->getStyle('1:2')->getFont()->setBold(true);
+
+
+        $sheet->getStyle('B4')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT); 
     }
 
 

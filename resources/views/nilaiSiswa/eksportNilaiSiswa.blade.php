@@ -56,8 +56,8 @@
         }
 
         .info-table {
-            width: 100%;
-            border-collapse: collapse;
+        width: 50%;
+        border-collapse: collapse;
         }
 
         .info-table th {
@@ -76,14 +76,61 @@
 </head>
 <body>
     @if(isset($guruPelajaran))
-    <h3 style="text-align: center">Nilai Kelas {{ $namaKelas }} Tahun Ajaran {{ $tahunAjaranFilter }}</h3>
+    {{-- @if (isset($guruPelajaran) || isset($guruPelajaran->nilai)) --}}
+    {{-- <h3 style="text-align: center">Nilai Kelas {{ $namaKelas }} Tahun Ajaran {{ $tahunAjaranFilter }}</h3> --}}
+    <table>
+        <tr>
+            <td>
+                @if ($dataSekolah->logo)
+                <img style="width: 50px; height: 50px; margin-bottom: 5px;" src="{{ 'data:image/png;base64,' . base64_encode(file_get_contents(public_path('storage/photos/' . $dataSekolah->logo))) }}" alt="image">
+                @else
+                    <p>Logo Sekolah Tidak Ditemukan</p>
+                @endif
+            </td>
+            <td>
+                @if ($dataSekolah->nama_sekolah) <p style="margin-left: 12px; margin-top: 4px; margin-bottom: 4px; font-weight: bold;">{{ $dataSekolah->nama_sekolah }}</p> @endif
+                @if ($dataSekolah->alamat) <p style="margin-left: 12px; margin-top: 4px; margin-bottom: 4px; font-weight: bold;">{{ $dataSekolah->alamat }}</p> @endif
+            </td>
+         
+        </tr>
+    </table>        
+    <hr>
+
+    <h3 class="mb-3" style="text-align: center">Laporan Detail Nilai Siswa </h3>
+    <table class="info-table">
+        <tbody>
+            <!-- Menampilkan informasi siswa -->
+            <tr>
+                <th>Nis Siswa<span style="float: right;">:</span></th>
+                <td>
+                    @if ($siswa)
+                        {{ $siswa->nis_siswa }}
+                    @else
+                        Data Siswa Tidak Ditemukan
+                    @endif
+                </td>
+            </tr>
+            
+            <tr>
+                <th>Nama Siswa<span style="float: right;">:</span></th>
+                <td>
+                    @if ($siswa)
+                        {{ $siswa->nama_siswa }}
+                    @else
+                        Data Siswa Tidak Ditemukan
+                    @endif
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <!-- Tampilkan konten jika data tersedia -->
     @else
         <h3></h3>
         <!-- Tampilkan pesan jika data kosong -->
     @endif
 
-    <p>&nbsp;</p>
+    {{-- <p>&nbsp;</p> --}}
+    {{-- @if (isset($guruPelajaran) || isset($guruPelajaran->nilai)) --}}
     @if(isset($guruPelajaran))
     <table class="table table-bordered">
         <thead>
@@ -103,16 +150,16 @@
         $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($dataGp->id_gp, $kategori->id_kn, $item->nis_siswa);
         @endphp --}}
             <tr>
-                <td style="border:1px solid #000; text-align:center; vertical-align:middle;">{{ $loop->iteration }}</td>
-                <td>{{ $mapel->nama_pelajaran }}</td>
-                <td>
+                <td style="text-align:center; vertical-align:middle;">{{ $loop->iteration }}</td>
+                <td style="text-align:center; vertical-align:middle;">{{ $mapel->nama_pelajaran }}</td>
+                <td style="text-align:center; vertical-align:middle;">
                     @foreach ($guruPelajaran as $guruMapel)
                         @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
                             {{ $guruMapel->user->user_name }}
                         @endif
                     @endforeach
                 </td>
-                @foreach ($guruPelajaran as $guruMapel)
+                {{-- @foreach ($guruPelajaran as $guruMapel)
                     @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
                         @foreach ($guruMapel->nilai as $nilai)
                             <td style="border:1px solid #000; text-align:center; vertical-align:middle;">
@@ -120,13 +167,26 @@
                             </td>
                          @endforeach
                     @endif
-                @endforeach
+                @endforeach --}}
+                @if (count($guruPelajaran) > 0)
+                    @foreach ($guruPelajaran as $guruMapel)
+                        @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                            @foreach ($guruMapel->nilai as $nilai)
+                                <td style="text-align:center; vertical-align:middle;">
+                                    {{ $nilai->nilai ?? '' }}
+                                </td>
+                            @endforeach
+                        @endif
+                    @endforeach
+                @else
+                    <td></td>
+                @endif
             </tr>
         @endforeach
         </tbody>
     </table>
     @else
-        <h3 style="text-align: center">Data Pelajaran Tidak Tersedia</h3>
+        <h3 style="text-align: center">Data pelajaran tidak tersedia</h3>
     @endif
 </body>
 </html>
