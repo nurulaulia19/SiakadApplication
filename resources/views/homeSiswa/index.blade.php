@@ -25,7 +25,7 @@
 					<div class="row">
 						<div class="panel" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
 							<div class="panel-heading">
-								<h3 class="panel-title">Home Siswa</h3>
+								<h3 class="panel-title">Dashboard Siswa</h3>
 							</div>
 
 							<div class="pad-all">
@@ -34,33 +34,39 @@
 						</div>
 					</div>					
 					    <div class="row">
-					        <div class="col-md-3">
+					        <div class="col-md-6">
+					            <div class="panel panel-danger panel-colorful media middle pad-all">
+									<a href="{{ route('jadwal.index') }}" class="text-white">
+										<div class="media-left">
+											<div class="pad-hor">
+												<i class="fas fa-calendar icon-3x"></i>
+											</div>
+										</div>
+										<div class="media-body">
+											{{-- <p class="text-2x mar-no text-semibold">{{ $totalMataPelajaran }}</p> --}}
+											<p class="text-2x mar-no text-semibold">{{ isset($totalMataPelajaran) ? $totalMataPelajaran : 0 }}</p>
+											<p class="mar-no">Jadwal</p>
+										</div>
+									</a>
+					            </div>
+					        </div>
+					        <div class="col-md-6">
 					            <div class="panel panel-warning panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-											<i class="fas fa-money-bill icon-3x"></i>
-					                    </div>
-					                </div>
-					                {{-- <div class="media-body">
-										<p class="text-2x mar-no text-semibold">{{ $jumlahTransaksi }}</p>
-										<p class="mar-no">Transaksi</p>
-									</div> --}}
+									<a href="{{ route('nilai.index') }}" class="text-white">
+										<div class="media-left">
+											<div class="pad-hor">
+												<i class="fas fa-chart-bar icon-3x"></i>
+											</div>
+										</div>
+										<div class="media-body">
+											{{-- <p class="text-2x mar-no text-semibold">{{ $totalNilaiRata }}</p> --}}
+											<p class="text-2x mar-no text-semibold">{{ isset($totalNilaiRata) ? $totalNilaiRata : 0 }}</p>
+											<p class="mar-no">Nilai Rata-rata</p>
+										</div>
+									</a>
 					            </div>
 					        </div>
 					        {{-- <div class="col-md-3">
-					            <div class="panel panel-info panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-					                        <i class="fas fa-shopping-bag icon-3x"></i>
-					                    </div>
-					                </div>
-					                <div class="media-body">
-					                    <p class="text-2x mar-no text-semibold">{{ $jumlahJasa}}</p>
-					                    <p class="mar-no">Jasa</p>
-					                </div>
-					            </div>
-					        </div>
-					        <div class="col-md-3">
 					            <div class="panel panel-mint panel-colorful media middle pad-all">
 					                <div class="media-left">
 					                    <div class="pad-hor">
@@ -85,8 +91,8 @@
 					                    <p class="mar-no">Jumlah Penjualan</p>
 					                </div>
 					            </div>
-					        </div> --}}
-					    </div>
+					        </div>
+					    </div> --}}
 						@if(session('error'))
 							<div class="alert alert-danger">
                                 {{ session('error') }}

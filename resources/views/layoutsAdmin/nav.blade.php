@@ -6,10 +6,10 @@
                 <!--Brand logo & name-->
                 <!--================================-->
                 <div class="navbar-header">
-                    <a href="home" class="navbar-brand">
-                        <img src="{{ asset('assets/img/logo.png') }}" alt="Nifty Logo" class="brand-icon">
+                    <a href="{{ route('admin.home') }}" class="navbar-brand">
+                        <img src="{{ asset('assets/img/tutwurihandayani.png') }}" alt="tutwurihandayani" class="brand-icon" style="width: 35px; height:35px; margin-left:25px; margin-top:13px">
                         <div class="brand-title">
-                            <span class="brand-text" style="color:white">Nifty</span>
+                            <span class="brand-text" style="color:white; margin-left:10px">Siakad</span>
                         </div>
                     </a>
                 </div>

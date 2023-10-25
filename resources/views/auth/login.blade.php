@@ -39,7 +39,7 @@
 		                    <input id="demo-form-checkbox" class="magic-checkbox" type="checkbox">
 		                    <label for="demo-form-checkbox">Remember me</label>
 		                </div> --}}
-		                <button class="btn btn-primary btn-lg btn-block" type="submit">Sign In</button>
+		                <button class="btn btn-lg btn-block" style="background-color:#367E18; color:white" type="submit">Sign In</button>
 		            </form>
 		        </div>
 		

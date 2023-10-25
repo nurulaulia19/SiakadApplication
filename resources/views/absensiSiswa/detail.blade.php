@@ -25,7 +25,7 @@
 					        <div class="col-xs-12">
 					            <div class="panel">
 					                <div class="panel-heading">
-					                    <h3 class="panel-title">Data Nilai</h3>
+					                    <h3 class="panel-title">Data Absensi Detail</h3>
 					                </div>
 					
 					                <!--Data Table-->
@@ -38,8 +38,8 @@
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a> --}}
 					                            </div>
-                                                <div class="col-md-1">
-                                                    <form action="{{ route('nilai.index') }}" method="GET">
+                                                {{-- <div class="col-md-1">
+                                                    <form action="{{ route('jadwal.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <label for="tahun_ajaran_filter">Filter Tahun Ajaran</label>
                                                             <select name="tahun_ajaran_filter" id="tahun_ajaran_filter" class="form-control">
@@ -50,7 +50,7 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-md-2" style="margin-left:20px">
-                                                    <form action="{{ route('nilai.index') }}" method="GET">
+                                                    <form action="{{ route('jadwal.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <div class="row">
                                                                 <div class="col-12">
@@ -69,17 +69,17 @@
                                                             </div>
                                                         </div>
                                                     </form>
-                                                </div>
-                                                <div class="col-md-1" style="margin-top: 20px">
+                                                </div> --}}
+                                                {{-- <div class="col-md-1" style="margin-top: 20px">
                                                     <div class="btn-group">
-                                                        <a href="{{ route('exportNilaiSiswa.pdf') }}" class="btn btn-danger">
+                                                        <a href="{{ route('exportAbsensiSiswa.pdf') }}" class="btn btn-danger">
                                                             <i style="font-size: 18px" class="fas fa-file-pdf"></i>
                                                         </a>
-                                                        <a href="{{ route('exportNilaiSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
+                                                        <a href="{{ route('exportAbsensiSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
                                                             <i style="font-size: 18px" class="fas fa-file-excel"></i>
                                                         </a>                                                                                                               
                                                     </div>
-                                                </div> 
+                                                </div>  --}}
 
 					                        </div>
 					                    </div>
@@ -88,58 +88,42 @@
 					                            <thead>
 					                                <tr>
                                                         <th>No</th>
-                                                        <th>Nama Pelajaran</th>
-                                                        <th>Nama Guru</th>
-                                                        @foreach ($dataKategori as $item)
-                                                            <th>Nilai {{ $item->kategori }}</th>
-                                                        @endforeach
+                                                        <th>Tanggal</th>
+                                                        <th>Status</th>
 
 					                                </tr>
 					                            </thead>
                                                 <tbody>
-                                                @foreach ($pelajaran as $mapel)
-                                                {{-- @php
-                                                $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($dataGp->id_gp, $kategori->id_kn, $item->nis_siswa);
-                                                @endphp --}}
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $mapel->nama_pelajaran }}</td>
-                                                        <td>
-                                                            @foreach ($guruPelajaran as $guruMapel)
-                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    {{ $guruMapel->user->user_name }}
-                                                                @endif
+                                                    {{-- @foreach ($guruPelajaran as $guruMapel)
+                                                        @if ($guruMapel->absensiDetail->isNotEmpty())
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            @foreach ($guruMapel->absensiDetail as $absensi)
+                                                                <td>{{ $absensi->tanggal }}</td>
+                                                                <td>{{ $absensi->keterangan }}</td>
                                                             @endforeach
-                                                        </td>
-                                                        {{-- @foreach ($guruPelajaran as $guruMapel)
-                                                            @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                @foreach ($guruMapel->nilai as $nilai)
-                                                                    <td>
-                                                                        {{ $nilai->nilai }}
-                                                                    </td>
-                                                                 @endforeach
-                                                            @endif
-                                                        @endforeach --}}
-                                                        @if (count($guruPelajaran) > 0)
-                                                            @foreach ($guruPelajaran as $guruMapel)
-                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    @foreach ($guruMapel->nilai as $nilai)
-                                                                        <td>
-                                                                            {{ $nilai->nilai ?? '' }}
-                                                                        </td>
-                                                                    @endforeach
-                                                                @endif
-                                                            @endforeach
-                                                        @else
-                                                            <td></td>
+                                                        </tr>
                                                         @endif
-                                                    </tr>
-                                                @endforeach
+                                                    @endforeach --}}
+                                                    @foreach ($guruPelajaran as $guruMapel)
+                                                        @if ($guruMapel->id_gp == $id_gp)
+                                                            @foreach ($guruMapel->absensiDetail as $absensi)
+                                                                <tr>
+                                                                    <td>{{ $loop->iteration }}</td>
+                                                                    <td>{{ $absensi->tanggal }}</td>
+                                                                    <td>{{ $absensi->keterangan }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @endif
+                                                    @endforeach
                                                 </tbody>
 					                        </table>
 					                    </div>
                                         {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}
-                                
+                                        <div class="text-right mt-3">
+                                            <a href="{{ route('absensi.index') }}" class="btn btn-primary">KEMBALI</a>
+                                            {{-- <button type="submit" class="btn btn-primary">SIMPAN</button> --}}
+                                        </div>
 					                    <hr class="new-section-xs">
 					                </div>
 					                <!--===================================================-->

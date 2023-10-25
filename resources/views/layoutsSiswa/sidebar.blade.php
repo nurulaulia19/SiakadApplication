@@ -82,6 +82,13 @@
 								<span class="menu-title">Absensi</span>
 							</a>
 						</li>
+						<li class="{{ request()->is('siswa/kuisioner*') ? 'active-sub' : '' }}">
+							<a href="{{ route('kuisionerSiswa.index') }}">
+								<i class="fas fa-pencil-alt"></i>
+								<span class="menu-title">Kuisioner</span>
+							</a>
+						</li>
+						
 
 						{{-- <li class="{{ request()->is('admin/role*','admin/user*') ? 'active-sub' : '' }}">
 							<a href="#">

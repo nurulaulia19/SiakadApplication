@@ -33,13 +33,13 @@
 					                <div class="panel-body">
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
-					                            <div class="col-sm-7 table-toolbar-left">
+					                            <div class="col-sm-8 table-toolbar-left">
 													{{-- <a href="{{ route('kenaikanKelas.create') }}" class="btn btn-purple">
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a> --}}
 					                            </div>
-                                                {{-- <div class="col-md-1">
-                                                    <form action="{{ route('jadwal.index') }}" method="GET">
+                                                <div class="col-md-1">
+                                                    <form action="{{ route('absensi.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <label for="tahun_ajaran_filter">Filter Tahun Ajaran</label>
                                                             <select name="tahun_ajaran_filter" id="tahun_ajaran_filter" class="form-control">
@@ -50,7 +50,7 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-md-2" style="margin-left:20px">
-                                                    <form action="{{ route('jadwal.index') }}" method="GET">
+                                                    <form action="{{ route('absensi.index') }}" method="GET">
                                                         <div class="form-group">
                                                             <div class="row">
                                                                 <div class="col-12">
@@ -69,8 +69,8 @@
                                                             </div>
                                                         </div>
                                                     </form>
-                                                </div> --}}
-                                                <div class="col-md-1" style="margin-top: 20px">
+                                                </div>
+                                                {{-- <div class="col-md-1" style="margin-top: 20px">
                                                     <div class="btn-group">
                                                         <a href="{{ route('exportAbsensiSiswa.pdf') }}" class="btn btn-danger">
                                                             <i style="font-size: 18px" class="fas fa-file-pdf"></i>
@@ -79,7 +79,7 @@
                                                             <i style="font-size: 18px" class="fas fa-file-excel"></i>
                                                         </a>                                                                                                               
                                                     </div>
-                                                </div> 
+                                                </div>  --}}
 
 					                        </div>
 					                    </div>
@@ -90,41 +90,39 @@
                                                         <th>No</th>
                                                         <th>Nama Pelajaran</th>
                                                         <th>Nama Guru</th>
-                                                        <th>Kehadiran</th>
+                                                        {{-- <th>Kehadiran</th> --}}
                                                         {{-- @foreach ($dataKategori as $item)
                                                             <th>Nilai {{ $item->kategori }}</th>
                                                         @endforeach --}}
 
 					                                </tr>
 					                            </thead>
-                                                {{-- <tbody>
-                                                @foreach ($pelajaran as $mapel)
-                                                    <tr>
-                                                        <td>{{ $loop->iteration }}</td>
-                                                        <td>{{ $mapel->nama_pelajaran }}</td>
-                                                        <td>
-                                                            @foreach ($guruPelajaran as $guruMapel)
-                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    {{ $guruMapel->user->user_name }}
-                                                                @endif
-                                                            @endforeach
-                                                        </td>
-                                                        @if (count($guruPelajaran) > 0)
-                                                            @foreach ($guruPelajaran as $guruMapel)
-                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    @foreach ($guruMapel->nilai as $nilai)
-                                                                        <td>
-                                                                            {{ $nilai->nilai ?? '' }}
-                                                                        </td>
+                                                <tbody>
+                                                    @foreach ($pelajaran as $mapel)
+                                                        <tr>
+                                                            <td>{{ $loop->iteration }}</td>
+                                                            <td>{{ $mapel->nama_pelajaran }}</td>
+                                                            <td>
+                                                                @foreach ($guruPelajaran as $guruMapel)
+                                                                    @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                        {{ $guruMapel->user->user_name }}
+                                                                    @endif
+                                                                @endforeach
+                                                            </td>
+                                                            <td class="table-action" style="vertical-align: middle;">
+                                                                <div style="display: flex; align-items: center;">
+                                                                    @foreach ($guruPelajaran as $guruMapel)
+                                                                        @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                            <a href="{{ route('absensiSiswa.detail', ['id_gp' => $guruMapel->id_gp]) }}" class="btn btn-sm btn-warning">Detail</a>
+                                                                        @endif
                                                                     @endforeach
-                                                                @endif
-                                                            @endforeach
-                                                        @else
-                                                            <td></td>
-                                                        @endif
-                                                    </tr>
-                                                @endforeach
-                                                </tbody> --}}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+
+                                                
+                                                </tbody>
 					                        </table>
 					                    </div>
                                         {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}

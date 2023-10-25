@@ -34,6 +34,7 @@ use App\Http\Controllers\JadwalSiswaController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DataKuisionerController;
 use App\Http\Controllers\DataPelajaranController;
 use App\Http\Controllers\GuruPelajaranController;
 use App\Http\Controllers\KategoriNilaiController;
@@ -41,8 +42,9 @@ use App\Http\Controllers\KenaikanKelasController;
 use App\Http\Controllers\PelajaranKelasController;
 use App\Http\Controllers\TransaksiDetailAditional;
 use App\Http\Controllers\TransaksiDetailController;
+use App\Http\Controllers\KategoriKuisionerController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
-
+use App\Http\Controllers\KuisionerSiswaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,7 +96,7 @@ Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('Adm
 Route::get('/admin/register', [RegisterController::class, 'showRegisterForm'])->name('Adminregister');
 Route::get('/admin/home', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.home');
 Route::get('logout', [LoginController::class, 'showRegisterForm']);
-Route::get('/admin/user', [App\Http\Controllers\MenuController::class, 'user'])->name('user');
+Route::get('/admin/user', [App\Http\Controllers\KategoriKuisionerController::class, 'user'])->name('user');
 Route::get('/admin/role', [App\Http\Controllers\MenuController::class, 'role'])->name('role');
 Route::get('/admin/user', function () {
     return view('user');
@@ -280,6 +282,23 @@ Route::get('/admin/aksessekolah/destroy/{id}', [AksesSekolahController::class,'d
 //     Route::post('/login', [SiswaAuthController::class, 'login'])->name('login.submit');
 // });
 
+// data kategori kuisioner admin
+Route::get('/admin/kategoriKuisioner/create', [KategoriKuisionerController::class, 'create'])->name('kategoriKuisioner.create');
+Route::post('/kategoriKuisioner/store', [KategoriKuisionerController::class, 'store']);
+Route::get('/admin/kategoriKuisioner', [KategoriKuisionerController::class,'index'])->name('kategoriKuisioner.index');
+Route::get('/admin/kategoriKuisioner/destroy/{id}', [KategoriKuisionerController::class,'destroy'])->name('kategoriKuisioner.destroy');
+Route::get('/admin/kategoriKuisioner/edit/{id}', [KategoriKuisionerController::class, 'edit'])->name('kategoriKuisioner.edit');
+Route::put('/admin/kategoriKuisioner/update/{id}', [KategoriKuisionerController::class, 'update'])->name('kategoriKuisioner.update');
+
+// data kuisioner admin
+Route::get('/admin/kuisioner/create', [DataKuisionerController::class, 'create'])->name('kuisioner.create');
+Route::post('/kuisioner/store', [DataKuisionerController::class, 'store']);
+Route::get('/admin/kuisioner', [DataKuisionerController::class,'index'])->name('kuisioner.index');
+Route::get('/admin/kuisioner/destroy/{id}', [DataKuisionerController::class,'destroy'])->name('kuisioner.destroy');
+Route::get('/admin/kuisioner/edit/{id}', [DataKuisionerController::class, 'edit'])->name('kuisioner.edit');
+Route::put('/admin/kuisioner/update/{id}', [DataKuisionerController::class, 'update'])->name('kuisioner.update');
+Route::get('/admin/kuisioner/getKategori', [DataKuisionerController::class, 'getKategori'])->name('kuisioner.getKategori');
+
 // login siswa
 Route::get('/siswa/login', [SiswaAuthController::class, 'showLoginForm'])->name('siswa.login');
 Route::post('/siswa/submit', [SiswaAuthController::class, 'login'])->name('siswa.submit');
@@ -310,7 +329,10 @@ Route::get('/siswa/nilai', [NilaiSiswaController::class,'index'])->name('nilai.i
 Route::get('/exportnilai-pdf', [NilaiSiswaController::class, 'exportPDF'])->name('exportNilaiSiswa.pdf');
 Route::get('/exportnilai-excel', [NilaiSiswaController::class, 'exportExcel'])->name('exportNilaiSiswa.excel');
 
-// nilai
+// absensi
 Route::get('/siswa/absensi', [AbsensiSiswaController::class,'index'])->name('absensi.index');
-Route::get('/exportabsensi-pdf', [AbsensiSiswaController::class, 'exportPDF'])->name('exportAbsensiSiswa.pdf');
-Route::get('/exportabsensi-excel', [AbsensiSiswaController::class, 'exportExcel'])->name('exportAbsensiSiswa.excel');
+Route::get('/siswa/detail/absensi/{id_gp}', [AbsensiSiswaController::class,'detailAbsensi'])->name('absensiSiswa.detail');
+
+// kuisioner u/ siswa
+Route::get('/siswa/kuisioner', [KuisionerSiswaController::class,'index'])->name('kuisionerSiswa.index');
+Route::get('/siswa/detail/kuisioner/{id_gp}', [KuisionerSiswaController::class,'detailKuisioner'])->name('kuisionerSiswa.detail');

@@ -9,7 +9,7 @@ use App\Models\GuruPelajaran;
 use App\Models\KenaikanKelas;
 use App\Models\PelajaranKelas;
 
-class AbsensiSiswaController extends Controller
+class KuisionerSiswaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -108,7 +108,7 @@ class AbsensiSiswaController extends Controller
                     //     ->get();
                     $guruPelajaran = GuruPelajaran::whereIn('id_pelajaran', $pelajaranData)
                     ->where('tahun_ajaran', $tahunAjaran)
-                    ->with('user', 'absensiDetail')
+                    ->with('user')
                     ->get();
                     
                    
@@ -132,16 +132,13 @@ class AbsensiSiswaController extends Controller
         // return view('jadwalSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran','message','namaKelas','guruPelajaran'));
 
         if (isset($guruPelajaran)) {
-            return view('absensiSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran'));
+            return view('kuisionerSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran'));
         } else {
-            return view('absensiSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
+            return view('kuisionerSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function detailAbsensi()
+    public function detailKuisioner()
     {
         $siswa = auth()->guard('siswa')->user();
         
@@ -225,23 +222,12 @@ class AbsensiSiswaController extends Controller
         
                 if ($pelajaranKelas) {
                     $pelajaranData = $pelajaranKelas->mapelList->pluck('id_pelajaran')->toArray();
-                    
-        
-                    // Langkah 3: Dapatkan data pelajaran yang sesuai dengan id_pelajaran
                     $pelajaran = DataPelajaran::whereIn('id_pelajaran', $pelajaranData)->get();
-                    // dd($pelajaran);
-
-                    // $guruPelajaran = GuruPelajaran::where('id_pelajaran', $pelajaranData)
-                    //     ->with('user', 'guruMapelJadwal')
-                    //     ->get();
                     $guruPelajaran = GuruPelajaran::whereIn('id_pelajaran', $pelajaranData)
                     ->where('tahun_ajaran', $tahunAjaran)
-                    ->with('user', 'absensiDetail')
+                    ->with('user','mapel')
                     ->get();
                     
-                   
-        
-                    // dd($guruPelajaran);
                 } else {
                     // Tindakan jika data pelajaran kelas tidak ditemukan
                     $pelajaran = collect(); // Menggunakan koleksi kosong jika data pelajaran kelas tidak ditemukan
@@ -260,10 +246,18 @@ class AbsensiSiswaController extends Controller
         // return view('jadwalSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran','message','namaKelas','guruPelajaran'));
 
         if (isset($guruPelajaran)) {
-            return view('absensiSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp'));
+            return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp'));
         } else {
-            return view('absensiSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
+            return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
         }
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
     }
 
     /**

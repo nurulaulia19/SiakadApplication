@@ -189,97 +189,20 @@
 
     <script src="{{ asset('assets/js/demo/form-component.js') }}"></script>
     
-    {{-- <script>
-        $( document ).ready(function() {
-    $('#demo-cs-multiselect').chosen({width:'100%'});
-});
-    </script> --}}
 
-    @yield('script')
-      
 
+    {{-- @yield('script')
     <script>
-      function validateForm(event) {
-          var userName = document.getElementById("user_name").value;
-          var userEmail = document.getElementById("user_email").value;
-          var userPassword = document.getElementById("user_password").value;
-          var userGender = document.getElementById("user_gender").value;
-          var userPhoto = document.getElementById("user_photo").value;
-          var roleId = document.getElementById("role_id").value;
-          var tokenId = document.getElementById("user_token").value;
-  
-          var isFormValid = true;
-  
-          if (userName.trim() === "") {
-              document.getElementById("usernameError").textContent = "Username tidak boleh kosong!";
-              isFormValid = false;
-          } else {
-              document.getElementById("usernameError").textContent = "";
-          }
-  
-          if (userEmail.trim() === "") {
-              document.getElementById("emailError").textContent = "Email tidak boleh kosong!";
-              isFormValid = false;
-          } else {
-              document.getElementById("emailError").textContent = "";
-          }
-  
-          if (userPassword.trim() === "") {
-              document.getElementById("passwordError").textContent = "Password tidak boleh kosong!";
-              isFormValid = false;
-          } else {
-              document.getElementById("passwordError").textContent = "";
-          }
-  
-          if (userGender === "") {
-              document.getElementById("genderError").textContent = "Silakan pilih gender!";
-              isFormValid = false;
-          } else {
-              document.getElementById("genderError").textContent = "";
-          }
-      if (userPhoto.trim() === "") {
-          document.getElementById("photoError").textContent = "Silakan pilih foto!";
-          isFormValid = false;
-      } else {
-          document.getElementById("photoError").textContent = "";
-      }
-  
-      if (roleId === "") {
-          document.getElementById("roleError").textContent = "Silakan pilih role!";
-          isFormValid = false;
-      } else {
-          document.getElementById("roleError").textContent = "";
-      }
-      if (tokenId === "") {
-          document.getElementById("tokenError").textContent = "Token tidak boleh kosong!";
-          isFormValid = false;
-      } else {
-          document.getElementById("tokenError").textContent = "";
-      }
-  
-      if (!isFormValid) {
-          event.preventDefault(); // Menghentikan pengiriman form jika ada error
-      }
-  }
-  </script>
-
-
-
-
-{{-- modal --}}
-<!-- Letakkan script JavaScript di bagian bawah dokumen HTML -->
-<
-<script>
-    function confirmDelete() {
-        if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-            // If the user clicks "OK" in the confirmation dialog, proceed with the deletion
-            // The default link behavior will be triggered, and the delete action will be performed
-        } else {
-            // If the user clicks "Cancel" in the confirmation dialog, do nothing
-            event.preventDefault(); // Prevent the default link behavior
+        function confirmDelete() {
+            if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
+                // If the user clicks "OK" in the confirmation dialog, proceed with the deletion
+                // The default link behavior will be triggered, and the delete action will be performed
+            } else {
+                // If the user clicks "Cancel" in the confirmation dialog, do nothing
+                event.preventDefault(); // Prevent the default link behavior
+            }
         }
-    }
-</script>
+    </script> --}}
 
     <!--=================================================-->
   </body>

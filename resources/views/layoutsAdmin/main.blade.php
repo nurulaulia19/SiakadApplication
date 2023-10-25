@@ -268,8 +268,8 @@
 
 {{-- modal --}}
 <!-- Letakkan script JavaScript di bagian bawah dokumen HTML -->
-<
-<script>
+
+{{-- <script>
     function confirmDelete() {
         if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
             // If the user clicks "OK" in the confirmation dialog, proceed with the deletion
@@ -279,7 +279,7 @@
             event.preventDefault(); // Prevent the default link behavior
         }
     }
-</script>
+</script> --}}
 
     <!--=================================================-->
   </body>

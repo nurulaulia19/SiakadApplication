@@ -61,4 +61,14 @@ class Sekolah extends Model
     {
         return $this->hasMany(AksesSekolah::class, 'id_sekolah', 'id_sekolah');
     }
+
+    public function kategoriKuisioner()
+    {
+        return $this->hasMany(KategoriKuisioner::class, 'id_sekolah', 'id_sekolah');
+    }
+
+    public function Kuisioner()
+    {
+        return $this->hasMany(DataKuisioner::class, 'id_kuisioner', 'id_kuisioner');
+    }
 }
