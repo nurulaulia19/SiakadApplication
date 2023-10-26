@@ -21,8 +21,8 @@ class KategoriKuisioner extends Model
         return $this->belongsTo(Sekolah::class, 'id_sekolah', 'id_sekolah');
     }
 
-    public function Kuisioner()
+    public function kuisioner()
     {
-        return $this->hasMany(DataKuisioner::class, 'id_kuisioner', 'id_kuisioner');
+        return $this->hasMany(DataKuisioner::class, 'id_kategori_kuisioner', 'id_kategori_kuisioner');
     }
 }

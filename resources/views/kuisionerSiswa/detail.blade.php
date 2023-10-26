@@ -48,13 +48,7 @@
                                                     <th style="width: 50%; border: none;">
                                                         @foreach ($guruPelajaran as $guruMapel)
                                                             @if ($guruMapel->id_gp == $id_gp)
-                                                                @if ($guruMapel->mapelList !== null && count($guruMapel->mapelList) > 0)
-                                                                    @foreach ($guruMapel->mapelList as $mapel)
-                                                                        {{ $mapel->nama_pelajaran }},
-                                                                    @endforeach
-                                                                @else
-                                                                    Data Mata Pelajaran Tidak Ditemukan
-                                                                @endif
+                                                                {{ $guruMapel->mapel->nama_pelajaran }}
                                                             @endif
                                                         @endforeach
                                                     </th>
@@ -63,41 +57,107 @@
                                                 <!-- Menampilkan informasi guru -->
                                                 <tr>
                                                     <th style="width: 50%; border: none;">Nama Guru<span style="float: right;">:</span></th>
-                                                    {{-- <th style="width: 50%; border: none;">
-                                                        @if (count($dataNilai) > 0)
-                                                            {{ $dataNilai[0]->nis_siswa }}
-                                                        @else
-                                                            Data Guru Pelajaran Tidak Ditemukan
-                                                        @endif
-                                                    </th>                                                         --}}
+                                                    <th style="width: 50%; border: none;">
+                                                        @foreach ($guruPelajaran as $guruMapel)
+                                                            @if ($guruMapel->id_gp == $id_gp)
+                                                                {{ $guruMapel->user->user_name }}
+                                                            @endif
+                                                         @endforeach
+                                                    </th>
                                             </tbody>
                                         </table>
 					                    <div class="table-responsive">
 					                        <table class="table table-striped">
 					                            <thead>
 					                                <tr>
-                                                        <th>No</th>
-                                                        <th>Kategori</th>
-                                                        <th>Pertanyaan</th>
-                                                        <th>Sangat Baik</th>
-                                                        <th>Baik</th>
-                                                        <th>Kurang Baik</th>
-
+                                                        <th style="text-align: center;">No</th>
+                                                        <th style="text-align: center;">Pertanyaan</th>
+                                                        <th style="text-align: center;">Sangat Baik</th>
+                                                        <th style="text-align: center;">Baik</th>
+                                                        <th style="text-align: center;">Cukup Baik</th>
+                                                        <th style="text-align: center;">Kurang Baik</th>
 					                                </tr>
 					                            </thead>
-                                                {{-- <tbody
-                                                    @foreach ($guruPelajaran as $guruMapel)
-                                                        @if ($guruMapel->id_gp == $id_gp)
-                                                            @foreach ($guruMapel->absensiDetail as $absensi)
-                                                                <tr>
-                                                                    <td>{{ $loop->iteration }}</td>
-                                                                    <td>{{ $absensi->tanggal }}</td>
-                                                                    <td>{{ $absensi->keterangan }}</td>
-                                                                </tr>
-                                                            @endforeach
-                                                        @endif
+                                                {{-- <tr> --}}
+                                                {{-- @php
+                                                $currentCategory = null;
+                                                @endphp
+
+                                                @foreach ($dataKuisioner as $item)
+                                                    @if ($currentCategory !== $item->id_kategori_kuisioner)
+                                                        <tr>
+                                                            <td style="text-align: center;"></td>
+                                                            <td style="text-align: center;">
+                                                                @php
+                                                                    $isFirst = true;
+                                                                @endphp
+                                                                @foreach ($dataKategoriKuisioner as $kategori)
+                                                                    @if ($kategori->id_kategori_kuisioner == $item->id_kategori_kuisioner)
+                                                                        @if ($isFirst)
+                                                                            {{ $kategori->nama_kategori }}
+                                                                            @php
+                                                                                $isFirst = false;
+                                                                            @endphp
+                                                                        @endif
+                                                                    @endif
+                                                                @endforeach
+                                                            </td>
+                                                        </tr>
+                                                        @php
+                                                            $currentCategory = $item->id_kategori_kuisioner;
+                                                        @endphp
+                                                    @endif
+                                                    <tr>
+                                                        <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                                        <td style="text-align: center;">
+                                                            {{ $item->pertanyaan }}
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <input type="radio" name="nama_radiobutton" value="nilai_pilihan1" id="radiobutton1">
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <input type="radio" name="nama_radiobutton" value="nilai_pilihan2" id="radiobutton2">
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <input type="radio" name="nama_radiobutton" value="nilai_pilihan3" id="radiobutton3">
+                                                        </td>
+                                                        <td style="text-align: center;">
+                                                            <input type="radio" name="nama_radiobutton" value="nilai_pilihan4" id="radiobutton4">
+                                                        </td>
+                                                    </tr>
+                                                @endforeach --}}
+                                                <tr>
+                                                @foreach ($groupedQuestions as $kategori => $questions)
+                                                    <tr>
+                                                        <td style="text-align: center;"></td>
+                                                        <td style="text-align: center;">
+                                                            {{ $kategori }}
+                                                        </td>
+                                                    </tr>
+                                                    @foreach ($questions as $question)
+                                                        <tr>
+                                                            <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                                            <td style="text-align: center;">
+                                                                {{ $question->pertanyaan }}
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan1" id="radiobutton1">
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan2" id="radiobutton2">
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan3" id="radiobutton3">
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan4" id="radiobutton4">
+                                                            </td>
+                                                        </tr>
                                                     @endforeach
-                                                </tbody> --}}
+                                                @endforeach
+                                                </tr>
+
+                                            {{-- @endforeach --}}
 					                        </table>
 					                    </div>
                                         {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Kelas;
 use Illuminate\Http\Request;
+use App\Models\DataKuisioner;
 use App\Models\DataPelajaran;
 use App\Models\GuruPelajaran;
 use App\Models\KenaikanKelas;
 use App\Models\PelajaranKelas;
+use App\Models\KategoriKuisioner;
 
 class KuisionerSiswaController extends Controller
 {
@@ -222,12 +224,30 @@ class KuisionerSiswaController extends Controller
         
                 if ($pelajaranKelas) {
                     $pelajaranData = $pelajaranKelas->mapelList->pluck('id_pelajaran')->toArray();
+                    
+        
+                    // Langkah 3: Dapatkan data pelajaran yang sesuai dengan id_pelajaran
                     $pelajaran = DataPelajaran::whereIn('id_pelajaran', $pelajaranData)->get();
                     $guruPelajaran = GuruPelajaran::whereIn('id_pelajaran', $pelajaranData)
                     ->where('tahun_ajaran', $tahunAjaran)
                     ->with('user','mapel')
                     ->get();
                     
+                    // $dataKuisioner = DataKuisioner::all(); 
+                    $dataKuisioner = DataKuisioner::where('id_sekolah', $idSekolah)->with('kategoriKuisioner')->get();
+                    // dd($dataKuisioner);
+                    $dataKategoriKuisioner = KategoriKuisioner::where('id_sekolah', $idSekolah)->get();
+        
+                    // dd($guruPelajaran);
+
+                    $groupedQuestions = [];
+
+                    foreach ($dataKuisioner as $item) {
+                        $kategori = $item->kategoriKuisioner->nama_kategori; // Sesuaikan dengan nama kolom yang sesuai
+                        $groupedQuestions[$kategori][] = $item;
+                    }
+
+
                 } else {
                     // Tindakan jika data pelajaran kelas tidak ditemukan
                     $pelajaran = collect(); // Menggunakan koleksi kosong jika data pelajaran kelas tidak ditemukan
@@ -246,7 +266,7 @@ class KuisionerSiswaController extends Controller
         // return view('jadwalSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran','message','namaKelas','guruPelajaran'));
 
         if (isset($guruPelajaran)) {
-            return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp'));
+            return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp','dataKuisioner','dataKategoriKuisioner','groupedQuestions'));
         } else {
             return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
         }
