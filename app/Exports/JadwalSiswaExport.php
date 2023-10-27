@@ -77,6 +77,7 @@ class JadwalSiswaExport implements FromView, ShouldAutoSize, WithStyles
     public function styles(Worksheet $sheet){
         $sheet->mergeCells('A1:D1');
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+    
     }
 
 

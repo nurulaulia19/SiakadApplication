@@ -236,7 +236,7 @@ class KuisionerSiswaController extends Controller
                     // $dataKuisioner = DataKuisioner::all(); 
                     $dataKuisioner = DataKuisioner::where('id_sekolah', $idSekolah)->with('kategoriKuisioner')->get();
                     // dd($dataKuisioner);
-                    $dataKategoriKuisioner = KategoriKuisioner::where('id_sekolah', $idSekolah)->get();
+                    // $dataKategoriKuisioner = KategoriKuisioner::where('id_sekolah', $idSekolah)->get();
         
                     // dd($guruPelajaran);
 
@@ -266,7 +266,7 @@ class KuisionerSiswaController extends Controller
         // return view('jadwalSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran','message','namaKelas','guruPelajaran'));
 
         if (isset($guruPelajaran)) {
-            return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp','dataKuisioner','dataKategoriKuisioner','groupedQuestions'));
+            return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp','dataKuisioner','groupedQuestions'));
         } else {
             return view('kuisionerSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
         }

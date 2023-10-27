@@ -79,6 +79,40 @@
 					                                </tr>
 					                            </thead>
                                                 {{-- <tr> --}}
+                                                @foreach ($groupedQuestions as $kategori => $questions)
+                                                    <tr>
+                                                        <td style="text-align: center;"></td>
+                                                        <td style="text-align: center;">
+                                                            {{ $kategori }}
+                                                        </td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    @foreach ($questions as $question)
+                                                        <tr>
+                                                            <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                                            <td style="text-align: center;">
+                                                                {{ $question->pertanyaan }}
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan1" id="radiobutton1">
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan2" id="radiobutton2">
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan3" id="radiobutton3">
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan4" id="radiobutton4">
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endforeach
+                                                {{-- </tr> --}}
+                                                {{-- <tr> --}}
                                                 {{-- @php
                                                 $currentCategory = null;
                                                 @endphp
@@ -126,44 +160,62 @@
                                                         </td>
                                                     </tr>
                                                 @endforeach --}}
-                                                <tr>
+                                                
+
+                                            {{-- @endforeach --}}
+
+                                            {{-- siman dulu --}}
+                                            {{-- <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="text-align: center;">No</th>
+                                                        <th style="text-align: center;">Pertanyaan</th>
+                                                        <th style="text-align: center;">Sangat Baik</th>
+                                                        <th style="text-align: center;">Baik</th>
+                                                        <th style="text-align: center;">Cukup Baik</th>
+                                                        <th style="text-align: center;">Kurang Baik</th>
+                                                    </tr>
+                                                </thead>
                                                 @foreach ($groupedQuestions as $kategori => $questions)
                                                     <tr>
                                                         <td style="text-align: center;"></td>
                                                         <td style="text-align: center;">
                                                             {{ $kategori }}
                                                         </td>
+                                                        <td style="text-align: center;"></td>
+                                                        <td style="text-align: center;"></td>
+                                                        <td style="text-align: center;"></td>
+                                                        <td style="text-align: center;"></td>
                                                     </tr>
                                                     @foreach ($questions as $question)
                                                         <tr>
-                                                            <td style="text-align: center;">{{ $loop->iteration }}</td>
+                                                            <td style="text-align: center;">{{ $loop->parent->parent->iteration }}</td>
                                                             <td style="text-align: center;">
                                                                 {{ $question->pertanyaan }}
                                                             </td>
                                                             <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan1" id="radiobutton1">
+                                                                <input type="radio" name="nama_radiobutton_{{ $kategori }}_{{ $loop->index }}" value="nilai_pilihan1" id="radiobutton1_{{ $kategori }}_{{ $loop->index }}">
                                                             </td>
                                                             <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan2" id="radiobutton2">
+                                                                <input type="radio" name="nama_radiobutton_{{ $kategori }}_{{ $loop->index }}" value="nilai_pilihan2" id="radiobutton2_{{ $kategori }}_{{ $loop->index }}">
                                                             </td>
                                                             <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan3" id="radiobutton3">
+                                                                <input type="radio" name="nama_radiobutton_{{ $kategori }}_{{ $loop->index }}" value="nilai_pilihan3" id="radiobutton3_{{ $kategori }}_{{ $loop->index }}">
                                                             </td>
                                                             <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan4" id="radiobutton4">
+                                                                <input type="radio" name="nama_radiobutton_{{ $kategori }}_{{ $loop->index }}" value="nilai_pilihan4" id="radiobutton4_{{ $kategori }}_{{ $loop->index }}">
                                                             </td>
                                                         </tr>
                                                     @endforeach
                                                 @endforeach
-                                                </tr>
+                                            </table> --}}
 
-                                            {{-- @endforeach --}}
 					                        </table>
 					                    </div>
                                         {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}
                                         <div class="text-right mt-3">
-                                            <a href="{{ route('kuisionerSiswa.index') }}" class="btn btn-primary">KEMBALI</a>
-                                            {{-- <button type="submit" class="btn btn-primary">SIMPAN</button> --}}
+                                            <a href="{{ route('kuisionerSiswa.index') }}" class="btn btn-secondary">KEMBALI</a>
+                                            <button type="submit" class="btn btn-primary">SIMPAN</button>
                                         </div>
 					                    <hr class="new-section-xs">
 					                </div>
