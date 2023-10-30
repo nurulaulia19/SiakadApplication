@@ -31,15 +31,6 @@
 					                <!--Data Table-->
 					                <!--===================================================-->
 					                <div class="panel-body">
-					                    {{-- <div class="pad-btm form-inline">
-					                        <div class="row">
-					                            <div class="col-sm-7 table-toolbar-left">
-													<a href="{{ route('kenaikanKelas.create') }}" class="btn btn-purple">
-														<i class="demo-pli-add icon-fw"></i>Add
-													</a>
-					                            </div>
-					                        </div>
-					                    </div> --}}
                                         <table class="table" style="width: 21%; max-width: 21%;">
                                             <tbody>
                                                 <!-- Menampilkan informasi mata pelajaran -->
@@ -66,51 +57,83 @@
                                                     </th>
                                             </tbody>
                                         </table>
+                                        <form action="{{ route('jawabanKuisioner.store') }}" method="POST">
+                                        @csrf  
 					                    <div class="table-responsive">
 					                        <table class="table table-striped">
 					                            <thead>
 					                                <tr>
-                                                        <th style="text-align: center;">No</th>
-                                                        <th style="text-align: center;">Pertanyaan</th>
+                                                        <th>No</th>
+                                                        <th>Pertanyaan</th>
                                                         <th style="text-align: center;">Sangat Baik</th>
                                                         <th style="text-align: center;">Baik</th>
                                                         <th style="text-align: center;">Cukup Baik</th>
                                                         <th style="text-align: center;">Kurang Baik</th>
 					                                </tr>
 					                            </thead>
-                                                {{-- <tr> --}}
-                                                @foreach ($groupedQuestions as $kategori => $questions)
-                                                    <tr>
-                                                        <td style="text-align: center;"></td>
-                                                        <td style="text-align: center;">
-                                                            {{ $kategori }}
-                                                        </td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                    </tr>
-                                                    @foreach ($questions as $question)
+                                                {{-- <tr> --}} 
+                                                    <input name="id_gp" type="hidden" value="{{$id_gp}}" readonly>
+                                                    <input name="nis_siswa" type="hidden" value="{{$siswa->nis_siswa}}" readonly>  
+                                                    @php
+                                                        $globalIteration = 1;
+                                                    @endphp                                            
+                                                    @foreach ($groupedQuestions as $kategori => $questions)
                                                         <tr>
-                                                            <td style="text-align: center;">{{ $loop->iteration }}</td>
-                                                            <td style="text-align: center;">
-                                                                {{ $question->pertanyaan }}
+                                                            <td style="background-color:#367E18"></td>
+                                                            <td style=" background-color:#367E18; color:white">
+                                                                {{ $kategori }}
                                                             </td>
-                                                            <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan1" id="radiobutton1">
-                                                            </td>
-                                                            <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan2" id="radiobutton2">
-                                                            </td>
-                                                            <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan3" id="radiobutton3">
-                                                            </td>
-                                                            <td style="text-align: center;">
-                                                                <input type="radio" name="nama_radiobutton" value="nilai_pilihan4" id="radiobutton4">
-                                                            </td>
+                                                            <td style="background-color:#367E18"></td>
+                                                            <td style="background-color:#367E18"></td>
+                                                            <td style="background-color:#367E18"></td>
+                                                            <td style="background-color:#367E18"></td>
                                                         </tr>
+                                                        @foreach ($questions as $question)
+                                                            <tr>
+                                                                <td>{{ $globalIteration }}</td>
+                                                                <td>
+                                                                    {{ $question->pertanyaan }}
+                                                                    <input name="id_kuisioner" type="hidden" value="{{ $question->id_kuisioner }}" readonly>
+                                                                </td>
+                                                                @php
+                                                                    $globalIteration++;
+                                                                @endphp
+                                                                <td style="text-align: center;">
+                                                                    <input type="radio" name="jawaban_{{ $question->id_kuisioner }}" value="sangatbaik" id="sangatbaik">
+                                                                </td>
+                                                                <td style="text-align: center;">
+                                                                    <input type="radio" name="jawaban_{{ $question->id_kuisioner }}" value="baik" id="baik">
+                                                                </td>
+                                                                <td style="text-align: center;">
+                                                                    <input type="radio" name="jawaban_{{ $question->id_kuisioner }}" value="cukupbaik" id="cukupbaik">
+                                                                </td>
+                                                                <td style="text-align: center;">
+                                                                    <input type="radio" name="jawaban_{{ $question->id_kuisioner }}" value="kurangbaik" id="kurangbaik">
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
                                                     @endforeach
-                                                @endforeach
+                                            </table>
+                                            @if ($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    @foreach ($errors->all() as $error)
+                                                        <span>{{ $error }}</span>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                            @endif                                        
+					                    </div>
+                                        <div class="text-right mt-3">
+                                            <a href="{{ route('kuisionerSiswa.index') }}" class="btn btn-secondary">KEMBALI</a>
+                                            <button type="submit" class="btn btn-primary">SIMPAN</button>
+                                        </div>
+                                        </form>
+                                         {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}
+					                    <hr class="new-section-xs">
+					                </div>
+					                <!--===================================================-->
+					                <!--End Data Table-->
                                                 {{-- </tr> --}}
                                                 {{-- <tr> --}}
                                                 {{-- @php
@@ -210,17 +233,7 @@
                                                 @endforeach
                                             </table> --}}
 
-					                        </table>
-					                    </div>
-                                        {{-- {{ $dataKk->appends(['search' => $search, 'sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }} --}}
-                                        <div class="text-right mt-3">
-                                            <a href="{{ route('kuisionerSiswa.index') }}" class="btn btn-secondary">KEMBALI</a>
-                                            <button type="submit" class="btn btn-primary">SIMPAN</button>
-                                        </div>
-					                    <hr class="new-section-xs">
-					                </div>
-					                <!--===================================================-->
-					                <!--End Data Table-->
+					                        
 					
 					            </div>
 					        </div>

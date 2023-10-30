@@ -299,6 +299,10 @@ Route::get('/admin/kuisioner/edit/{id}', [DataKuisionerController::class, 'edit'
 Route::put('/admin/kuisioner/update/{id}', [DataKuisionerController::class, 'update'])->name('kuisioner.update');
 Route::get('/admin/kuisioner/getKategori', [DataKuisionerController::class, 'getKategori'])->name('kuisioner.getKategori');
 
+// laporan kuisioner admin
+Route::get('/admin/kuisioner/kuisioner', [GuruPelajaranController::class,'laporanKuisioner'])->name('laporanKuisioner.index');
+Route::get('/admin/kuisioner/detail/{id_gp}', [GuruPelajaranController::class, 'detailLaporanKuisioner'])->name('laporanKuisioner.detail');
+
 // login siswa
 Route::get('/siswa/login', [SiswaAuthController::class, 'showLoginForm'])->name('siswa.login');
 Route::post('/siswa/submit', [SiswaAuthController::class, 'login'])->name('siswa.submit');
@@ -336,3 +340,5 @@ Route::get('/siswa/detail/absensi/{id_gp}', [AbsensiSiswaController::class,'deta
 // kuisioner u/ siswa
 Route::get('/siswa/kuisioner', [KuisionerSiswaController::class,'index'])->name('kuisionerSiswa.index');
 Route::get('/siswa/detail/kuisioner/{id_gp}', [KuisionerSiswaController::class,'detailKuisioner'])->name('kuisionerSiswa.detail');
+Route::post('/siswa/jawaban/kuisioner', [KuisionerSiswaController::class,'storeJawabanKuisioner'])->name('jawabanKuisioner.store');
+Route::get('/siswa/isi/kuisioner/{id_gp}', [KuisionerSiswaController::class,'isiKuisioner'])->name('kuisionerSiswa.isi');

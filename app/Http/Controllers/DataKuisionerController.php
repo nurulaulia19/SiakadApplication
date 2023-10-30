@@ -8,6 +8,7 @@ use App\Models\Data_Menu;
 use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use App\Models\DataKuisioner;
+use App\Models\JawabanKuisioner;
 use App\Models\KategoriKuisioner;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -228,6 +229,8 @@ class DataKuisionerController extends Controller
     public function destroy($id){
         $dataKuisioner = DataKuisioner::where('id_kuisioner', $id);
         $dataKuisioner->delete();
+        $dataJawabanKuisioner = JawabanKuisioner::where('id_kuisioner', $id);
+        $dataJawabanKuisioner->delete();
         return redirect()->route('kuisioner.index')->with('success', 'Terdelet');
     }
 

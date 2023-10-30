@@ -25,7 +25,7 @@
 					        <div class="col-xs-12">
 					            <div class="panel">
 					                <div class="panel-heading">
-					                    <h3 class="panel-title">Data Absensi</h3>
+					                    <h3 class="panel-title">Data Kuisioner</h3>
 					                </div>
 					
 					                <!--Data Table-->
@@ -34,9 +34,6 @@
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
 					                            <div class="col-sm-8 table-toolbar-left">
-													{{-- <a href="{{ route('kenaikanKelas.create') }}" class="btn btn-purple">
-														<i class="demo-pli-add icon-fw"></i>Add
-													</a> --}}
 					                            </div>
                                                 <div class="col-md-1">
                                                     <form action="{{ route('absensi.index') }}" method="GET">
@@ -70,17 +67,6 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                {{-- <div class="col-md-1" style="margin-top: 20px">
-                                                    <div class="btn-group">
-                                                        <a href="{{ route('exportAbsensiSiswa.pdf') }}" class="btn btn-danger">
-                                                            <i style="font-size: 18px" class="fas fa-file-pdf"></i>
-                                                        </a>
-                                                        <a href="{{ route('exportAbsensiSiswa.excel') }}" style="margin-left: 15px" class="btn btn-success">
-                                                            <i style="font-size: 18px" class="fas fa-file-excel"></i>
-                                                        </a>                                                                                                               
-                                                    </div>
-                                                </div>  --}}
-
 					                        </div>
 					                    </div>
 					                    <div class="table-responsive">
@@ -109,15 +95,41 @@
                                                                 <div style="display: flex; align-items: center;">
                                                                     @foreach ($guruPelajaran as $guruMapel)
                                                                         @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                            @php
+                                                                                $jawabanExist = DB::table('data_jawaban_kuisioner')
+                                                                                    ->where('id_gp', $guruMapel->id_gp)
+                                                                                    ->exists();
+                                                                            @endphp
+                                                                        
+                                                                            @if ($jawabanExist)
+                                                                                <a href="{{ route('kuisionerSiswa.isi', ['id_gp' => $guruMapel->id_gp]) }}" class="btn btn-sm btn-danger">Jawaban</a>
+                                                                            @else
+                                                                                <a href="{{ route('kuisionerSiswa.detail', ['id_gp' => $guruMapel->id_gp]) }}" class="btn btn-sm btn-warning">Detail</a>
+                                                                            @endif
+                                                                        @endif
+                                                                    @endforeach
+                                                                </div>
+                                                            </td>                                                                                                                     
+                                                            {{-- <td class="table-action" style="vertical-align: middle;">
+                                                                <div style="display: flex; align-items: center;">
+                                                                    @foreach ($guruPelajaran as $guruMapel)
+                                                                        @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
                                                                             <a href="{{ route('kuisionerSiswa.detail', ['id_gp' => $guruMapel->id_gp]) }}" class="btn btn-sm btn-warning">Detail</a>
                                                                         @endif
                                                                     @endforeach
                                                                 </div>
                                                             </td>
+                                                            <td class="table-action" style="vertical-align: middle;">
+                                                                <div style="display: flex; align-items: center;">
+                                                                    @foreach ($guruPelajaran as $guruMapel)
+                                                                        @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                            <a href="{{ route('kuisionerSiswa.isi', ['id_gp' => $guruMapel->id_gp]) }}" class="btn btn-sm btn-warning">Jawaban</a>
+                                                                        @endif
+                                                                    @endforeach
+                                                                </div>
+                                                            </td> --}}
                                                         </tr>
                                                     @endforeach
-
-                                                
                                                 </tbody>
 					                        </table>
 					                    </div>
@@ -134,6 +146,11 @@
 						@if(session('error'))
 							<div class="alert alert-danger">
                                 {{ session('error') }}
+                            </div>
+				        @endif
+                        @if(session('success'))
+							<div class="alert" style="background-color:#367E18; color:white">
+                                {{ session('success') }}
                             </div>
 				        @endif
 					

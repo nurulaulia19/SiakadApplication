@@ -1240,6 +1240,85 @@ class GuruPelajaranController extends Controller
         return Excel::download(new AbsensiExport($dataSekolah, $dataAd, $uniqueDates), 'data-absensi.xlsx');
     }
   
+    public function laporanKuisioner(Request $request) {
+        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        $user_id = auth()->user()->user_id; 
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
+            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+            ->paginate(10);
+
+        $id_kn = $request->input('id_kn');
+        // dd($id_kn);
+        // MENU
+        $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
+    
+                $user = DataUser::find($user_id);
+                $role_id = $user->role_id;
+    
+                $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
+    
+                $mainMenus = Data_Menu::where('menu_category', 'master menu')
+                    ->whereIn('menu_id', $menu_ids)
+                    ->get();
+    
+                $menuItemsWithSubmenus = [];
+    
+                foreach ($mainMenus as $mainMenu) {
+                    $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                        ->where('menu_category', 'sub menu')
+                        ->whereIn('menu_id', $menu_ids)
+                        ->orderBy('menu_position')
+                        ->get();
+    
+                    $menuItemsWithSubmenus[] = [
+                        'mainMenu' => $mainMenu,
+                        'subMenus' => $subMenus,
+                    ];
+                }// menu
+        $user_id = auth()->user()->user_id;
+        $user = DataUser::findOrFail($user_id);
+        $menu_ids = $user->role->roleMenus->pluck('menu_id');
+
+        $menu_route_name = request()->route()->getName(); // Nama route dari URL yang diminta
+
+        // Ambil menu berdasarkan menu_link yang sesuai dengan nama route
+        $requested_menu = Data_Menu::where('menu_link', $menu_route_name)->first();
+        // dd($requested_menu);
+
+        // Periksa izin akses berdasarkan menu_id dan user_id
+        if (!$requested_menu || !$menu_ids->contains($requested_menu->menu_id)) {
+            return redirect()->back()->with('error', 'You do not have permission to access this menu.');
+        }
+
+        $mainMenus = Data_Menu::where('menu_category', 'master menu')
+            ->whereIn('menu_id', $menu_ids)
+            ->get();
+
+        $menuItemsWithSubmenus = [];
+
+        foreach ($mainMenus as $mainMenu) {
+            $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                ->where('menu_category', 'sub menu')
+                ->whereIn('menu_id', $menu_ids)
+                ->orderBy('menu_position')
+                ->get();
+
+            $menuItemsWithSubmenus[] = [
+                'mainMenu' => $mainMenu,
+                'subMenus' => $subMenus,
+            ];
+            
+        }
+        return view('laporanKuisioner.index', compact('dataGp','menuItemsWithSubmenus','id_kn'));
+    }
 
 }
 

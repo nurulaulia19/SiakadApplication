@@ -213,6 +213,7 @@
 									'Data Nilai' => 'fas fa-chart-bar',
 									'Data Absensi' => 'fas fa-clock',
 									'Kuisioner' => 'fas fa-pencil-alt',
+									'Laporan Kuisioner' => 'fas fa-poll'
 								];
 
 							@endphp
