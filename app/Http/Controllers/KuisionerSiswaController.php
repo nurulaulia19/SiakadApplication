@@ -136,7 +136,7 @@ class KuisionerSiswaController extends Controller
         // return view('jadwalSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran','message'guruPelajaran'));
 
         if (isset($guruPelajaran)) {
-            return view('kuisionerSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran'));
+            return view('kuisionerSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','siswa'));
         } else {
             return view('kuisionerSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
         }
@@ -383,6 +383,7 @@ class KuisionerSiswaController extends Controller
                     foreach ($dataKuisioner as $question) {
                         $jawaban[$question->id_kuisioner] = JawabanKuisioner::where('id_gp', $id_gp)
                             ->where('id_kuisioner', $question->id_kuisioner)
+                            ->where('nis_siswa', $nisSiswa)
                             ->get();
                     }
 

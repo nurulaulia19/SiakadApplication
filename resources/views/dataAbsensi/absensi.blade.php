@@ -31,6 +31,56 @@
 					                <!--Data Table-->
 					                <!--===================================================-->
 					                <div class="panel-body">
+                                        <div class="pad-btm form-inline">
+					                        <div class="row">
+					                            <div class="col-sm-8 table-toolbar-left">
+													{{-- <a href="{{ route('guruMapel.create') }}" class="btn btn-purple">
+														<i class="demo-pli-add icon-fw"></i>Add
+													</a> --}}
+					                            </div>
+                                                <div class="col-sm-2">
+                                                    <form action="{{ route('dataAbsensi.absensi') }}" method="GET">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <label for="sekolah_filter">Filter Sekolah</label>
+                                                                </div>
+                                                                <div class="col-7">
+                                                                    <select name="sekolah_filter" id="sekolah_filter" class="form-control">
+                                                                        <option value="">Tampilkan Semua</option>
+                                                                        @foreach ($dataSekolah as $sekolah)
+                                                                            <option value="{{ $sekolah->id_sekolah }}" {{ $sekolahFilter == $sekolah->id_sekolah ? 'selected' : '' }}>
+                                                                                {{ $sekolah->nama_sekolah }}
+                                                                            </option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-3">
+                                                                    <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <form action="{{ route('dataAbsensi.absensi') }}" method="GET">
+                                                        <div class="form-group">
+                                                            <label for="tahun_ajaran_filter">Filter Tahun Ajaran</label>
+                                                            <input type="hidden" name="sekolah_filter" value="{{ $sekolahFilter }}">
+                                                            <select name="tahun_ajaran_filter" id="tahun_ajaran_filter" class="form-control">
+                                                                <option value="">Tampilkan Semua</option>
+                                                                @foreach ($tahunAjarans as $tahunAjaran)
+                                                                    <option value="{{ $tahunAjaran }}" {{ $tahunAjaranFilter == $tahunAjaran ? 'selected' : '' }}>
+                                                                        {{ $tahunAjaran }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="submit" class="btn btn-sm btn-primary mt-1" style="margin-left: 5px">Filter</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+					                        </div>
+					                    </div>
 					                    <div class="table-responsive">
 					                        <table class="table table-striped">
 					                            <thead>
@@ -93,7 +143,8 @@
 					                            </tbody>
 					                        </table>
 					                    </div>
-                                        {{ $dataGp->links('pagination::bootstrap-4') }}
+                                        {{-- {{ $dataGp->links('pagination::bootstrap-4') }} --}}
+                                        {{ $dataGp->appends(['sekolah_filter' => $sekolahFilter, 'tahun_ajaran_filter' => $tahunAjaranFilter])->links('pagination::bootstrap-4') }}
 					                    <hr class="new-section-xs">
 					                    
 					                </div>

@@ -238,7 +238,7 @@ class AbsensiSiswaController extends Controller
                     ->where('tahun_ajaran', $tahunAjaran)
                     ->with('user', 'absensiDetail')
                     ->get();
-                    
+                    // dd($guruPelajaran);
                    
         
                     // dd($guruPelajaran);
@@ -260,7 +260,7 @@ class AbsensiSiswaController extends Controller
         // return view('jadwalSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran','message','namaKelas','guruPelajaran'));
 
         if (isset($guruPelajaran)) {
-            return view('absensiSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp'));
+            return view('absensiSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','id_gp','nisSiswa'));
         } else {
             return view('absensiSiswa.detail', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas'));
         }

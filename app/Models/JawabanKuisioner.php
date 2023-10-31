@@ -17,4 +17,9 @@ class JawabanKuisioner extends Model
             'nis_siswa',
             'jawaban',
     ];
+
+    public function kuisioner()
+    {
+        return $this->belongsTo(DataKuisioner::class, 'id_kuisioner', 'id_kuisioner');
+    }
 }

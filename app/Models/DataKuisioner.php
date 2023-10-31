@@ -26,4 +26,9 @@ class DataKuisioner extends Model
     {
         return $this->belongsTo(KategoriKuisioner::class, 'id_kategori_kuisioner', 'id_kategori_kuisioner');
     }
+
+    public function jawabanKuisioner()
+    {
+        return $this->hasMany(JawabanKuisioner::class, 'id_kuisioner', 'id_kuisioner');
+    }
 }

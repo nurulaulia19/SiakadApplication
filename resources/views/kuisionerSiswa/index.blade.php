@@ -98,6 +98,7 @@
                                                                             @php
                                                                                 $jawabanExist = DB::table('data_jawaban_kuisioner')
                                                                                     ->where('id_gp', $guruMapel->id_gp)
+                                                                                    ->where('nis_siswa', $siswa->nis_siswa)
                                                                                     ->exists();
                                                                             @endphp
                                                                         

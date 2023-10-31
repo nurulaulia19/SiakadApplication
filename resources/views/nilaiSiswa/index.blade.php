@@ -111,16 +111,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                        {{-- @foreach ($guruPelajaran as $guruMapel)
-                                                            @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                @foreach ($guruMapel->nilai as $nilai)
-                                                                    <td>
-                                                                        {{ $nilai->nilai }}
-                                                                    </td>
-                                                                 @endforeach
-                                                            @endif
-                                                        @endforeach --}}
-                                                        @if (count($guruPelajaran) > 0)
+                                                        {{-- @if (count($guruPelajaran) > 0)
                                                             @foreach ($guruPelajaran as $guruMapel)
                                                                 @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
                                                                     @foreach ($guruMapel->nilai as $nilai)
@@ -132,7 +123,27 @@
                                                             @endforeach
                                                         @else
                                                             <td></td>
+                                                        @endif --}}
+                                                        @if (count($guruPelajaran) > 0)
+                                                            @php
+                                                                $nilaiAvailable = false;
+                                                            @endphp
+                                                            @foreach ($guruPelajaran as $guruMapel)
+                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                    @foreach ($guruMapel->nilai as $nilai)
+                                                                        @if ($nilai->nis_siswa == $nisSiswa)
+                                                                            <td>{{ $nilai->nilai ?? '' }}</td>
+                                                                            @php
+                                                                                $nilaiAvailable = true;
+                                                                            @endphp
+                                                                        @endif
+                                                                    @endforeach
+                                                                @endif
+                                                            @endforeach
+                                                        @else
+                                                            <td></td>
                                                         @endif
+
                                                     </tr>
                                                 @endforeach
                                                 </tbody>

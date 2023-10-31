@@ -140,7 +140,7 @@ class NilaiSiswaController extends Controller
         }
         
         if (isset($guruPelajaran)) {
-            return view('nilaiSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','dataKategori'));
+            return view('nilaiSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','dataKategori','nisSiswa'));
         } else {
             return view('nilaiSiswa.index', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas','dataKategori'));
         }

@@ -95,17 +95,6 @@
 					                            </thead>
                                                 <tbody>
                                                     {{-- @foreach ($guruPelajaran as $guruMapel)
-                                                        @if ($guruMapel->absensiDetail->isNotEmpty())
-                                                        <tr>
-                                                            <td>{{ $loop->iteration }}</td>
-                                                            @foreach ($guruMapel->absensiDetail as $absensi)
-                                                                <td>{{ $absensi->tanggal }}</td>
-                                                                <td>{{ $absensi->keterangan }}</td>
-                                                            @endforeach
-                                                        </tr>
-                                                        @endif
-                                                    @endforeach --}}
-                                                    @foreach ($guruPelajaran as $guruMapel)
                                                         @if ($guruMapel->id_gp == $id_gp)
                                                             @foreach ($guruMapel->absensiDetail as $absensi)
                                                                 <tr>
@@ -115,7 +104,34 @@
                                                                 </tr>
                                                             @endforeach
                                                         @endif
+                                                    @endforeach --}}
+                                                    @foreach ($guruPelajaran as $guruMapel)
+                                                        @if ($guruMapel->id_gp == $id_gp)
+                                                            @php
+                                                                $absensiAvailable = false;
+                                                            @endphp
+                                                            @foreach ($guruMapel->absensiDetail as $absensi)
+                                                                @if ($absensi->nis_siswa == $nisSiswa)
+                                                                    <tr>
+                                                                        <td>{{ $loop->iteration }}</td>
+                                                                        <td>{{ $absensi->tanggal }}</td>
+                                                                        <td>{{ $absensi->keterangan }}</td>
+                                                                    </tr>
+                                                                    @php
+                                                                        $absensiAvailable = true;
+                                                                    @endphp
+                                                                @endif
+                                                            @endforeach
+                                                            {{-- @if (!$absensiAvailable)
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                    <td>-</td>
+                                                                </tr>
+                                                            @endif --}}
+                                                        @endif
                                                     @endforeach
+
                                                 </tbody>
 					                        </table>
 					                    </div>

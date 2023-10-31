@@ -17,6 +17,7 @@ use App\Exports\NilaiExport;
 use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
 use App\Models\AbsensiDetail;
+use App\Models\DataKuisioner;
 use App\Models\DataPelajaran;
 use App\Models\GuruPelajaran;
 use App\Models\KategoriNilai;
@@ -29,6 +30,7 @@ use App\Models\PelajaranKelasList;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\GuruPelajaranJadwal;
+use App\Models\JawabanKuisioner;
 use Illuminate\Support\Facades\View;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -602,14 +604,34 @@ class GuruPelajaranController extends Controller
         // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
 
-        // Menggunakan Eloquent untuk mengambil data Guru Pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
         // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
         //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
-        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        //     ->whereExists(function ($query) use ($user_id) {
+        //         $query->select(DB::raw(1))
+        //             ->from('akses_sekolah')
+        //             ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+        //             ->where('akses_sekolah.user_id', $user_id);
+        //     })
         //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
         //     ->paginate(10);
+
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
+
+        // $dataSekolah = Sekolah::all();
+        $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->get();
+            // dd($dataSekolah);
+        // $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
+        $tahunAjarans = KenaikanKelas::whereIn('id_sekolah', $sekolahUser)
+            ->distinct()
+            ->pluck('tahun_ajaran');
+       
+            
+        $sekolahFilter = $request->input('sekolah_filter');
+        $tahunAjaranFilter = $request->input('tahun_ajaran_filter');
+
         $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
             ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
@@ -620,6 +642,12 @@ class GuruPelajaranController extends Controller
                     ->where('akses_sekolah.user_id', $user_id);
             })
             ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+            ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+                $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
+            })
+            ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
+                $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
+            })
             ->paginate(10);
 
         $id_kn = $request->input('id_kn');
@@ -684,7 +712,7 @@ class GuruPelajaranController extends Controller
             ];
             
     }
-    return view('dataAbsensi.absensi', compact('dataGp','menuItemsWithSubmenus','id_kn'));
+    return view('dataAbsensi.absensi', compact('dataGp','menuItemsWithSubmenus','id_kn','tahunAjaranFilter','dataSekolah','tahunAjarans','sekolahFilter'));
     }
 
     public function detailAbsensi(Request $request, $id_gp) {
@@ -1243,6 +1271,73 @@ class GuruPelajaranController extends Controller
     public function laporanKuisioner(Request $request) {
         // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
         $user_id = auth()->user()->user_id; 
+        // Dapatkan ID sekolah yang terkait dengan pengguna yang sedang login
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
+
+        // $dataSekolah = Sekolah::all();
+        $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->get();
+            // dd($dataSekolah);
+        // $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
+        $tahunAjarans = KenaikanKelas::whereIn('id_sekolah', $sekolahUser)
+            ->distinct()
+            ->pluck('tahun_ajaran');
+       
+            
+        $sekolahFilter = $request->input('sekolah_filter');
+        $tahunAjaranFilter = $request->input('tahun_ajaran_filter');
+
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
+            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+            ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+                $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
+            })
+            ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
+                $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
+            })
+            ->paginate(10);
+
+        // MENU
+        $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
+
+            $user = DataUser::find($user_id);
+            $role_id = $user->role_id;
+
+            $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
+
+            $mainMenus = Data_Menu::where('menu_category', 'master menu')
+                ->whereIn('menu_id', $menu_ids)
+                ->get();
+
+            $menuItemsWithSubmenus = [];
+
+            foreach ($mainMenus as $mainMenu) {
+                $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                    ->where('menu_category', 'sub menu')
+                    ->whereIn('menu_id', $menu_ids)
+                    ->orderBy('menu_position')
+                    ->get();
+
+                $menuItemsWithSubmenus[] = [
+                    'mainMenu' => $mainMenu,
+                    'subMenus' => $subMenus,
+                ];
+            }
+        return view('laporanKuisioner.index', compact('dataGp','menuItemsWithSubmenus', 'dataSekolah', 'tahunAjarans','sekolahFilter', 'tahunAjaranFilter'));
+    }
+
+    public function detailLaporanKuisioner($id_gp)
+    {
+        $user_id = auth()->user()->user_id; 
         $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
             ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
@@ -1254,70 +1349,109 @@ class GuruPelajaranController extends Controller
             })
             ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
             ->paginate(10);
-
-        $id_kn = $request->input('id_kn');
-        // dd($id_kn);
-        // MENU
-        $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
-    
-                $user = DataUser::find($user_id);
-                $role_id = $user->role_id;
-    
-                $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
-    
-                $mainMenus = Data_Menu::where('menu_category', 'master menu')
-                    ->whereIn('menu_id', $menu_ids)
-                    ->get();
-    
-                $menuItemsWithSubmenus = [];
-    
-                foreach ($mainMenus as $mainMenu) {
-                    $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
-                        ->where('menu_category', 'sub menu')
-                        ->whereIn('menu_id', $menu_ids)
-                        ->orderBy('menu_position')
-                        ->get();
-    
-                    $menuItemsWithSubmenus[] = [
-                        'mainMenu' => $mainMenu,
-                        'subMenus' => $subMenus,
-                    ];
-                }// menu
-        $user_id = auth()->user()->user_id;
-        $user = DataUser::findOrFail($user_id);
-        $menu_ids = $user->role->roleMenus->pluck('menu_id');
-
-        $menu_route_name = request()->route()->getName(); // Nama route dari URL yang diminta
-
-        // Ambil menu berdasarkan menu_link yang sesuai dengan nama route
-        $requested_menu = Data_Menu::where('menu_link', $menu_route_name)->first();
-        // dd($requested_menu);
-
-        // Periksa izin akses berdasarkan menu_id dan user_id
-        if (!$requested_menu || !$menu_ids->contains($requested_menu->menu_id)) {
-            return redirect()->back()->with('error', 'You do not have permission to access this menu.');
+         
+        $id_gp= request('id_gp');
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        $dataSekolah = $sekolahUser->pluck('sekolah');
+        
+        $dataKuisioner = DataKuisioner::whereIn('id_sekolah', $dataSekolah->pluck('id_sekolah'))->with('kategoriKuisioner')->get();
+        
+        $groupedQuestions = [];
+            foreach ($dataKuisioner as $item) {
+                $kategori = $item->kategoriKuisioner->nama_kategori; // Sesuaikan dengan nama kolom yang sesuai
+                $groupedQuestions[$kategori][] = $item;
         }
+        // dd($groupedQuestions);
 
-        $mainMenus = Data_Menu::where('menu_category', 'master menu')
-            ->whereIn('menu_id', $menu_ids)
-            ->get();
+        // $jawabanSiswa = JawabanKuisioner::join('data_siswa', 'data_siswa.nis_siswa', '=', 'data_jawaban_kuisioner.nis_siswa')
+        //     ->whereIn('data_siswa.id_sekolah', $dataSekolah->pluck('id_sekolah'))
+        //     ->get();
 
-        $menuItemsWithSubmenus = [];
+        // $jawabanSiswa = JawabanKuisioner::join('data_siswa', 'data_siswa.nis_siswa', '=', 'data_jawaban_kuisioner.nis_siswa')
+        //     ->whereIn('data_siswa.id_sekolah', $dataSekolah->pluck('id_sekolah'))
+        //     ->where('data_jawaban_kuisioner.id_gp', $id_gp) // Filter berdasarkan id_gp
+        //     ->where('data_kuisioner.pertanyaan')
+        //     ->get();
+        
 
-        foreach ($mainMenus as $mainMenu) {
-            $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
-                ->where('menu_category', 'sub menu')
+        // // $id_kuisioner = request('id_kuisioner');
+        // // dd($id_kuisioner);
+        // $sangatBaikCount = $jawabanSiswa->where('jawaban', 'sangatbaik')->count();
+        // $baikCount = $jawabanSiswa->where('jawaban', 'baik')->count();
+        // $cukupBaikCount = $jawabanSiswa->where('jawaban', 'cukupbaik')->count();
+        // $kurangBaikCount = $jawabanSiswa->where('jawaban', 'kurangbaik')->count();
+        $jawabanSiswa = JawabanKuisioner::join('data_siswa', 'data_siswa.nis_siswa', '=', 'data_jawaban_kuisioner.nis_siswa')
+    ->join('data_kuisioner', 'data_kuisioner.id_kuisioner', '=', 'data_jawaban_kuisioner.id_kuisioner')
+    ->whereIn('data_siswa.id_sekolah', $dataSekolah->pluck('id_sekolah'))
+    ->where('data_jawaban_kuisioner.id_gp', $id_gp) // Filter berdasarkan id_gp
+    // ->select('data_kuisioner.pertanyaan', 'data_jawaban_kuisioner.jawaban')
+    ->get();
+
+    // $perhitungan = $jawabanSiswa->groupBy('pertanyaan')
+    //     ->map(function ($groupedAnswers) {
+    //         $sangatBaikCount = $groupedAnswers->where('jawaban', 'sangatbaik')->count();
+    //         $baikCount = $groupedAnswers->where('jawaban', 'baik')->count();
+    //         $cukupBaikCount = $groupedAnswers->where('jawaban', 'cukupbaik')->count();
+    //         $kurangBaikCount = $groupedAnswers->where('jawaban', 'kurangbaik')->count();
+
+    //         return [
+    //             'sangatbaik' => $sangatBaikCount,
+    //             'baik' => $baikCount,
+    //             'cukupbaik' => $cukupBaikCount,
+    //             'kurangbaik' => $kurangBaikCount,
+    //         ];
+    //     });
+    $perhitungan = [];
+    foreach ($dataKuisioner as $item) {
+        // Ambil ID kuisioner
+        $idKuisioner = $item->id_kuisioner;
+        // dd($idKuisioner);
+        
+        // Hitung jumlah jawaban untuk setiap kategori
+        $sangatBaikCount = $jawabanSiswa->where('id_kuisioner', $idKuisioner)->where('jawaban', 'sangatbaik')->count();
+        $baikCount = $jawabanSiswa->where('id_kuisioner', $idKuisioner)->where('jawaban', 'baik')->count();
+        $cukupBaikCount = $jawabanSiswa->where('id_kuisioner', $idKuisioner)->where('jawaban', 'cukupbaik')->count();
+        $kurangBaikCount = $jawabanSiswa->where('id_kuisioner', $idKuisioner)->where('jawaban', 'kurangbaik')->count();
+
+        // Simpan hasil perhitungan dalam array
+        $perhitungan[$idKuisioner] = [
+            'sangatbaik' => $sangatBaikCount,
+            'baik' => $baikCount,
+            'cukupbaik' => $cukupBaikCount,
+            'kurangbaik' => $kurangBaikCount,
+        ];
+    }
+    // dd($perhitungan);
+
+
+        // menu
+        // $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
+
+            $user = DataUser::find($user_id);
+            $role_id = $user->role_id;
+
+            $menu_ids = RoleMenu::where('role_id', $role_id)->pluck('menu_id');
+
+            $mainMenus = Data_Menu::where('menu_category', 'master menu')
                 ->whereIn('menu_id', $menu_ids)
-                ->orderBy('menu_position')
                 ->get();
 
-            $menuItemsWithSubmenus[] = [
-                'mainMenu' => $mainMenu,
-                'subMenus' => $subMenus,
-            ];
-            
-        }
-        return view('laporanKuisioner.index', compact('dataGp','menuItemsWithSubmenus','id_kn'));
+            $menuItemsWithSubmenus = [];
+
+            foreach ($mainMenus as $mainMenu) {
+                $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
+                    ->where('menu_category', 'sub menu')
+                    ->whereIn('menu_id', $menu_ids)
+                    ->orderBy('menu_position')
+                    ->get();
+
+                $menuItemsWithSubmenus[] = [
+                    'mainMenu' => $mainMenu,
+                    'subMenus' => $subMenus,
+                ];
+            }
+        return view('laporanKuisioner.detail', compact('dataGp', 'id_gp', 'dataSekolah', 'dataKuisioner', 'groupedQuestions', 'menuItemsWithSubmenus','perhitungan'));
     }
 
 }
