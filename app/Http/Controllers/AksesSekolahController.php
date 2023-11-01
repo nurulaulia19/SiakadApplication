@@ -57,10 +57,10 @@ class AksesSekolahController extends Controller
     {
         $dataAs = AksesSekolah::all();
         $dataSekolah = Sekolah::all(); 
-        $guruRoleId = Role::where('role_name', 'admin')->value('role_id'); // Mendapatkan ID peran "guru"
+        $adminRoleId = Role::where('role_name', 'admin')->value('role_id'); // Mendapatkan ID peran "guru"
 
-        $dataUser = DataUser::whereHas('role', function ($query) use ($guruRoleId) {
-            $query->where('role_id', $guruRoleId);
+        $dataUser = DataUser::whereHas('role', function ($query) use ($adminRoleId) {
+            $query->where('role_id', $adminRoleId);
         })->get();
 
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -100,7 +100,7 @@ class AksesSekolahController extends Controller
         $customMessages = [
             'id_sekolah.unique' => 'Data sudah ada.',
             'id_sekolah.required' => 'Pilih sekolah.',
-            'user_id.required' => 'Pilih nama guru.'
+            'user_id.required' => 'Pilih nama admin.'
         ];
         
         $validatedData = $request->validate([
@@ -143,10 +143,10 @@ class AksesSekolahController extends Controller
     {
         $dataAs = AksesSekolah::where('id_as', $id_as)->first();
         $dataSekolah = Sekolah::all();
-        $guruRoleId = Role::where('role_name', 'admin')->value('role_id'); // Mendapatkan ID peran "guru"
+        $adminRoleId = Role::where('role_name', 'admin')->value('role_id'); // Mendapatkan ID peran "guru"
 
-        $dataUser = DataUser::whereHas('role', function ($query) use ($guruRoleId) {
-            $query->where('role_id', $guruRoleId);
+        $dataUser = DataUser::whereHas('role', function ($query) use ($adminRoleId) {
+            $query->where('role_id', $adminRoleId);
         })->get();
         
         // Menu
@@ -186,7 +186,7 @@ class AksesSekolahController extends Controller
         $customMessages = [
             'id_sekolah.unique' => 'Data sudah ada.',
             'id_sekolah.required' => 'Pilih sekolah.',
-            'user_id.required' => 'Pilih nama guru.'
+            'user_id.required' => 'Pilih nama admin.'
         ];
         
         $validatedData = $request->validate([

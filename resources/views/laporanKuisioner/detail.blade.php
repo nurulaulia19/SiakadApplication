@@ -42,6 +42,12 @@
                                                                 {{ $guruMapel->mapel->nama_pelajaran }}
                                                             @endif
                                                         @endforeach
+                                                        {{-- @foreach ($dataGp as $guruMapel) --}}
+                                                            {{-- @if ($dataGp->id_gp == $id_gp)
+                                                                {{ $dataGp->mapel->nama_pelajaran }} 
+                                                            @else
+                                                                No matching records found.
+                                                            @endif --}}
                                                     </th>
                                                 </tr>
                                                 
@@ -53,7 +59,12 @@
                                                             @if ($guruMapel->id_gp == $id_gp)
                                                                 {{ $guruMapel->user->user_name }}
                                                             @endif
-                                                         @endforeach
+                                                        @endforeach
+                                                         {{-- @if ($dataGp->id_gp == $id_gp)
+                                                            {{ $dataGp->user->user_name }} 
+                                                        @else
+                                                            No matching records found.
+                                                        @endif --}}
                                                     </th>
                                             </tbody>
                                         </table>

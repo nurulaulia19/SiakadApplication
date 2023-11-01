@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Models\RoleMenu;
 use FontLib\Table\Type\name;
 use App\Models\GuruPelajaran;
@@ -44,6 +45,7 @@ use App\Http\Controllers\TransaksiDetailAditional;
 use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\KategoriKuisionerController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
+use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\KuisionerSiswaController;
 
 /*
@@ -342,3 +344,7 @@ Route::get('/siswa/kuisioner', [KuisionerSiswaController::class,'index'])->name(
 Route::get('/siswa/detail/kuisioner/{id_gp}', [KuisionerSiswaController::class,'detailKuisioner'])->name('kuisionerSiswa.detail');
 Route::post('/siswa/jawaban/kuisioner', [KuisionerSiswaController::class,'storeJawabanKuisioner'])->name('jawabanKuisioner.store');
 Route::get('/siswa/isi/kuisioner/{id_gp}', [KuisionerSiswaController::class,'isiKuisioner'])->name('kuisionerSiswa.isi');
+
+// menu guru
+// jadwal
+Route::get('/guru/jadwal', [JadwalGuruController::class,'index'])->name('jadwalGuru.index');
