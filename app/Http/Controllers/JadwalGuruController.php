@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
 use Illuminate\Http\Request;
 use App\Models\GuruPelajaran;
+use App\Exports\JadwalGuruExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JadwalGuruController extends Controller
 {
@@ -27,46 +31,39 @@ class JadwalGuruController extends Controller
         //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
         //     ->paginate(10);
 
-        $query = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
-        ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-        ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
-        ->where('data_guru_pelajaran.user_id', $user_id);
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->where('data_guru_pelajaran.user_id', $user_id);
 
-        // Filter berdasarkan id_pelajaran jika diberikan
-        if ($request->has('tahun_ajaran_filter')) {
-            $idPelajaranFilter = $request->input('tahun_ajaran_filter');
-            $query->where('data_guru_pelajaran.tahun_ajaran', $idPelajaranFilter);
+        if ($request->has('sekolah') && $request->sekolah) {
+            $dataGp->where('data_sekolah.id_sekolah', $request->sekolah);
         }
 
-        // Filter berdasarkan id_sekolah jika diberikan
-        if ($request->has('id_sekolah_filter')) {
-            $idSekolahFilter = $request->input('id_sekolah_filter');
-            $query->where('data_sekolah.id_sekolah', $idSekolahFilter);
+        if ($request->has('tahun_ajaran') && $request->tahun_ajaran) {
+            $dataGp->where('data_guru_pelajaran.tahun_ajaran', $request->tahun_ajaran);
         }
 
-        // Lakukan query dengan filter
-        $dataGp = $query->orderBy('data_guru_pelajaran.id_gp', 'DESC')->paginate(10);
+        $dataGp = $dataGp->orderBy('data_guru_pelajaran.id_gp', 'DESC')->paginate(10);
 
-        // Ambil id_pelajaran dari data guru pelajaran
-        $idPelajaran = $dataGp->pluck('id_pelajaran');
-        $idSekolah = $dataGp->pluck('id_sekolah');
-
-        // Gunakan id_sekolah untuk mengambil dataSekolah
-        $dataSekolah = Sekolah::whereIn('id_sekolah', $idSekolah)
-            ->distinct()
-            ->get();
-
-        $tahunAjarans = GuruPelajaran::whereIn('id_pelajaran', $idPelajaran)
-            ->distinct()
-            ->pluck('tahun_ajaran');
-        $sekolahFilter = $request->input('id_sekolah_filter');
-        $tahunAjaranFilter = $request->input('tahun_ajaran_filter');
-
-
+        $listSekolah = GuruPelajaran::where('user_id', $user_id)
+            ->join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah')
+            ->all();
         
 
+        $listTahunAjaran = GuruPelajaran::where('user_id', $user_id)
+        ->pluck('tahun_ajaran')
+        ->unique()
+        ->values()
+        ->all();
+        // dd($listTahunAjaran);
 
+        $sekolahFilter = $request->input('sekolah');
+        $tahunFilter = $request->input('tahun_ajaran');
 
+        
          // Menu
          $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -94,7 +91,119 @@ class JadwalGuruController extends Controller
              ];
         }
 
-    return view('jadwalGuru.index', compact('dataGp', 'dataSekolah', 'tahunAjarans', 'sekolahFilter', 'tahunAjaranFilter', 'menuItemsWithSubmenus'));
+        // return view('jadwalGuru.index', compact('dataGp', 'dataSekolah', 'tahunAjarans', 'sekolahFilter', 'tahunAjaranFilter', 'menuItemsWithSubmenus'));
+        return view('jadwalGuru.index', compact('dataGp','listSekolah','listTahunAjaran','sekolahFilter','tahunFilter','menuItemsWithSubmenus'));
+    }
+
+
+    public function exportJadwalPDF(Request $request)
+    {
+        $user = auth()->user();
+        $user_id = $user->user_id;
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->where('data_guru_pelajaran.user_id', $user_id);
+
+        if ($request->has('sekolah') && $request->sekolah) {
+            $dataGp->where('data_sekolah.id_sekolah', $request->sekolah);
+        }
+
+        if ($request->has('tahun_ajaran') && $request->tahun_ajaran) {
+            $dataGp->where('data_guru_pelajaran.tahun_ajaran', $request->tahun_ajaran);
+        }
+
+        $dataGp = $dataGp->orderBy('data_guru_pelajaran.id_gp', 'DESC')->paginate(10);
+
+        $listSekolah = GuruPelajaran::where('user_id', $user_id)
+            ->join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah')
+            ->all();
+        
+
+        $listTahunAjaran = GuruPelajaran::where('user_id', $user_id)
+        ->pluck('tahun_ajaran')
+        ->unique()
+        ->values()
+        ->all();
+        // dd($listTahunAjaran);
+
+        $sekolahFilter = $request->input('sekolah');
+        $tahunFilter = $request->input('tahun_ajaran');
+        $namaSekolah = '';
+        if ($request->has('sekolah') && $request->sekolah) {
+            $namaSekolah = Sekolah::find($request->sekolah)->nama_sekolah;
+        }
+        // Buat opsi PDF
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+
+        // Inisialisasi Dompdf dengan opsi yang telah ditentukan
+        $pdf = new Dompdf($pdfOptions);
+
+        $htmlContent = view('jadwalGuru.eksportJadwalGuru', compact('dataGp','listSekolah','listTahunAjaran','sekolahFilter','tahunFilter','namaSekolah'))->render();
+
+        // Render view dengan data siswa ke dalam HTML
+        // $htmlContent = view('jadwalSiswa.eksportJadwalSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran'))->render();
+
+        // Muat konten HTML ke dalam Dompdf
+        $pdf->loadHtml($htmlContent);
+
+        // Atur ukuran kertas dan orientasi
+        $pdf->setPaper('A4', 'portrait');
+
+        // Render PDF
+        $pdf->render();
+
+        // Kembalikan PDF untuk diunduh
+        return $pdf->stream('Jadwal Mata Pelajaran.pdf');
+    }
+
+    public function exportJadwalExcel(Request $request)
+    {
+        $user = auth()->user();
+        $user_id = $user->user_id;
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->where('data_guru_pelajaran.user_id', $user_id);
+
+        if ($request->has('sekolah') && $request->sekolah) {
+            $dataGp->where('data_sekolah.id_sekolah', $request->sekolah);
+        }
+
+        if ($request->has('tahun_ajaran') && $request->tahun_ajaran) {
+            $dataGp->where('data_guru_pelajaran.tahun_ajaran', $request->tahun_ajaran);
+        }
+
+        $dataGp = $dataGp->orderBy('data_guru_pelajaran.id_gp', 'DESC')->paginate(10);
+
+        $listSekolah = GuruPelajaran::where('user_id', $user_id)
+            ->join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah')
+            ->all();
+        
+
+        $listTahunAjaran = GuruPelajaran::where('user_id', $user_id)
+        ->pluck('tahun_ajaran')
+        ->unique()
+        ->values()
+        ->all();
+        // dd($listTahunAjaran);
+
+        $sekolahFilter = $request->input('sekolah');
+        $tahunFilter = $request->input('tahun_ajaran');
+        // $namaSekolah = Sekolah::find($sekolahFilter)->nama_sekolah;
+        $namaSekolah = '';
+        if ($request->has('sekolah') && $request->sekolah) {
+            $namaSekolah = Sekolah::find($request->sekolah)->nama_sekolah;
+        }
+
+
+        return Excel::download(new JadwalGuruExport($dataGp,$listSekolah,$listTahunAjaran,$sekolahFilter,$tahunFilter, $namaSekolah), 'Jadwal Mata Pelajaran.xlsx');
+
     }
 
     /**

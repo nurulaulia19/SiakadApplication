@@ -25,7 +25,7 @@
 					        <div class="col-xs-12">
 					            <div class="panel">
 					                <div class="panel-heading">
-					                    <h3 class="panel-title">Jadwal Mata Pelajaran</h3>
+					                    <h3 class="panel-title">Data Nilai</h3>
 					                </div>
 					
 					                <!--Data Table-->
@@ -33,10 +33,13 @@
 					                <div class="panel-body">
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
-					                            <div class="col-sm-6 table-toolbar-left">
+					                            <div class="col-sm-7 table-toolbar-left">
+													{{-- <a href="{{ route('dataNilai.create') }}" class="btn btn-purple">
+														<i class="demo-pli-add icon-fw"></i>Add
+													</a> --}}
 					                            </div>
                                                 <div class="col-sm-2">
-                                                    <form method="GET" action="{{ route('jadwalGuru.index') }}">
+                                                    <form method="GET" action="{{ route('nilaiGuru.index') }}">
                                                         <div class="form-group">
                                                             <div class="row">
                                                                 <div class="col-12">
@@ -60,7 +63,7 @@
                                                     </form>
                                                 </div>
                                                 <div class="col-sm-2" >
-                                                    <form method="GET" action="{{ route('jadwalGuru.index') }}">
+                                                    <form method="GET" action="{{ route('nilaiGuru.index') }}">
                                                     <div class="form-group">
                                                         <div class="row">
                                                             <div class="col-12">
@@ -84,16 +87,6 @@
                                                     </div>
                                                     </form>
                                                 </div>
-                                                <div class="col-md-1" style="margin-top: 20px; margin-left: 50px;" >
-                                                    <div class="btn-group">
-                                                        <a href="{{ route('exportJadwalGuru.pdf', ['sekolah' => $sekolahFilter, 'tahun_ajaran' => $tahunFilter]) }}" class="btn btn-danger">
-                                                            <i style="font-size: 18px" class="fas fa-file-pdf"></i>
-                                                        </a>
-                                                        <a href="{{ route('exportJadwalGuru.excel', ['sekolah' => $sekolahFilter, 'tahun_ajaran' => $tahunFilter]) }}" style="margin-left: 15px" class="btn btn-success">
-                                                            <i style="font-size: 18px" class="fas fa-file-excel"></i>
-                                                        </a>                                                                                                               
-                                                    </div>
-                                                </div> 
 					                        </div>
 					                    </div>
 					                    <div class="table-responsive">
@@ -101,12 +94,11 @@
 					                            <thead>
 					                                <tr>
                                                         <th>No</th>
-                                                        <th>Nama Sekolah</th>
+					                                    <th>Nama Sekolah</th>
                                                         <th>Nama Kelas</th>
                                                         <th>Tahun Ajaran</th>
                                                         <th>Mata Pelajaran</th>
                                                         <th>Nama Guru</th>
-                                                        <th>Jadwal</th>
 					                                </tr>
 					                            </thead>
 					                            <tbody>
@@ -120,21 +112,14 @@
                                                             @else
                                                                 Nama Sekolah not assigned
                                                             @endif
-                                                        </td>  
+                                                        </td>    
                                                         <td style="vertical-align: middle;">
                                                             @if ($item->kelas)
                                                                 {{ $item->kelas->nama_kelas }}
                                                             @else
                                                                 Nama Kelas not assigned
                                                             @endif
-                                                        </td>  
-                                                        {{-- <td> @foreach ($item->mapelList as $mapelList)
-															{{ $mapelList->sekolah->nama_sekolah }}
-															@if (!$loop->last)
-																,
-															@endif
-															@endforeach
-														</td>  --}}
+                                                        </td>
                                                         <td style="vertical-align: middle;">{{ $item->tahun_ajaran }}</td>    
                                                         <td style="vertical-align: middle;">{{ $item->mapel->nama_pelajaran}}</td>   
                                                         <td style="vertical-align: middle;">
@@ -143,21 +128,29 @@
                                                             @else
                                                                 Nama Guru not assigned
                                                             @endif
-                                                        </td>
-                                                        <td style="vertical-align: middle;">
-                                                            @foreach ($item->guruMapelJadwal as $guruMapel)
-                                                                <a style="color: blue">
-                                                                    {{ $guruMapel->hari }} - {{ $guruMapel->jam_mulai }} to {{ $guruMapel->jam_selesai }}
-                                                                </a>
-                                                                <br>
-                                                            @endforeach
-                                                        </td>
+                                                        </td>                                       
+														<td class="table-action" style="vertical-align: middle;">
+                                                            <div style="display:flex; align-items:center">
+                                                                 <a style="margin-right: 10px;" href="{{ route('nilaiGuru.detail', ['id_gp' => $item->id_gp, 'id_kn' => $id_kn]) }}" class="btn btn-sm btn-warning">Detail</a>
+                                                            </div>													
+														</td>
 					                                </tr>
 													@endforeach
+													<script>
+														function confirmDelete(menuId) {
+															if (confirm('Are you sure you want to delete this item?')) {
+																document.getElementById('delete-form-' + menuId).submit();
+															}
+														}
+													</script>
+                                                     @if(session('success'))
+                                                     <div class="alert alert-info">
+                                                         {{ session('success') }}
+                                                     </div>
+                                                     @endif
 					                            </tbody>
 					                        </table>
 					                    </div>
-                                        {{-- {{ $dataGp->links('pagination::bootstrap-4') }} --}}
                                         {{ $dataGp->appends(['sekolah' => $sekolahFilter, 'tahun_ajaran' => $tahunFilter])->links('pagination::bootstrap-4') }}
 					                    <hr class="new-section-xs">
 					                    
@@ -191,7 +184,6 @@
         </button>
         <!--===================================================-->
     </div>
-    
     <!--===================================================-->
     <!-- END OF CONTAINER -->
 @endsection

@@ -47,6 +47,7 @@ use App\Http\Controllers\KategoriKuisionerController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
 use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\KuisionerSiswaController;
+use App\Http\Controllers\NilaiGuruController;
 
 /*
 |--------------------------------------------------------------------------
@@ -347,4 +348,10 @@ Route::get('/siswa/isi/kuisioner/{id_gp}', [KuisionerSiswaController::class,'isi
 
 // menu guru
 // jadwal
-Route::get('/guru/jadwal', [JadwalGuruController::class,'index'])->name('jadwalGuru.index');
+Route::get('/admin/jadwalGuru', [JadwalGuruController::class,'index'])->name('jadwalGuru.index');
+Route::get('/exportjadwalguru-pdf', [JadwalGuruController::class, 'exportJadwalPDF'])->name('exportJadwalGuru.pdf');
+Route::get('/exportjadwalguru-excel', [JadwalGuruController::class, 'exportJadwalExcel'])->name('exportJadwalGuru.excel');
+// nilai
+Route::get('/admin/nilaiGuru', [NilaiGuruController::class,'index'])->name('nilaiGuru.index');
+Route::get('/admin/nilaiGuru/detail/{id_gp}', [NilaiGuruController::class, 'detail'])->name('nilaiGuru.detail');
+Route::post('/admin/nilaiGuru/store', [NilaiGuruController::class, 'storeNilaiGuru'])->name('nilaiGuru.store');
