@@ -401,8 +401,25 @@ class GuruPelajaranController extends Controller
 
 
     public function detailNilai(Request $request, $id_gp) {
-        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel')->orderBy('id_gp', 'DESC')->paginate(10);
-        $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','siswa')->where('id_gp', $id_gp)->first();
+        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','siswa')->where('id_gp', $id_gp)->first();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
+            ->where('id_gp', $id_gp)
+            ->first();
+            
+            if (!$dataGp) {
+                // Jika ID GP tidak sesuai, Anda dapat mengarahkan pengguna kembali ke halaman sebelumnya dengan pesan kesalahan
+                return redirect()->back()->with('error', 'Data Guru Pelajaran tidak ditemukan.');
+            }
+
         $dataKn = KategoriNilai::all();
         $tab = $request->query('tab');
         $dataSekolah = Sekolah::all();
@@ -653,23 +670,47 @@ class GuruPelajaranController extends Controller
         $sekolahFilter = $request->input('sekolah_filter');
         $tahunAjaranFilter = $request->input('tahun_ajaran_filter');
 
+        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        //     ->whereExists(function ($query) use ($user_id) {
+        //         $query->select(DB::raw(1))
+        //             ->from('akses_sekolah')
+        //             ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+        //             ->where('akses_sekolah.user_id', $user_id);
+        //     })
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+        //         $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
+        //     })
+        //     ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
+        //         $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
+        //     })
+        //     ->paginate(10);
         $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
-            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
-            ->whereExists(function ($query) use ($user_id) {
-                $query->select(DB::raw(1))
-                    ->from('akses_sekolah')
-                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
-                    ->where('akses_sekolah.user_id', $user_id);
-            })
-            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
-            ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+        ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        ->whereExists(function ($query) use ($user_id) {
+            $query->select(DB::raw(1))
+                ->from('akses_sekolah')
+                ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id);
+        })
+        ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
+            $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
+        })
+        ->orderBy('data_guru_pelajaran.id_gp', 'DESC');
+
+        if ($sekolahFilter) {
+            $dataGp->where('data_guru_pelajaran.id_sekolah', $sekolahFilter);
+        } else {
+            // Jika $sekolahFilter tidak ada, Anda bisa membatasi hasil sesuai dengan akses sekolah pengguna
+            $dataGp->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
                 $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
-            })
-            ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
-                $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
-            })
-            ->paginate(10);
+            });
+        }
+
+        $dataGp = $dataGp->paginate(10);
 
         $id_kn = $request->input('id_kn');
         // dd($id_kn);
@@ -737,8 +778,25 @@ class GuruPelajaranController extends Controller
     }
 
     public function detailAbsensi(Request $request, $id_gp) {
-        $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','siswa')->where('id_gp', $id_gp)->first();
-        // $dataAd = DataAbsensi::where('id_gp', $id_gp)->get();
+        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','siswa')->where('id_gp', $id_gp)->first();
+        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+            ->whereExists(function ($query) use ($user_id) {
+                $query->select(DB::raw(1))
+                    ->from('akses_sekolah')
+                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id);
+            })
+            ->where('id_gp', $id_gp)
+            ->first();
+            
+            if (!$dataGp) {
+                // Jika ID GP tidak sesuai, Anda dapat mengarahkan pengguna kembali ke halaman sebelumnya dengan pesan kesalahan
+                return redirect()->back()->with('error', 'Data Guru Pelajaran tidak ditemukan.');
+            }
+        
         $tab = $request->query('tab');
         $dataSekolah = Sekolah::all();
         $dataAbsensi = DataAbsensi::where('id_gp', $id_gp)->get();
@@ -1290,25 +1348,35 @@ class GuruPelajaranController extends Controller
     }
   
     public function laporanKuisioner(Request $request) {
-        // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
         $user_id = auth()->user()->user_id; 
-        // Dapatkan ID sekolah yang terkait dengan pengguna yang sedang login
         $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
-
         // $dataSekolah = Sekolah::all();
         $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
             ->where('akses_sekolah.user_id', $user_id)
             ->get();
-            // dd($dataSekolah);
-        // $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
         $tahunAjarans = GuruPelajaran::whereIn('id_sekolah', $sekolahUser)
             ->distinct()
             ->pluck('tahun_ajaran');
-       
-            
         $sekolahFilter = $request->input('sekolah_filter');
         $tahunAjaranFilter = $request->input('tahun_ajaran_filter');
 
+        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        //     ->whereExists(function ($query) use ($user_id) {
+        //         $query->select(DB::raw(1))
+        //             ->from('akses_sekolah')
+        //             ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+        //             ->where('akses_sekolah.user_id', $user_id);
+        //     })
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+        //         $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
+        //     })
+        //     ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
+        //         $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
+        //     })
+        //     ->paginate(10);
         $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
             ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
@@ -1318,14 +1386,22 @@ class GuruPelajaranController extends Controller
                     ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
                     ->where('akses_sekolah.user_id', $user_id);
             })
-            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
-            ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
-                $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
-            })
             ->when($tahunAjaranFilter, function ($query) use ($tahunAjaranFilter) {
                 $query->where('data_guru_pelajaran.tahun_ajaran', $tahunAjaranFilter);
             })
-            ->paginate(10);
+            ->orderBy('data_guru_pelajaran.id_gp', 'DESC');
+
+            if ($sekolahFilter) {
+                $dataGp->where('data_guru_pelajaran.id_sekolah', $sekolahFilter);
+            } else {
+                // Jika $sekolahFilter tidak ada, Anda bisa membatasi hasil sesuai dengan akses sekolah pengguna
+                $dataGp->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+                    $query->whereIn('data_guru_pelajaran.id_sekolah', $sekolahUser);
+                });
+            }
+
+            $dataGp = $dataGp->paginate(10);
+
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'

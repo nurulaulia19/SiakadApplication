@@ -49,8 +49,12 @@ class KenaikanKelasController extends Controller
         //     ->when(isset($search), function ($query) use ($search) {
         //         $query->where('nis_siswa', 'LIKE', '%' . $search . '%');
         //     })
-        //     ->when(isset($sekolahFilter) && !empty($sekolahFilter), function ($query) use ($sekolahFilter) {
-        //         $query->where('id_sekolah', $sekolahFilter);
+        //     ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
+        //         $query->where(function ($subQuery) use ($sekolahUser) {
+        //             foreach ($sekolahUser as $id_sekolah) {
+        //                 $subQuery->orWhere('id_sekolah', $id_sekolah);
+        //             }
+        //         });
         //     })
         //     ->when(isset($tahunAjaranFilter) && !empty($tahunAjaranFilter), function ($query) use ($tahunAjaranFilter) {
         //         $query->where('tahun_ajaran', $tahunAjaranFilter);
@@ -59,18 +63,16 @@ class KenaikanKelasController extends Controller
         //     ->groupBy('id_sekolah', 'id_kelas', 'tahun_ajaran')
         //     ->paginate(10);
 
-        
-
         $dataKk = KenaikanKelas::orderBy('id_kk', 'desc')
             ->when(isset($search), function ($query) use ($search) {
                 $query->where('nis_siswa', 'LIKE', '%' . $search . '%');
             })
-            ->when(count($sekolahUser) > 0, function ($query) use ($sekolahUser) {
-                $query->where(function ($subQuery) use ($sekolahUser) {
-                    foreach ($sekolahUser as $id_sekolah) {
-                        $subQuery->orWhere('id_sekolah', $id_sekolah);
-                    }
-                });
+            ->when($sekolahFilter, function ($query) use ($sekolahFilter) {
+                $query->where('id_sekolah', $sekolahFilter);
+            }, function ($query) use ($sekolahUser) {
+                if (count($sekolahUser) > 0) {
+                    $query->whereIn('id_sekolah', $sekolahUser);
+                }
             })
             ->when(isset($tahunAjaranFilter) && !empty($tahunAjaranFilter), function ($query) use ($tahunAjaranFilter) {
                 $query->where('tahun_ajaran', $tahunAjaranFilter);
@@ -78,7 +80,6 @@ class KenaikanKelasController extends Controller
             ->select('id_sekolah', 'id_kelas', 'tahun_ajaran', DB::raw('GROUP_CONCAT(id_kk, ", ") as id_kk'), DB::raw('GROUP_CONCAT(nis_siswa SEPARATOR ", ") as nis_siswa'))
             ->groupBy('id_sekolah', 'id_kelas', 'tahun_ajaran')
             ->paginate(10);
-
 
         // sidebar menu
         $user_id = auth()->user()->user_id;

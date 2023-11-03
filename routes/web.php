@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AbsensiGuruController;
 use App\Models\RoleMenu;
 use FontLib\Table\Type\name;
 use App\Models\GuruPelajaran;
@@ -46,6 +46,7 @@ use App\Http\Controllers\TransaksiDetailController;
 use App\Http\Controllers\KategoriKuisionerController;
 use App\Http\Controllers\GuruPelajaranJadwalController;
 use App\Http\Controllers\JadwalGuruController;
+use App\Http\Controllers\KuisionerGuruController;
 use App\Http\Controllers\KuisionerSiswaController;
 use App\Http\Controllers\NilaiGuruController;
 
@@ -62,7 +63,7 @@ use App\Http\Controllers\NilaiGuruController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 // Route::get('/admin/dashboard', function () {
 //     return view('dashboard');
@@ -351,7 +352,19 @@ Route::get('/siswa/isi/kuisioner/{id_gp}', [KuisionerSiswaController::class,'isi
 Route::get('/admin/jadwalGuru', [JadwalGuruController::class,'index'])->name('jadwalGuru.index');
 Route::get('/exportjadwalguru-pdf', [JadwalGuruController::class, 'exportJadwalPDF'])->name('exportJadwalGuru.pdf');
 Route::get('/exportjadwalguru-excel', [JadwalGuruController::class, 'exportJadwalExcel'])->name('exportJadwalGuru.excel');
+
 // nilai
 Route::get('/admin/nilaiGuru', [NilaiGuruController::class,'index'])->name('nilaiGuru.index');
 Route::get('/admin/nilaiGuru/detail/{id_gp}', [NilaiGuruController::class, 'detail'])->name('nilaiGuru.detail');
-Route::post('/admin/nilaiGuru/store', [NilaiGuruController::class, 'storeNilaiGuru'])->name('nilaiGuru.store');
+Route::post('/admin/nilaiGuru/store', [NilaiGuruController::class, 'store'])->name('nilaiGuru.store');
+
+// absensi
+Route::get('/admin/absensiGuru', [AbsensiGuruController::class,'index'])->name('absensiGuru.index');
+Route::get('/admin/absensiGuru/detail/{id_gp}', [AbsensiGuruController::class, 'detail'])->name('absensiGuru.detail');
+Route::post('/admin/absensiGuru/store', [AbsensiGuruController::class, 'store'])->name('absensiGuru.store');
+Route::post('/admin/absensiGuruDetail/store', [AbsensiGuruController::class, 'storeAbsensiGuruDetail'])->name('absensiGuruDetail.store');
+Route::delete('/admin/absensiGuru/destroy/{id_absensi}', [AbsensiGuruController::class, 'destroyAbsensiGuru'])->name('absensiGuru.destroy');
+
+// laporan kuisioner
+Route::get('/admin/kuisionerGuru/laporan', [KuisionerGuruController::class,'laporanKuisionerGuru'])->name('laporanKuisionerGuru.laporan');
+Route::get('/admin/kuisionerGuru/detail/{id_gp}', [KuisionerGuruController::class, 'detailLaporanKuisionerGuru'])->name('laporanKuisionerGuru.detail');

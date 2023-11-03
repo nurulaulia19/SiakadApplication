@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,7 @@ class DataUser extends Authenticatable
     {
         return $this->hasMany(AksesCabang::class, 'user_id', 'user_id');
     }
+    
 
     public function updateProfile(array $data)
     {
@@ -69,4 +71,6 @@ class DataUser extends Authenticatable
     {
         return $this->hasMany(PelajaranKelas::class, 'user_id', 'user_id');
     }
+
 }
+
