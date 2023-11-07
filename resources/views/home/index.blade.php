@@ -25,7 +25,7 @@
 					<div class="row">
 						<div class="panel" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
 							<div class="panel-heading">
-								<h3 class="panel-title">Laporan Transaksi</h3>
+								<h3 class="panel-title">Dashboard Admin</h3>
 							</div>
 
 							<div class="pad-all">
@@ -34,33 +34,33 @@
 						</div>
 					</div>					
 					    <div class="row">
-					        <div class="col-md-3">
-					            <div class="panel panel-warning panel-colorful media middle pad-all">
+					    	<div class="col-md-6">
+					            <div class="panel panel-danger panel-colorful media middle pad-all">
 					                <div class="media-left">
 					                    <div class="pad-hor">
-											<i class="fas fa-money-bill icon-3x"></i>
-					                    </div>
-					                </div>
-					                {{-- <div class="media-body">
-										<p class="text-2x mar-no text-semibold">{{ $jumlahTransaksi }}</p>
-										<p class="mar-no">Transaksi</p>
-									</div> --}}
-					            </div>
-					        </div>
-					        {{-- <div class="col-md-3">
-					            <div class="panel panel-info panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-					                        <i class="fas fa-shopping-bag icon-3x"></i>
+											<i class="fas fa-book-open icon-3x"></i>
 					                    </div>
 					                </div>
 					                <div class="media-body">
-					                    <p class="text-2x mar-no text-semibold">{{ $jumlahJasa}}</p>
-					                    <p class="mar-no">Jasa</p>
+										{{-- <p class="text-2x mar-no text-semibold">{{ $jumlahMapel }}</p> --}}
+										<p class="mar-no">Mata Pelajaran</p>
+									</div>
+					            </div>
+					        </div>
+					        <div class="col-md-6">
+					            <div class="panel panel-warning panel-colorful media middle pad-all">
+					                <div class="media-left">
+					                    <div class="pad-hor">
+					                        <i class="fas fa-users icon-3x"></i>
+					                    </div>
+					                </div>
+					                <div class="media-body">
+					                    {{-- <p class="text-2x mar-no text-semibold">{{ $jumlahSiswa}}</p> --}}
+					                    <p class="mar-no">Siswa</p>
 					                </div>
 					            </div>
 					        </div>
-					        <div class="col-md-3">
+					        {{-- <div class="col-md-3">
 					            <div class="panel panel-mint panel-colorful media middle pad-all">
 					                <div class="media-left">
 					                    <div class="pad-hor">
@@ -85,7 +85,7 @@
 					                    <p class="mar-no">Jumlah Penjualan</p>
 					                </div>
 					            </div>
-					        </div> --}}
+					        </div>  --}}
 					    </div>
 						@if(session('error'))
 							<div class="alert alert-danger">

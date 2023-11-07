@@ -95,11 +95,12 @@ Auth::routes();
 Auth::routes([
     'verify' =>true
 ]);
+// Route::post('/login', [LoginController::class, 'login'])->name('login')->middleware('checkUserRole');
 Route::get('logout', [LoginController::class, 'logout']);
 Route::get('/admin/login', [LoginController::class, 'showLoginForm'])->name('Adminlogin');
 Route::get('/admin/register', [RegisterController::class, 'showRegisterForm'])->name('Adminregister');
 Route::get('/admin/home', [App\Http\Controllers\HomeController::class, 'index'])->name('admin.home');
-Route::get('logout', [LoginController::class, 'showRegisterForm']);
+// Route::get('logout', [LoginController::class, 'showRegisterForm']);
 Route::get('/admin/user', [App\Http\Controllers\KategoriKuisionerController::class, 'user'])->name('user');
 Route::get('/admin/role', [App\Http\Controllers\MenuController::class, 'role'])->name('role');
 Route::get('/admin/user', function () {
@@ -368,3 +369,6 @@ Route::delete('/admin/absensiGuru/destroy/{id_absensi}', [AbsensiGuruController:
 // laporan kuisioner
 Route::get('/admin/kuisionerGuru/laporan', [KuisionerGuruController::class,'laporanKuisionerGuru'])->name('laporanKuisionerGuru.laporan');
 Route::get('/admin/kuisionerGuru/detail/{id_gp}', [KuisionerGuruController::class, 'detailLaporanKuisionerGuru'])->name('laporanKuisionerGuru.detail');
+
+// home guru
+Route::get('/admin/homeGuru', [App\Http\Controllers\HomeGuruController::class, 'index'])->name('guru.home');

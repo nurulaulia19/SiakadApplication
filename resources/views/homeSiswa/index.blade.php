@@ -66,39 +66,12 @@
 									</a>
 					            </div>
 					        </div>
-					        {{-- <div class="col-md-3">
-					            <div class="panel panel-mint panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-					                        <i class="fas fa-tag icon-3x"></i>
-					                    </div>
-					                </div>
-					                <div class="media-body">
-					                    <p class="text-2x mar-no text-semibold">{{ $jumlahKategori }}</p>
-					                    <p class="mar-no">Kategori</p>
-					                </div>
-					            </div>
-					        </div>
-							<div class="col-md-3">
-					            <div class="panel panel-danger panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-					                        <i class="fas fa-calculator icon-3x"></i>
-					                    </div>
-					                </div>
-					                <div class="media-body">
-					                    <p class="text-2x mar-no text-semibold">{{ number_format($totalHargaProduk, 2, ',', '.') }}</p>
-					                    <p class="mar-no">Jumlah Penjualan</p>
-					                </div>
-					            </div>
-					        </div>
-					    </div> --}}
-						@if(session('error'))
-							<div class="alert alert-danger">
-                                {{ session('error') }}
-                            </div>
-				        @endif
-                </div>
+							@if(session('error'))
+								<div class="alert alert-danger">
+									{{ session('error') }}
+								</div>
+							@endif
+                		</div>
                 <!--===================================================-->
                 <!--End page content-->
 

@@ -23,10 +23,26 @@ class LoginController extends Controller
     
     $user = DataUser::where('user_name', $credentials['user_name'])->first();
     
+    // if ($user && Hash::check($credentials['user_password'], $user->user_password)) {
+    //     Auth::login($user);
+    //     return redirect()->intended('admin/home');
+    // }
     if ($user && Hash::check($credentials['user_password'], $user->user_password)) {
-        Auth::login($user);
-        return redirect()->intended('admin/home');
+        if ($user->role_id == 2) {
+            Auth::login($user);
+            return redirect()->intended('admin/homeGuru');
+        } else {
+            Auth::login($user);
+            return redirect()->intended('admin/home');
+        }
     }
+    
+    // Handle jika autentikasi gagal
+    // Misalnya, tampilkan pesan error atau tindakan lain yang sesuai
+    
+    
+    
+    
     
     return back()->withErrors([
         'user_name' => 'Invalid credentials.',
@@ -115,7 +131,17 @@ class LoginController extends Controller
      *
      * @var string
      */
+
     protected $redirectTo = '/admin/home';
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     if ($user->role_id == 2) {
+    //         return redirect('/admin/homeGuru');
+    //     } else {
+    //         return redirect('/admin/home');
+    //     }
+    // }
+
 
     /**
      * Create a new controller instance.
