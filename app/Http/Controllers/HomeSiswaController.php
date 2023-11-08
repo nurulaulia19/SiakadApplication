@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Kelas;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
+use App\Models\DataNilai;
 use App\Models\DataSiswa;
 use Illuminate\Http\Request;
 use App\Models\DataPelajaran;
 use App\Models\GuruPelajaran;
+use App\Models\KategoriNilai;
 use App\Models\KenaikanKelas;
 use App\Models\PelajaranKelas;
+use App\Models\GuruPelajaranJadwal;
 
 class HomeSiswaController extends Controller
 {
@@ -136,29 +139,6 @@ class HomeSiswaController extends Controller
                     ->where('tahun_ajaran', $tahunAjaran)
                     ->with('mapelList')
                     ->first();
-        
-                // if ($pelajaranKelas) {
-                //     $pelajaranData = $pelajaranKelas->mapelList;
-                    
-                //     $totalMataPelajaran = $pelajaranData->count();
-                //     $pelajaran = DataPelajaran::where('id_pelajaran', $pelajaranData)->get();
-                //     $guruPelajaran = GuruPelajaran::where('id_pelajaran', $pelajaranData)
-                //     ->where('tahun_ajaran', $tahunAjaran)
-                //     ->with('user', 'nilai')
-                //     ->get();
-                //     dd($guruPelajaran);
-
-
-                //     $nilaiSiswa = $guruPelajaran->pluck('nilai')->flatten();
-                    
-                //     // Menghitung total nilai
-                //     $totalNilai = $nilaiSiswa->sum();
-                    
-                //     // Menghitung jumlah nilai
-                //     $jumlahNilai = $nilaiSiswa->count();
-                    
-                //     // Menghitung nilai rata-rata
-                //     $rataRata = $totalNilai / $jumlahNilai;
 
                 if ($pelajaranKelas) {
                     $pelajaranData = $pelajaranKelas->mapelList->pluck('id_pelajaran')->toArray();
@@ -167,13 +147,9 @@ class HomeSiswaController extends Controller
                     // Langkah 3: Dapatkan data pelajaran yang sesuai dengan id_pelajaran
                     $pelajaran = DataPelajaran::whereIn('id_pelajaran', $pelajaranData)->get();
                     // dd($pelajaran);
-
-                    // $guruPelajaran = GuruPelajaran::where('id_pelajaran', $pelajaranData)
-                    //     ->with('user', 'guruMapelJadwal')
-                    //     ->get();
                     $guruPelajaran = GuruPelajaran::whereIn('id_pelajaran', $pelajaranData)
                     ->where('tahun_ajaran', $tahunAjaran)
-                    ->with('user', 'absensiDetail')
+                    ->with('user', 'nilai')
                     ->get();
                     
                     $nilaiSiswa = $guruPelajaran->pluck('nilai')->flatten();
@@ -198,7 +174,96 @@ class HomeSiswaController extends Controller
                     };
 
                     // dd($rataRata);
+                    $dataJadwal = GuruPelajaranJadwal::all(); // Isi dengan data jadwal dari database
+                    $namaHariInggris = date('l'); // Mendapatkan nama hari dalam bahasa Inggris
+
+                    // Membuat pemetaan dari nama hari Inggris ke nama hari dalam bahasa Indonesia
+                    $mapHari = [
+                        'Monday' => 'senin',
+                        'Tuesday' => 'selasa',
+                        'Wednesday' => 'rabu',
+                        'Thursday' => 'kamis',
+                        'Friday' => 'jumat',
+                        'Saturday' => 'sabtu',
+                        'Sunday' => 'minggu',
+                    ];
+
+                    $hariIni = $mapHari[$namaHariInggris];
+
+                    // $hariIni = 'kamis';
                     
+                    // $gpData = GuruPelajaran::whereHas('guruMapelJadwal', function ($query) use ($hariIni) {
+                    //     $query->where('hari', $hariIni);
+                    // })->get();
+
+                    $gpData =  GuruPelajaran::whereIn('id_pelajaran', $pelajaranData)
+                    ->where('tahun_ajaran', $tahunAjaran)
+                    ->with('user', 'siswa')
+                    ->whereHas('guruMapelJadwal', function ($query) use ($hariIni) {
+                        $query->where('hari', $hariIni);
+                    })->get();
+                    
+                    // $dataNilai = [];
+                    // $nisSiswa = $siswa->nis_siswa; // Ambil NIS siswa yang login
+
+                    // foreach ($guruPelajaran as $guruMapel) {
+                    //     foreach ($guruMapel->nilai as $nilai) {
+                    //         // Filter data nilai berdasarkan NIS siswa yang login
+                    //         if ($nilai->nis_siswa == $nisSiswa) {
+                    //             // Mengakses nama_kategori melalui relasi
+                    //             $kategori = $nilai->kategoriNilai;
+
+                    //             if ($kategori) {
+                    //                 $dataNilai[] = [
+                    //                     'label' => $kategori->kategori,
+                    //                     'value' => $nilai->nilai ?? 0,
+                    //                 ];
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                   
+                    $dataNilai = [];
+                    $nisSiswa = $siswa->nis_siswa; // Ambil NIS siswa yang login
+                    $kategoriData = [];
+
+                    foreach ($guruPelajaran as $guruMapel) {
+                        foreach ($guruMapel->nilai as $nilai) {
+                            // Filter data nilai berdasarkan NIS siswa yang login
+                            if ($nilai->nis_siswa == $nisSiswa) {
+                                // Mengakses nama_kategori melalui relasi
+                                $kategori = $nilai->kategoriNilai;
+
+                                if ($kategori) {
+                                    $kategoriId = $kategori->id_kn;
+
+                                    // Mengecek apakah sudah ada data untuk kategori ini
+                                    if (isset($kategoriData[$kategoriId])) {
+                                        $kategoriData[$kategoriId]['nilai'][] = $nilai->nilai;
+                                    } else {
+                                        $kategoriData[$kategoriId] = [
+                                            'label' => $kategori->kategori,
+                                            'nilai' => [$nilai->nilai],
+                                        ];
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Hitung rata-rata untuk setiap kategori
+                    foreach ($kategoriData as $kategoriId => $kategoriInfo) {
+                        $totalNilai = array_sum($kategoriInfo['nilai']);
+                        $jumlahNilai = count($kategoriInfo['nilai']);
+                        $rataRata = $jumlahNilai > 0 ? $totalNilai / $jumlahNilai : 0;
+
+                        $dataNilai[] = [
+                            'label' => $kategoriInfo['label'],
+                            'value' => $rataRata,
+                        ];
+                    }
+
+                    // dd($dataNilai);
 
                 } else {
                     // Tindakan jika data pelajaran kelas tidak ditemukan
@@ -213,11 +278,25 @@ class HomeSiswaController extends Controller
             $pelajaran = collect(); // Menggunakan koleksi kosong jika pengguna tidak ditemukan
         }
 
+        $namaHariInggris = date('l'); // Mendapatkan nama hari dalam bahasa Inggris
+
+        // Membuat pemetaan dari nama hari Inggris ke nama hari dalam bahasa Indonesia
+        $mapHari = [
+            'Monday' => 'senin',
+            'Tuesday' => 'selasa',
+            'Wednesday' => 'rabu',
+            'Thursday' => 'kamis',
+            'Friday' => 'jumat',
+            'Saturday' => 'sabtu',
+            'Sunday' => 'minggu',
+        ];
+
+        $hariIni = $mapHari[$namaHariInggris];
 
         if (isset($guruPelajaran)) {
-            return view('homeSiswa.index', compact('siswa', 'totalMataPelajaran', 'totalNilaiRata'));
+            return view('homeSiswa.index', compact('siswa', 'totalMataPelajaran', 'totalNilaiRata', 'dataJadwal', 'gpData', 'hariIni','dataNilai'));
         } else {
-            return view('homeSiswa.index', compact('siswa'));
+            return view('homeSiswa.index', compact('siswa','hariIni'));
         }
         // return view('homeSiswa.index', compact('siswa', 'totalMataPelajaran', 'totalNilaiRata'));
     }

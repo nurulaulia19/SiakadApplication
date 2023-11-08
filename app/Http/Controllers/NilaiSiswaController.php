@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Models\Kelas;
+use App\Models\DataNilai;
 use Illuminate\Http\Request;
 use App\Models\DataPelajaran;
 use App\Models\GuruPelajaran;
 use App\Models\KategoriNilai;
 use App\Models\KenaikanKelas;
 use App\Models\PelajaranKelas;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\NilaiSiswaExport;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NilaiSiswaController extends Controller
 {
@@ -115,9 +116,6 @@ class NilaiSiswaController extends Controller
                     $pelajaran = DataPelajaran::whereIn('id_pelajaran', $pelajaranData)->get();
                     // dd($pelajaran);
 
-                    // $guruPelajaran = GuruPelajaran::where('id_pelajaran', $pelajaranData)
-                    //     ->with('user', 'guruMapelJadwal')
-                    //     ->get();
                     $guruPelajaran = GuruPelajaran::whereIn('id_pelajaran', $pelajaranData)
                     ->where('tahun_ajaran', $tahunAjaran)
                     ->with('user', 'nilai')
@@ -223,9 +221,7 @@ class NilaiSiswaController extends Controller
                 ->where('nis_siswa', $nisSiswa)
                 ->first();
 
-            $dataKategori = KategoriNilai::where('id_sekolah', $idSekolah)
-                ->orderBy('id_kn', 'desc')
-                ->get();
+            $dataKategori = KategoriNilai::where('id_sekolah', $idSekolah)->get();
         
             if ($kenaikanKelas) {
                 $idKelas = $kenaikanKelas->id_kelas;
@@ -432,10 +428,27 @@ class NilaiSiswaController extends Controller
 
     }
 
-    public function create()
-    {
-        //
-    }
+    // public static function getNilaiByKategori($id_gp, $kategori, $nis_siswa) {
+    //     $dataNilai = DataNilai::where('id_gp', $id_gp)
+    //         ->where('kategori', $kategori)
+    //         ->where('nis_siswa', $nis_siswa)
+    //         ->first();
+    
+    //     if ($dataNilai) {
+    //         // Gunakan relasi untuk mengakses DataPelajaran
+    //         $dataPelajaran = $dataNilai->guruPelajaran->dataPelajaran;
+    
+    //         return [
+    //             'nilai' => @$dataNilai->nilai,
+    //             'nama_pelajaran' => $dataPelajaran->nama_pelajaran, // Misalnya, mengambil nama_pelajaran dari relasi.
+    //             // Tambahkan informasi lain yang Anda butuhkan dari DataPelajaran.
+    //         ];
+    //     } else {
+    //         return null;
+    //     }
+    // }
+    
+    
 
     /**
      * Store a newly created resource in storage.

@@ -18,6 +18,7 @@ use App\Models\GuruPelajaran;
 use App\Models\KenaikanKelas;
 use App\Models\AditionalProduk;
 use Illuminate\Support\Facades\DB;
+use App\Models\GuruPelajaranJadwal;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -82,8 +83,35 @@ class HomeGuruController extends Controller
             $jumlahSiswa += $dataKk->count();
         }
 
-        
+        $dataJadwal = GuruPelajaranJadwal::all(); // Isi dengan data jadwal dari database
+        // $gpData = GuruPelajaran::all();
+        // Misalkan Anda menggunakan Laravel Eloquent
+        $namaHariInggris = date('l'); // Mendapatkan nama hari dalam bahasa Inggris
 
+        // Membuat pemetaan dari nama hari Inggris ke nama hari dalam bahasa Indonesia
+        $mapHari = [
+            'Monday' => 'senin',
+            'Tuesday' => 'selasa',
+            'Wednesday' => 'rabu',
+            'Thursday' => 'kamis',
+            'Friday' => 'jumat',
+            'Saturday' => 'sabtu',
+            'Sunday' => 'minggu',
+        ];
+
+        $hariIni = $mapHari[$namaHariInggris];
+
+        // $hariIni = 'senin';
+        
+        $gpData = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        ->where('data_guru_pelajaran.user_id', $user_id)
+        ->whereHas('guruMapelJadwal', function ($query) use ($hariIni) {
+            $query->where('hari', $hariIni);
+        })->get();
+
+        // dd($gpData);
          // MENU
          $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
 
@@ -111,7 +139,7 @@ class HomeGuruController extends Controller
              ];
          }
 
-        return view('homeGuru.index', compact('menuItemsWithSubmenus','jumlahMapel','jumlahSiswa'));
+        return view('homeGuru.index', compact('menuItemsWithSubmenus','jumlahMapel','jumlahSiswa','dataJadwal','gpData','hariIni'));
     }
 
 }

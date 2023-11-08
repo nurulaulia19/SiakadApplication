@@ -44,10 +44,10 @@
 
     <!--Demo [ DEMONSTRATION ]-->
 
-    {{-- ini aku hapuuus --}}
+
     <link href="{{ asset('assets/css/demo/nifty-demo.min.css') }}" rel="stylesheet">
 
-    {{-- <link href="{{ asset('assets/plugins/morris-js/morris.min.css') }}" rel="stylesheet"> --}}
+    <link href="{{ asset('assets/plugins/morris-js/morris.min.css') }}" rel="stylesheet">
 
     {{-- tambahan --}}
 
@@ -105,10 +105,27 @@
   
     <script src="{{ asset('assets/plugins/morris-js/raphael-js/raphael.min.js') }}"></script>
     
-  
-  
     <!--Morris.js Sample [ SAMPLE ]-->
     <script src="{{ asset('assets/js/demo/morris-js.js') }}"></script>
+
+    {{-- <script>
+      Morris.Donut({
+        element: 'demo-morris-donut',
+        data: [
+            {label: 'Download Sales', value: 12},
+            {label: 'In-Store Sales', value: 30},
+            {label: 'Mail-Order Sales', value: 20}
+        ],
+        colors: [
+            '#ec407a',
+            '#03a9f4',
+            '#d8dfe2'
+        ],
+        resize:true
+    });
+    </script> --}}
+
+    
 
     <!--jQuery [ REQUIRED ]-->
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -121,10 +138,7 @@
     <!--NiftyJS [ RECOMMENDED ]-->
     <script src="{{ asset('assets/js/nifty.min.js') }}"></script>
 
-	<script src="{{url('assets/js/components/bootstrap.js')}}"></script>
-    <!--Demo script [ DEMONSTRATION ]-->
-    {{-- ini aku komen --}}
-    {{-- <script src="{{ asset('assets/js/demo/nifty-demo.min.js') }}"></script> --}}
+	  <script src="{{url('assets/js/components/bootstrap.js')}}"></script>
     
     <!--Flot Chart [ OPTIONAL ]-->
     <script src="{{ asset('assets/plugins/flot-charts/jquery.flot.min.js') }}"></script>

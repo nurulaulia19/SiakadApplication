@@ -93,7 +93,6 @@
                                                         @foreach ($dataKategori as $item)
                                                             <th>Nilai {{ $item->kategori }}</th>
                                                         @endforeach
-
 					                                </tr>
 					                            </thead>
                                                 <tbody>
@@ -111,19 +110,6 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                        {{-- @if (count($guruPelajaran) > 0)
-                                                            @foreach ($guruPelajaran as $guruMapel)
-                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                                                                    @foreach ($guruMapel->nilai as $nilai)
-                                                                        <td>
-                                                                            {{ $nilai->nilai ?? '' }}
-                                                                        </td>
-                                                                    @endforeach
-                                                                @endif
-                                                            @endforeach
-                                                        @else
-                                                            <td></td>
-                                                        @endif --}}
                                                         @if (count($guruPelajaran) > 0)
                                                             @php
                                                                 $nilaiAvailable = false;
@@ -143,7 +129,6 @@
                                                         @else
                                                             <td></td>
                                                         @endif
-
                                                     </tr>
                                                 @endforeach
                                                 </tbody>
