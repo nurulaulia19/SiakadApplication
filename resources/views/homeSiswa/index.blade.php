@@ -63,6 +63,7 @@
                                         </div>
                                         <!--===================================================-->
                                         <!-- End Info -->
+										@if (isset($gpData))
 										<div class="col-md-5">
 											<!-- Donut Chart -->
 											<!---------------------------------->
@@ -75,6 +76,7 @@
 												</div>
 											</div>
 										</div>
+										@endif
                                     </div>
                                     <div class="col-lg-6" style="padding-left: 30px">
                                         <h4>Jadwal Pelajaran</h4>
@@ -84,7 +86,7 @@
                                 
                                             <!-- Timeline header -->
                                             <div class="timeline-header">
-												@if (isset($datGp))
+												@if (isset($dataGp))
 													@foreach ($gpData as $gp)
 														<div class="timeline-header-title bg-purple">{{ $hariIni }}</div>
 													@endforeach
@@ -237,6 +239,7 @@
         });
     });
 </script> --}}
+@if (isset($gpData))
 <script>
     var dataNilai = {!! json_encode($dataNilai) !!};
 
@@ -255,3 +258,4 @@
         });
     });
 </script>
+@endif

@@ -21,8 +21,9 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
     protected $dataKategori;
     protected $dataSekolah;
     protected $siswa;
+    protected $nisSiswa;
 
-    public function __construct($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori, $dataSekolah, $siswa)
+    public function __construct($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori, $dataSekolah, $siswa, $nisSiswa)
     {
         $this->tahunAjaranFilter = $tahunAjaranFilter;
         $this->kelasFilter = $kelasFilter;
@@ -33,6 +34,7 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
         $this->dataKategori = $dataKategori;
         $this->dataSekolah = $dataSekolah;
         $this->siswa = $siswa;
+        $this->nisSiswa = $nisSiswa;
     }
 
 
@@ -56,6 +58,7 @@ class NilaiSiswaExport implements FromView, ShouldAutoSize, WithStyles
             'dataKategori' => $this->dataKategori,
             'dataSekolah' => $this->dataSekolah,
             'siswa' => $this->siswa,
+            'nisSiswa' => $this->nisSiswa,
         ];
     
         // Periksa apakah $guruPelajaran memiliki data sebelum menambahkannya ke $viewData

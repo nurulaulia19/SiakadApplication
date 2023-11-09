@@ -149,16 +149,7 @@
                         @endif
                     @endforeach
                 </td>
-                {{-- @foreach ($guruPelajaran as $guruMapel)
-                    @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
-                        @foreach ($guruMapel->nilai as $nilai)
-                            <td style="border:1px solid #000; text-align:center; vertical-align:middle;">
-                                {{ $nilai->nilai }}
-                            </td>
-                         @endforeach
-                    @endif
-                @endforeach --}}
-                @if (count($guruPelajaran) > 0)
+                {{-- @if (count($guruPelajaran) > 0)
                     @foreach ($guruPelajaran as $guruMapel)
                         @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
                             @foreach ($guruMapel->nilai as $nilai)
@@ -170,7 +161,35 @@
                     @endforeach
                 @else
                     <td style="border:1px solid #000; text-align:center; vertical-align:middle;"></td>
+                @endif --}}
+                @if (count($guruPelajaran) > 0)
+                    @php
+                        $nilaiAvailable = false;
+                    @endphp
+                    @foreach ($guruPelajaran as $guruMapel)
+                        @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                            @foreach ($dataKategori as $kategori)
+                                @php
+                                    $nilai = App\Http\Controllers\NilaiSiswaController::getNilaiByKategori($guruMapel->id_gp, $kategori->id_kn, $nisSiswa);
+                                @endphp
+                                <td style="border:1px solid #000; text-align:center; vertical-align:middle;">{{ $nilai ?? '' }}</td>
+                            @endforeach
+                            @php
+                                $nilaiAvailable = true;
+                            @endphp
+                        @endif
+                    @endforeach
+                    @if (!$nilaiAvailable)
+                        @foreach ($dataKategori as $kategori)
+                            <td style="border:1px solid #000; text-align:center; vertical-align:middle;"></td>
+                        @endforeach
+                    @endif
+                @else
+                    @foreach ($dataKategori as $kategori)
+                        <td style="border:1px solid #000; text-align:center; vertical-align:middle;"></td>
+                    @endforeach
                 @endif
+
             </tr>
         @endforeach
         </tbody>

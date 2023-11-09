@@ -97,7 +97,7 @@ class NilaiSiswaController extends Controller
             $dataKategori = KategoriNilai::where('id_sekolah', $idSekolah)
                 ->orderBy('id_kn', 'desc')
                 ->get();
-        
+                // dd($dataKategori);
             if ($kenaikanKelas) {
                 $idKelas = $kenaikanKelas->id_kelas;
                 $tahunAjaran = $kenaikanKelas->tahun_ajaran;
@@ -121,9 +121,13 @@ class NilaiSiswaController extends Controller
                     ->with('user', 'nilai')
                     ->get();
                     
-                   
-        
-                    // dd($guruPelajaran);
+                    //coba
+                    // $guruPelajaran = GuruPelajaran::with(['nilai' => function ($query) use ($dataKategori, $nisSiswa) {
+                    //     $query->whereIn('kategori', $dataKategori->pluck('id_kn'))->where('nis_siswa', $nisSiswa);
+                    // }])
+                    // ->where('tahun_ajaran', $tahunAjaran)
+                    // ->get();
+
                 } else {
                     // Tindakan jika data pelajaran kelas tidak ditemukan
                     $pelajaran = collect(); // Menggunakan koleksi kosong jika data pelajaran kelas tidak ditemukan
@@ -221,7 +225,10 @@ class NilaiSiswaController extends Controller
                 ->where('nis_siswa', $nisSiswa)
                 ->first();
 
-            $dataKategori = KategoriNilai::where('id_sekolah', $idSekolah)->get();
+            // $dataKategori = KategoriNilai::where('id_sekolah', $idSekolah)->get();
+            $dataKategori = KategoriNilai::where('id_sekolah', $idSekolah)
+                ->orderBy('id_kn', 'desc')
+                ->get();
         
             if ($kenaikanKelas) {
                 $idKelas = $kenaikanKelas->id_kelas;
@@ -275,7 +282,7 @@ class NilaiSiswaController extends Controller
 
 
         if (isset($guruPelajaran)) {
-            $htmlContent = view('nilaiSiswa.eksportNilaiSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','dataKategori','dataSekolah','siswa'))->render();
+            $htmlContent = view('nilaiSiswa.eksportNilaiSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas', 'guruPelajaran','dataKategori','dataSekolah','siswa','nisSiswa'))->render();
         } else {
             $htmlContent = view('nilaiSiswa.eksportNilaiSiswa', compact('tahunAjaranFilter', 'kelasFilter', 'pelajaran', 'message', 'namaKelas','dataKategori'))->render();
         }
@@ -418,37 +425,37 @@ class NilaiSiswaController extends Controller
 
         if (isset($guruPelajaran)) {
             // Jika guruPelajaran memiliki data, maka lakukan ekspor dengan view
-            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori, $dataSekolah, $siswa), 'nilai-siswa.xlsx');
+            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran, $dataKategori, $dataSekolah, $siswa, $nisSiswa), 'nilai-siswa.xlsx');
         } else {
             // Jika guruPelajaran kosong, maka hanya lakukan ekspor data lainnya tanpa view
-            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, [], $dataKategori, $dataSekolah, $siswa), 'nilai-siswa.xlsx');
+            return Excel::download(new NilaiSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, [], $dataKategori, $dataSekolah, $siswa, $nisSiswa), 'nilai-siswa.xlsx');
         }
     // Panggil kelas eksport yang telah Anda buat
     // return Excel::download(new JadwalSiswaExport($tahunAjaranFilter, $kelasFilter, $pelajaran, $message, $namaKelas, $guruPelajaran), 'jadwal-siswa.xlsx');
 
     }
 
-    // public static function getNilaiByKategori($id_gp, $kategori, $nis_siswa) {
+    // public static function getNilaiByKategori ($id_gp, $kategori, $nis_siswa) {
+    //     // $id_nilai = 13;
     //     $dataNilai = DataNilai::where('id_gp', $id_gp)
-    //         ->where('kategori', $kategori)
-    //         ->where('nis_siswa', $nis_siswa)
-    //         ->first();
-    
-    //     if ($dataNilai) {
-    //         // Gunakan relasi untuk mengakses DataPelajaran
-    //         $dataPelajaran = $dataNilai->guruPelajaran->dataPelajaran;
-    
-    //         return [
-    //             'nilai' => @$dataNilai->nilai,
-    //             'nama_pelajaran' => $dataPelajaran->nama_pelajaran, // Misalnya, mengambil nama_pelajaran dari relasi.
-    //             // Tambahkan informasi lain yang Anda butuhkan dari DataPelajaran.
-    //         ];
-    //     } else {
-    //         return null;
-    //     }
+    //     ->where('kategori', $kategori)
+    //     ->where('nis_siswa', $nis_siswa)->first();
+
+    //     return @$dataNilai->nilai;
     // }
     
-    
+    public static function getNilaiByKategori($idGuruPelajaran, $idKategori, $nisSiswa)
+    {
+        $nilai = GuruPelajaran::findOrFail($idGuruPelajaran)
+            ->nilai()
+            ->where('kategori', $idKategori)
+            ->where('nis_siswa', $nisSiswa)
+            ->value('nilai');
+
+        return $nilai;
+    }
+
+
 
     /**
      * Store a newly created resource in storage.

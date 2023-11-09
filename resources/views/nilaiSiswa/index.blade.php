@@ -98,7 +98,7 @@
                                                 <tbody>
                                                 @foreach ($pelajaran as $mapel)
                                                 {{-- @php
-                                                $nilai = App\Http\Controllers\GuruPelajaranController::getNilai($dataGp->id_gp, $kategori->id_kn, $item->nis_siswa);
+                                                $nilai = App\Http\Controllers\NilaiSiswaController::getNilaiByKategori($guruPelajaran->id_gp, $kategori->id_kn, $item->nis_siswa);
                                                 @endphp --}}
                                                     <tr>
                                                         <td>{{ $loop->iteration }}</td>
@@ -110,7 +110,7 @@
                                                                 @endif
                                                             @endforeach
                                                         </td>
-                                                        @if (count($guruPelajaran) > 0)
+                                                        {{-- @if (count($guruPelajaran) > 0)
                                                             @php
                                                                 $nilaiAvailable = false;
                                                             @endphp
@@ -128,6 +128,34 @@
                                                             @endforeach
                                                         @else
                                                             <td></td>
+                                                        @endif --}}
+
+                                                        @if (count($guruPelajaran) > 0)
+                                                            @php
+                                                                $nilaiAvailable = false;
+                                                            @endphp
+                                                            @foreach ($guruPelajaran as $guruMapel)
+                                                                @if ($guruMapel->id_pelajaran == $mapel->id_pelajaran)
+                                                                    @foreach ($dataKategori as $kategori)
+                                                                        @php
+                                                                            $nilai = App\Http\Controllers\NilaiSiswaController::getNilaiByKategori($guruMapel->id_gp, $kategori->id_kn, $nisSiswa);
+                                                                        @endphp
+                                                                        <td>{{ $nilai ?? '' }}</td>
+                                                                    @endforeach
+                                                                    @php
+                                                                        $nilaiAvailable = true;
+                                                                    @endphp
+                                                                @endif
+                                                            @endforeach
+                                                            @if (!$nilaiAvailable)
+                                                                @foreach ($dataKategori as $kategori)
+                                                                    <td></td>
+                                                                @endforeach
+                                                            @endif
+                                                        @else
+                                                            @foreach ($dataKategori as $kategori)
+                                                            <td></td>
+                                                            @endforeach
                                                         @endif
                                                     </tr>
                                                 @endforeach
