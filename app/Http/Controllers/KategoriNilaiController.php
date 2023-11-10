@@ -21,16 +21,31 @@ class KategoriNilaiController extends Controller
     {
         
         // $dataKn = KategoriNilai::with('sekolah')->orderBy('id_kn', 'DESC')->paginate(10);
-        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
 
-        // Menggunakan Eloquent untuk mengambil data Kategori Nilai yang berhubungan dengan sekolah yang terkait dengan pengguna
-        $dataKn = KategoriNilai::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_nilai.id_sekolah')
-            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-            ->with('sekolah') // Load relasi yang dibutuhkan
-            ->where('akses_sekolah.user_id', $user_id)
-            ->orderBy('data_kategori_nilai.id_kn', 'DESC')
-            ->paginate(10);
+        // // Menggunakan Eloquent untuk mengambil data Kategori Nilai yang berhubungan dengan sekolah yang terkait dengan pengguna
+        // $dataKn = KategoriNilai::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_nilai.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //     ->with('sekolah') // Load relasi yang dibutuhkan
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_kategori_nilai.id_kn', 'DESC')
+        //     ->paginate(10);
 
+        $user_id = auth()->user()->user_id; 
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataKn = KategoriNilai::with('sekolah')->orderBy('id_kn', 'DESC')->paginate(10);
+        } else {
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataKn = KategoriNilai::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_nilai.id_sekolah')
+                ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->with('sekolah') // Load relasi yang dibutuhkan
+                ->where('akses_sekolah.user_id', $user_id)
+                ->orderBy('data_kategori_nilai.id_kn', 'DESC')
+                ->paginate(10);
+        }
 
         // menu
         $user_id = auth()->user()->user_id;

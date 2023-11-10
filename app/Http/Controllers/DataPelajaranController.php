@@ -20,14 +20,30 @@ class DataPelajaranController extends Controller
     public function index()
     {
         // $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('kode_pelajaran', 'DESC')->paginate(10);
-        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
 
         // Menggunakan Eloquent untuk mengambil data pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
-        $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+        // $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_pelajaran.kode_pelajaran', 'DESC')
+        //     ->paginate(10);
+
+        // cek
+        $user_id = auth()->user()->user_id;
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+           $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('kode_pelajaran', 'DESC')->paginate(10);
+        } else {
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
             ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
             ->where('akses_sekolah.user_id', $user_id)
             ->orderBy('data_pelajaran.kode_pelajaran', 'DESC')
             ->paginate(10);
+        }
 
 
         // menu

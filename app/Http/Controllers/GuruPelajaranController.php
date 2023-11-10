@@ -42,8 +42,28 @@ class GuruPelajaranController extends Controller
     public function index()
     {
         // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
-        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
-        $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        //     ->whereExists(function ($query) use ($user_id) {
+        //         $query->select(DB::raw(1))
+        //             ->from('akses_sekolah')
+        //             ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+        //             ->where('akses_sekolah.user_id', $user_id);
+        //     })
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->paginate(10);
+        
+        $user_id = auth()->user()->user_id; 
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
+        } else {
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
             ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
             ->whereExists(function ($query) use ($user_id) {
@@ -54,38 +74,7 @@ class GuruPelajaranController extends Controller
             })
             ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
             ->paginate(10);
-        
-        // $user = auth()->user();
-        // $desiredRole = 'guru';
-
-        // $hasDesiredRole = $user->role->role_name === $desiredRole;
-
-        // if ($hasDesiredRole) {
-        //     // User has the desired role, so you can proceed with data retrieval
-        //     $user_id = $user->user_id;
-
-        //     $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
-        //         ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-        //         ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
-        //         ->where('data_guru_pelajaran.user_id', $user_id) // Filter by user_id
-        //         ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
-        //         ->paginate(10);
-        // } else {
-        //     $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
-        //     $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
-        //         ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-        //         ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
-        //         ->whereExists(function ($query) use ($user_id) {
-        //             $query->select(DB::raw(1))
-        //                 ->from('akses_sekolah')
-        //                 ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
-        //                 ->where('akses_sekolah.user_id', $user_id);
-        //         })
-        //         ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
-        //         ->paginate(10);
-        // }
-
-
+        }
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -348,14 +337,6 @@ class GuruPelajaranController extends Controller
         // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
 
-        // Menggunakan Eloquent untuk mengambil data Guru Pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
-        // $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
-        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal') // Load relasi yang dibutuhkan
-        //     ->where('akses_sekolah.user_id', $user_id)
-        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
-        //     ->paginate(10);
         $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
             ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')

@@ -48,28 +48,9 @@ class DataSiswaController extends Controller
         // dd($user_id);
 
         $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
-       
 
         // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
         $dataSekolah = $sekolahUser->pluck('sekolah');
-
-        // Menggunakan Eloquent untuk mengambil data Data Siswa yang berhubungan dengan sekolah yang terkait dengan pengguna
-        // $dataSiswaList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
-        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-        //     ->with('sekolah') // Load relasi yang dibutuhkan
-        //     ->when($selectedYear, function ($query) use ($selectedYear) {
-        //         $query->where('tahun_masuk', '=', $selectedYear);
-        //     })
-        //     ->when($searchTerm, function ($query) use ($searchTerm) {
-        //         $query->where(function ($subQuery) use ($searchTerm) {
-        //             $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
-        //                 ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
-        //         });
-        //     })
-        //     ->where('akses_sekolah.user_id', $user_id) // Filter berdasarkan user yang memiliki akses sekolah
-        //     ->orderBy('data_siswa.id_siswa', 'DESC')
-        //     ->paginate(10);
-
             
         $tahunList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
         ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')

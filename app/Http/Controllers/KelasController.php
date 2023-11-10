@@ -19,14 +19,21 @@ class KelasController extends Controller
     public function index() {
         // $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
 
-        $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
-
-        // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-        $dataKelas = Kelas::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        // Mendapatkan ID pengguna yang sedang login
+        $user_id = auth()->user()->user_id; 
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
+        } else {
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataKelas = Kelas::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
             ->where('akses_sekolah.user_id', $user_id)
             ->orderBy('data_kelas.id_kelas', 'DESC')
             ->paginate(10);
+        }
 
         // menu
         $user_id = auth()->user()->user_id;

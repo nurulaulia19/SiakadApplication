@@ -109,6 +109,8 @@ class HomeSiswaController extends Controller
                 ->first();
         
             $message = $kenaikanKelas ? '' : 'Data Kenaikan Kelas tidak ditemukan';
+
+            // $tahunAjaran = $kenaikanKelas ? $kenaikanKelas->tahun_ajaran : null;
         
             // Lanjutkan dengan mencari data pelajaran
         
@@ -203,8 +205,10 @@ class HomeSiswaController extends Controller
                         $query->where('hari', $hariIni);
                     })->get();
                     
+                    // belum berdasarkan th ajaran
                     // $dataNilai = [];
                     // $nisSiswa = $siswa->nis_siswa; // Ambil NIS siswa yang login
+                    // $kategoriData = [];
 
                     // foreach ($guruPelajaran as $guruMapel) {
                     //     foreach ($guruMapel->nilai as $nilai) {
@@ -214,57 +218,83 @@ class HomeSiswaController extends Controller
                     //             $kategori = $nilai->kategoriNilai;
 
                     //             if ($kategori) {
-                    //                 $dataNilai[] = [
-                    //                     'label' => $kategori->kategori,
-                    //                     'value' => $nilai->nilai ?? 0,
-                    //                 ];
+                    //                 $kategoriId = $kategori->id_kn;
+
+                    //                 // Mengecek apakah sudah ada data untuk kategori ini
+                    //                 if (isset($kategoriData[$kategoriId])) {
+                    //                     $kategoriData[$kategoriId]['nilai'][] = $nilai->nilai;
+                    //                 } else {
+                    //                     $kategoriData[$kategoriId] = [
+                    //                         'label' => $kategori->kategori,
+                    //                         'nilai' => [$nilai->nilai],
+                    //                     ];
+                    //                 }
                     //             }
                     //         }
                     //     }
                     // }
-                   
+
+                    // // Hitung rata-rata untuk setiap kategori
+                    // foreach ($kategoriData as $kategoriId => $kategoriInfo) {
+                    //     $totalNilai = array_sum($kategoriInfo['nilai']);
+                    //     $jumlahNilai = count($kategoriInfo['nilai']);
+                    //     $rataRata = $jumlahNilai > 0 ? $totalNilai / $jumlahNilai : 0;
+
+                    //     $dataNilai[] = [
+                    //         'label' => $kategoriInfo['label'],
+                    //         'value' => $rataRata,
+                    //     ];
+                    // }
+
+                    // sudah berdasarkan th ajaran
                     $dataNilai = [];
                     $nisSiswa = $siswa->nis_siswa; // Ambil NIS siswa yang login
                     $kategoriData = [];
-
+                    $tahunAjaranSaatIni = now()->format('Y'); // Menggunakan tahun ajaran saat ini
+                    
                     foreach ($guruPelajaran as $guruMapel) {
                         foreach ($guruMapel->nilai as $nilai) {
-                            // Filter data nilai berdasarkan NIS siswa yang login
+                            // Filter data nilai berdasarkan NIS siswa yang login dan tahun ajaran siswa
                             if ($nilai->nis_siswa == $nisSiswa) {
-                                // Mengakses nama_kategori melalui relasi
-                                $kategori = $nilai->kategoriNilai;
-
-                                if ($kategori) {
-                                    $kategoriId = $kategori->id_kn;
-
-                                    // Mengecek apakah sudah ada data untuk kategori ini
-                                    if (isset($kategoriData[$kategoriId])) {
-                                        $kategoriData[$kategoriId]['nilai'][] = $nilai->nilai;
-                                    } else {
-                                        $kategoriData[$kategoriId] = [
-                                            'label' => $kategori->kategori,
-                                            'nilai' => [$nilai->nilai],
-                                        ];
+                                // Mendapatkan data kenaikan kelas untuk siswa
+                                $kenaikanKelas = KenaikanKelas::where('nis_siswa', $nisSiswa)->first();
+                                $tahunAjaranSiswa = $kenaikanKelas ? $kenaikanKelas->tahun_ajaran : null;
+                    
+                                // Membandingkan tahun ajaran siswa dengan tahun ajaran saat ini
+                                if ($tahunAjaranSiswa && $tahunAjaranSiswa == $tahunAjaranSaatIni) {
+                                    // Mengakses nama_kategori melalui relasi
+                                    $kategori = $nilai->kategoriNilai;
+                    
+                                    if ($kategori) {
+                                        $kategoriId = $kategori->id_kn;
+                    
+                                        // Mengecek apakah sudah ada data untuk kategori ini
+                                        if (isset($kategoriData[$kategoriId])) {
+                                            $kategoriData[$kategoriId]['nilai'][] = $nilai->nilai;
+                                        } else {
+                                            $kategoriData[$kategoriId] = [
+                                                'label' => $kategori->kategori,
+                                                'nilai' => [$nilai->nilai],
+                                            ];
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-
+                    
                     // Hitung rata-rata untuk setiap kategori
                     foreach ($kategoriData as $kategoriId => $kategoriInfo) {
                         $totalNilai = array_sum($kategoriInfo['nilai']);
                         $jumlahNilai = count($kategoriInfo['nilai']);
                         $rataRata = $jumlahNilai > 0 ? $totalNilai / $jumlahNilai : 0;
-
+                    
                         $dataNilai[] = [
                             'label' => $kategoriInfo['label'],
                             'value' => $rataRata,
                         ];
                     }
-
-                    // dd($dataNilai);
-
+                    
                 } else {
                     // Tindakan jika data pelajaran kelas tidak ditemukan
                     $pelajaran = collect(); // Menggunakan koleksi kosong jika data pelajaran kelas tidak ditemukan
@@ -294,7 +324,7 @@ class HomeSiswaController extends Controller
         $hariIni = $mapHari[$namaHariInggris];
 
         if (isset($guruPelajaran)) {
-            return view('homeSiswa.index', compact('siswa', 'totalMataPelajaran', 'totalNilaiRata', 'dataJadwal', 'gpData', 'hariIni','dataNilai'));
+            return view('homeSiswa.index', compact('siswa', 'totalMataPelajaran', 'totalNilaiRata', 'dataJadwal', 'gpData', 'hariIni','dataNilai','tahunAjaranSaatIni'));
         } else {
             return view('homeSiswa.index', compact('siswa','hariIni'));
         }

@@ -9,11 +9,14 @@ use App\Models\DataUser;
 use App\Models\Kategori;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
+use App\Models\DataSiswa;
 use App\Models\Transaksi;
 use App\Models\DataProduk;
 use App\Models\AksesCabang;
 use App\Models\Verifytoken;
 use Illuminate\Http\Request;
+use App\Models\DataPelajaran;
+use App\Models\GuruPelajaran;
 use App\Models\AditionalProduk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Auth\User;
@@ -39,127 +42,32 @@ class HomeController extends Controller
     public function index()
     {
 
-        // $startDate = Carbon::now()->startOfMonth();
-        // $endDate = Carbon::now()->endOfMonth();
+        $user_id = auth()->user()->user_id;
 
-        // $labels = [];
-        // $currentDate = $startDate->copy();
-        // while ($currentDate <= $endDate) {
-        //     $labels[] = $currentDate->format('d M Y');
-        //     $currentDate->addDay();
-        // }
+        // Menggunakan Eloquent untuk mengambil data pelajaran yang berhubungan dengan sekolah yang terkait dengan pengguna
+        $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->get();
 
-        // $loggedInUser = auth()->user();
-        // $dataCabang = AksesCabang::where('user_id', $loggedInUser->user_id)->get();
-        // $cabangIds = $dataCabang->pluck('cabang.id_cabang')->toArray();
+        // Menghitung jumlah mata pelajaran
+        $jumlahMapel = $dataPelajaran->count();  // Menggunakan metode count() untuk Eloquent Collection
 
-        // $dataPerCabang = [];
-        // $namaCabang = Cabang::whereIn('id_cabang', $cabangIds)
-        //     ->pluck('nama_cabang', 'id_cabang')
-        //     ->toArray();
+        $dataSiswa = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
+            ->where('akses_sekolah.user_id', $user_id)
+            ->get();
 
-        // // Jika user memiliki akses ke cabang tertentu, ambil hanya cabang yang dimilikinya
-        // if (!empty($cabangIds)) {
-        //     foreach ($cabangIds as $cabangId) {
-        //         $totals = [];
+        // Menghitung jumlah siswa
+        $jumlahSiswa = $dataSiswa->count();
 
-        //         foreach ($labels as $label) {
-        //             $tanggal = Carbon::createFromFormat('d M Y', $label)->format('Y-m-d');
-
-        //             $transaksi = Transaksi::where('id_cabang', $cabangId)
-        //                 ->where('user_id', $loggedInUser->user_id)
-        //                 ->whereDate('tanggal_transaksi', $tanggal)
-        //                 ->count();
-
-        //             $totals[] = $transaksi;
-        //         }
-
-        //         $dataPerCabang[$cabangId] = $totals;
-        //     }
-        // } else {
-        //     // Jika user tidak memiliki akses cabang, hitung transaksi untuk semua cabang
-        //     $allCabangIds = Cabang::pluck('id_cabang')->toArray();
-
-        //     foreach ($allCabangIds as $cabangId) {
-        //         $totals = [];
-
-        //         foreach ($labels as $label) {
-        //             $tanggal = Carbon::createFromFormat('d M Y', $label)->format('Y-m-d');
-
-        //             $transaksi = Transaksi::where('id_cabang', $cabangId)
-        //                 ->whereDate('tanggal_transaksi', $tanggal)
-        //                 ->count();
-
-        //             $totals[] = $transaksi;
-        //         }
-
-        //         $dataPerCabang[$cabangId] = $totals;
-
-        //         // Tambahkan nama cabang jika tidak ada di $namaCabang (user_id tidak punya akses id_cabang)
-        //         if (!isset($namaCabang[$cabangId])) {
-        //             $namaCabang[$cabangId] = Cabang::where('id_cabang', $cabangId)->value('nama_cabang');
-        //         }
-        //     }
-        // }
-
-
-        // $jumlahJasa = Jasa::count();
-        // $jumlahKategori = Kategori::count();
-
-        // $loggedInUser = auth()->user();
-        // $dataCabang = AksesCabang::where('user_id', $loggedInUser->user_id)->get();
-        // $hasAccessToCabang = $dataCabang->isNotEmpty();
-
-        // $today = now();
-        // $month = $today->month;
-        
-
-        // if ($hasAccessToCabang) {
-        //     $user_id = $loggedInUser->user_id;
-        //     $totalHargaProduk = Transaksi::where('user_id', $user_id)->whereMonth('created_at', $month)->sum('total_harga');
-        //     $jumlahTransaksi = Transaksi::where('user_id', $user_id)->whereMonth('created_at', $month)->count();
-        // } else {
-        //     $totalHargaProduk = Transaksi::whereMonth('created_at', $month)->sum('total_harga');
-        //     $jumlahTransaksi = Transaksi::whereMonth('created_at', $month)->count();
-        // }
-
-        
-        
-        // MENU
-
-        // $user_id = auth()->user()->user_id;
-        // $user = DataUser::findOrFail($user_id);
-        // $menu_ids = $user->role->roleMenus->pluck('menu_id');
-       
-        // $menu_route_name = request()->route()->getName(); // Nama route dari URL yang diminta
-    
-        // // Ambil menu berdasarkan menu_link yang sesuai dengan nama route
-        // $requested_menu = Data_Menu::where('menu_link', $menu_route_name)->first();
-        // // dd($requested_menu);
-    
-        // // Periksa izin akses berdasarkan menu_id dan user_id
-        // if (!$requested_menu || !$menu_ids->contains($requested_menu->menu_id)) {
-        //     return redirect()->back()->with('error', 'You do not have permission to access this menu.');
-        // }
-
-        // $mainMenus = Data_Menu::where('menu_category', 'master menu')
-        //     ->whereIn('menu_id', $menu_ids)
-        //     ->get();
-
-        // $menuItemsWithSubmenus = [];
-
-        // foreach ($mainMenus as $mainMenu) {
-        //     $subMenus = Data_Menu::where('menu_sub', $mainMenu->menu_id)
-        //         ->where('menu_category', 'sub menu')
-        //         ->whereIn('menu_id', $menu_ids)
-        //         ->orderBy('menu_position')
-        //         ->get();
-
-        //     $menuItemsWithSubmenus[] = [
-        //         'mainMenu' => $mainMenu,
-        //         'subMenus' => $subMenus,
-        //     ];
-        // }
+        // menghitung jumlah guru
+        $jumlahGuru = GuruPelajaran::join('data_user', 'data_guru_pelajaran.user_id', '=', 'data_user.user_id')
+            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_guru_pelajaran.id_sekolah')
+            ->where('data_user.role_id', 2)
+            ->where('akses_sekolah.user_id', $user_id)
+            ->distinct('data_guru_pelajaran.user_id') // Menjamin setiap guru hanya dihitung sekali
+            ->count();
     
          // MENU
          $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -190,7 +98,7 @@ class HomeController extends Controller
 
 
 
-        return view('home.index', compact('menuItemsWithSubmenus'));
+        return view('home.index', compact('menuItemsWithSubmenus','jumlahMapel','jumlahSiswa','jumlahGuru'));
     
         // return view('home.index', compact('labels', 'dataPerCabang', 'jumlahTransaksi', 'jumlahJasa', 'jumlahKategori', 'totalHargaProduk','namaCabang','menuItemsWithSubmenus'));
         // return view('home.index');

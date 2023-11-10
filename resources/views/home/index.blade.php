@@ -23,17 +23,65 @@
                 <div id="page-content">
                     
 					<div class="row">
-						<div class="panel" style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+						<div class="panel">
 							<div class="panel-heading">
 								<h3 class="panel-title">Dashboard Admin</h3>
 							</div>
 
 							<div class="pad-all">
-								<canvas id="transaksiChart" style="width: 1200px; height: 500px;"></canvas>
+								<div class="row">
+                                    <div class="col-lg-6">
+                                        <!-- Timeline -->
+                                        <!--===================================================-->
+                                        <div class="info">
+                                            <div class="panel panel-warning panel-colorful media middle pad-all">
+												<a href="{{ route('mapel.index') }}" class="text-white">
+													<div class="media-left">
+														<div class="pad-hor">
+															<i class="fas fa-book-open icon-3x"></i>
+														</div>
+													</div>
+													<div class="media-body">
+														<p class="text-2x mar-no text-semibold">{{ $jumlahMapel }}</p>
+														<p class="mar-no">Mata Pelajaran</p>
+													</div>
+												</a>
+                                            </div>
+                                            <div class="panel panel-info panel-colorful media middle pad-all">
+												<a href="{{ route('siswa.index') }}" class="text-white">
+													<div class="media-left">
+														<div class="pad-hor">
+															<i class="fas fa-users icon-3x"></i>
+														</div>
+													</div>
+													<div class="media-body">
+														<p class="text-2x mar-no text-semibold">{{ $jumlahSiswa }}</p>
+														<p class="mar-no">Siswa</p>
+													</div>
+												</a>
+                                            </div>
+											<div class="panel panel-danger panel-colorful media middle pad-all">
+												<a href="{{ route('guruMapel.index') }}" class="text-white">
+													<div class="media-left">
+														<div class="pad-hor">
+															<i class="fas fa-chalkboard-teacher icon-3x"></i>
+														</div>
+													</div>
+													<div class="media-body">
+														<p class="text-2x mar-no text-semibold">{{ $jumlahGuru }}</p>
+														<p class="mar-no">Guru</p>
+													</div>
+												</a>
+                                            </div>
+                                        </div>
+                                        <!--===================================================-->
+                                        <!-- End Timeline -->
+                                    </div>
+                                </div>
 							</div>
 						</div>
 					</div>					
-					    <div class="row">
+					    {{-- <div class="row">
 					    	<div class="col-md-6">
 					            <div class="panel panel-danger panel-colorful media middle pad-all">
 					                <div class="media-left">
@@ -42,7 +90,6 @@
 					                    </div>
 					                </div>
 					                <div class="media-body">
-										{{-- <p class="text-2x mar-no text-semibold">{{ $jumlahMapel }}</p> --}}
 										<p class="mar-no">Mata Pelajaran</p>
 									</div>
 					            </div>
@@ -55,38 +102,11 @@
 					                    </div>
 					                </div>
 					                <div class="media-body">
-					                    {{-- <p class="text-2x mar-no text-semibold">{{ $jumlahSiswa}}</p> --}}
 					                    <p class="mar-no">Siswa</p>
 					                </div>
 					            </div>
 					        </div>
-					        {{-- <div class="col-md-3">
-					            <div class="panel panel-mint panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-					                        <i class="fas fa-tag icon-3x"></i>
-					                    </div>
-					                </div>
-					                <div class="media-body">
-					                    <p class="text-2x mar-no text-semibold">{{ $jumlahKategori }}</p>
-					                    <p class="mar-no">Kategori</p>
-					                </div>
-					            </div>
-					        </div>
-							<div class="col-md-3">
-					            <div class="panel panel-danger panel-colorful media middle pad-all">
-					                <div class="media-left">
-					                    <div class="pad-hor">
-					                        <i class="fas fa-calculator icon-3x"></i>
-					                    </div>
-					                </div>
-					                <div class="media-body">
-					                    <p class="text-2x mar-no text-semibold">{{ number_format($totalHargaProduk, 2, ',', '.') }}</p>
-					                    <p class="mar-no">Jumlah Penjualan</p>
-					                </div>
-					            </div>
-					        </div>  --}}
-					    </div>
+					    </div> --}}
 						@if(session('error'))
 							<div class="alert alert-danger">
                                 {{ session('error') }}
@@ -110,54 +130,6 @@
     </div>
     <!--===================================================-->
     <!-- END OF CONTAINER -->
-
-	{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-	<script>
-	var ctx = document.getElementById('transaksiChart').getContext('2d');
-	var datasets = [];
-
-	@foreach ($dataPerCabang as $cabangId => $totals)
-		@if (isset($namaCabang[$cabangId]))
-			var namaCabang = {!! json_encode($namaCabang[$cabangId]) !!};
-		@else
-			var namaCabang = ''; // Atau isikan dengan nilai default jika tidak ada nama cabang
-		@endif
-
-		datasets.push({
-			label: 'Cabang ' + namaCabang,
-			data: {!! json_encode($totals) !!},
-			borderColor: getRandomColor(),
-			borderWidth: 1,
-			fill: false
-		});
-
-		@endforeach
-	var myChart = new Chart(ctx, {
-		type: 'line',
-		data: {
-			labels: {!! json_encode($labels) !!},
-			datasets: datasets
-		},
-		options: {
-			scales: {
-				y: {
-					beginAtZero: true
-				}
-			}
-		}
-	});
-
-	function getRandomColor() {
-		var letters = '0123456789ABCDEF';
-		var color = '#';
-		for (var i = 0; i < 6; i++) {
-			color += letters[Math.floor(Math.random() * 16)];
-		}
-		return color;
-	}
-
-	</script> --}}
-
 
 @endsection
 

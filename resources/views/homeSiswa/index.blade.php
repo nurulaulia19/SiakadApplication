@@ -69,7 +69,7 @@
 											<!---------------------------------->
 											<div class="panel">
 												<div class="panel-heading">
-													<h3 class="panel-title">Chart Nilai</h3>
+													<h3 class="panel-title">Chart Nilai {{ $tahunAjaranSaatIni }}</h3>
 												</div>
 												<div class="panel-body">
 													<div id="demo-morris-donut" class="morris-donut" style="height: 250px;"></div>

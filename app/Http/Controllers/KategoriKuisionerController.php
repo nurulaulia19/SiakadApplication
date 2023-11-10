@@ -17,14 +17,27 @@ class KategoriKuisionerController extends Controller
      * Display a listing of the resource.
      */
     public function index() {
-        $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
-        $dataKategoriKuisioner = KategoriKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
-            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
-            ->where('akses_sekolah.user_id', $user_id)
-            ->orderBy('data_kategori_kuisioner.id_kategori_kuisioner', 'DESC')
-            ->paginate(10);
-    
         // $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
+        // $dataKategoriKuisioner = KategoriKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_kategori_kuisioner.id_kategori_kuisioner', 'DESC')
+        //     ->paginate(10);
+    
+            $user_id = auth()->user()->user_id; 
+            $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+            
+            if (empty($cek->user_id)){
+                // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+                $dataKategoriKuisioner = KategoriKuisioner::with('sekolah')->orderBy('id_kategori_kuisioner', 'DESC')->paginate(10);
+            } else {
+                // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+                $dataKategoriKuisioner = KategoriKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
+                    ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id)
+                    ->orderBy('data_kategori_kuisioner.id_kategori_kuisioner', 'DESC')
+                    ->paginate(10);
+            }
 
             $user = DataUser::find($user_id);
             $role_id = $user->role_id;
