@@ -18,12 +18,14 @@ class SiswaExport implements FromView, WithStyles
     private $tahun;
     private $dataSiswa;
     private $selectedSchool;
+    private $user;
 
-    public function __construct($tahun, $dataSiswa, $selectedSchool)
+    public function __construct($tahun, $dataSiswa, $selectedSchool, $user)
     {
         $this->tahun = $tahun;
         $this->dataSiswa = $dataSiswa;
         $this->selectedSchool = $selectedSchool;
+        $this->user = $user;
     }
 
     public function view(): View
@@ -44,6 +46,8 @@ class SiswaExport implements FromView, WithStyles
         return view('siswa.eksportSiswa', [
             'dataSiswa' => $dataSiswa,
             'tahun' => $this->tahun,
+            'selectedSchool' => $this->selectedSchool,
+            'user' => $this->user,
         ]);
     }
 

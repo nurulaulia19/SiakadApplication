@@ -31,57 +31,103 @@ class DataSiswaController extends Controller
     {
         // $dataSiswa = DataSiswa::orderBy('id_siswa', 'DESC')->paginate(10);
 
-        $tahunList = DB::table('data_siswa')
-        ->select(DB::raw('YEAR(tahun_masuk) as tahun'))
-        ->groupBy(DB::raw('YEAR(tahun_masuk)'))
-        ->orderBy('tahun', 'desc')
-        ->pluck('tahun');
+        // $tahunList = DB::table('data_siswa')
+        // ->select(DB::raw('YEAR(tahun_masuk) as tahun'))
+        // ->groupBy(DB::raw('YEAR(tahun_masuk)'))
+        // ->orderBy('tahun', 'desc')
+        // ->pluck('tahun');
+
+        // $selectedYear = $request->input('tahun_filter'); // Get the selected year from the form
+        // $searchTerm = $request->input('search');
+        // $selectedSchool = $request->input('school_filter');
+        // $dataSiswaQuery = DB::table('data_siswa');
+        
+
+        // // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
+        // // dd($user_id);
+
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+            
+        // $tahunList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
+        // ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        // ->where('akses_sekolah.user_id', $user_id)
+        // ->when($selectedSchool, function ($query) use ($selectedSchool) {
+        //     $query->where('data_siswa.id_sekolah', '=', $selectedSchool);
+        // })
+        // ->orderBy('tahun_masuk', 'desc')
+        // ->distinct()
+        // ->pluck('tahun_masuk');
+    
+        // $dataSiswaList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //     ->with('sekolah')
+        //     ->when($selectedSchool, function ($query) use ($selectedSchool) {
+        //         $query->where('data_siswa.id_sekolah', '=', $selectedSchool);
+        //     })
+        //     ->when($selectedYear, function ($query) use ($selectedYear) {
+        //         $query->where('tahun_masuk', '=', $selectedYear);
+        //     })
+        //     ->when($searchTerm, function ($query) use ($searchTerm) {
+        //         $query->where(function ($subQuery) use ($searchTerm) {
+        //             $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
+        //                 ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
+        //         });
+        //     })
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_siswa.id_siswa', 'DESC')
+        //     ->paginate(10);
 
         $selectedYear = $request->input('tahun_filter'); // Get the selected year from the form
         $searchTerm = $request->input('search');
         $selectedSchool = $request->input('school_filter');
-        $dataSiswaQuery = DB::table('data_siswa');
         
-
-        // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
-        // dd($user_id);
-
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
-
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
-            
-        $tahunList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
-        ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-        ->where('akses_sekolah.user_id', $user_id)
+        
+        $cek = AksesSekolah::where('user_id', $user_id)->first();
+        
+        $dataSiswaQuery = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
+        ->leftJoin('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
         ->when($selectedSchool, function ($query) use ($selectedSchool) {
             $query->where('data_siswa.id_sekolah', '=', $selectedSchool);
         })
-        ->orderBy('tahun_masuk', 'desc')
-        ->distinct()
-        ->pluck('tahun_masuk');
+        ->when($selectedYear, function ($query) use ($selectedYear) {
+            $query->where('tahun_masuk', '=', $selectedYear);
+        })
+        ->when($searchTerm, function ($query) use ($searchTerm) {
+            $query->where(function ($subQuery) use ($searchTerm) {
+                $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
+            });
+        });
     
-        $dataSiswaList = DataSiswa::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_siswa.id_sekolah')
-            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-            ->with('sekolah')
-            ->when($selectedSchool, function ($query) use ($selectedSchool) {
-                $query->where('data_siswa.id_sekolah', '=', $selectedSchool);
-            })
-            ->when($selectedYear, function ($query) use ($selectedYear) {
-                $query->where('tahun_masuk', '=', $selectedYear);
-            })
-            ->when($searchTerm, function ($query) use ($searchTerm) {
-                $query->where(function ($subQuery) use ($searchTerm) {
-                    $subQuery->where('nama_siswa', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('nis_siswa', 'like', '%' . $searchTerm . '%');
-                });
-            })
-            ->where('akses_sekolah.user_id', $user_id)
-            ->orderBy('data_siswa.id_siswa', 'DESC')
-            ->paginate(10);
-
-
+        // Inisialisasi $dataSekolah sebagai array kosong
+        $dataSekolah = [];
+        
+        // Ambil data akses sekolah jika $cek tidak kosong
+        if (empty($cek)) {
+            $dataSekolah = Sekolah::all();
+        } else{
+            $dataSekolah = AksesSekolah::where('user_id', $user_id)->with('sekolah')->get()->pluck('sekolah');
+            // dd($dataSekolah);
+        }
+        
+        // Jika $cek kosong, ambil semua data siswa tanpa memperhatikan akses sekolah
+        if (empty($cek)) {
+            $dataSiswaList = $dataSiswaQuery->orderBy('data_siswa.id_siswa', 'DESC')->paginate(10);
+        } else {
+            // Jika $cek tidak kosong, ambil data siswa dengan memperhatikan akses sekolah
+            $dataSiswaList = $dataSiswaQuery->where('akses_sekolah.user_id', $user_id)
+                ->orderBy('data_siswa.id_siswa', 'DESC')
+                ->paginate(10);
+        }
+        
+        // Dapatkan daftar tahun untuk filter
+        $tahunList = DataSiswa::orderBy('tahun_masuk', 'desc')->distinct()->pluck('tahun_masuk');    
+        
 
         // sidebar menu
         $user_id = auth()->user()->user_id;
@@ -340,41 +386,53 @@ class DataSiswaController extends Controller
 
     public function exportPDF(Request $request, $tahun = null)
     {
-        // Ambil data siswa berdasarkan tahun yang dipilih jika tahun ada, atau ambil semua data jika tidak ada tahun yang dipilih
-        // if ($tahun) {
-        //     $dataSiswa = DataSiswa::where('tahun_masuk', $tahun)->get();
-        // } else {
-        //     $dataSiswa = DataSiswa::all();
-        // }
-        $selectedSchool = $request->input('school_filter');
+        // $selectedSchool = $request->input('school_filter');
         
+        // $user = auth()->user();
+        // $user_id = $user->user_id;
+
+        // // Cek apakah ada sekolah yang dipilih dalam permintaan
+        // if ($request->has('school_filter')) {
+        //     $selectedSchool = $request->input('school_filter');
+        // } else {
+        //     // Jika tidak ada sekolah yang dipilih, cek apakah pengguna memiliki akses ke sekolah apa pun
+        //     $sekolahUser = AksesSekolah::where('user_id', $user_id)->first();
+        //     if ($sekolahUser) {
+        //         $selectedSchool = $sekolahUser->id_sekolah;
+        //     } else {
+        //         // Handle jika pengguna tidak memiliki akses ke sekolah apa pun
+        //         // Misalnya, Anda dapat melakukan redirect ke halaman tertentu dengan pesan kesalahan
+        //         return redirect()->route('siswa.index')->with('error', 'Anda tidak memiliki akses ke sekolah apa pun.');
+        //     }
+        // }
+        // $dataSiswa = DataSiswa::when($tahun, function ($query) use ($tahun) {
+        //         $query->where('tahun_masuk', $tahun);
+        //     })
+        //     ->when($selectedSchool, function ($query) use ($selectedSchool) {
+        //         $query->where('id_sekolah', $selectedSchool);
+        //     })
+        //     ->get();
+
+        $selectedSchool = $request->input('school_filter');
         $user = auth()->user();
         $user_id = $user->user_id;
 
         // Cek apakah ada sekolah yang dipilih dalam permintaan
-        if ($request->has('school_filter')) {
-            $selectedSchool = $request->input('school_filter');
-        } else {
-            // Jika tidak ada sekolah yang dipilih, cek apakah pengguna memiliki akses ke sekolah apa pun
-            $sekolahUser = AksesSekolah::where('user_id', $user_id)->first();
-            if ($sekolahUser) {
-                $selectedSchool = $sekolahUser->id_sekolah;
-            } else {
-                // Handle jika pengguna tidak memiliki akses ke sekolah apa pun
-                // Misalnya, Anda dapat melakukan redirect ke halaman tertentu dengan pesan kesalahan
-                return redirect()->route('siswa.index')->with('error', 'Anda tidak memiliki akses ke sekolah apa pun.');
-            }
-        }
-
-
         $dataSiswa = DataSiswa::when($tahun, function ($query) use ($tahun) {
                 $query->where('tahun_masuk', $tahun);
             })
             ->when($selectedSchool, function ($query) use ($selectedSchool) {
                 $query->where('id_sekolah', $selectedSchool);
             })
+            ->when(!$request->has('school_filter'), function ($query) use ($user_id) {
+                // Jika tidak ada sekolah yang dipilih, cek apakah pengguna memiliki akses ke sekolah apa pun
+                $sekolahUser = AksesSekolah::where('user_id', $user_id)->first();
+                if ($sekolahUser) {
+                    $query->where('id_sekolah', $sekolahUser->id_sekolah);
+                }
+                // Jika pengguna tidak memiliki akses ke sekolah apa pun, abaikan filter sekolah
+            })
             ->get();
-
 
         // Buat opsi PDF
         $pdfOptions = new Options();
@@ -384,7 +442,7 @@ class DataSiswaController extends Controller
         $pdf = new Dompdf($pdfOptions);
 
         // Render view dengan data siswa ke dalam HTML
-        $htmlContent = view('siswa.eksportSiswa', compact('dataSiswa','tahun','selectedSchool'))->render();
+        $htmlContent = view('siswa.eksportSiswa', compact('dataSiswa','tahun','selectedSchool','user'))->render();
 
         // Muat konten HTML ke dalam Dompdf
         $pdf->loadHtml($htmlContent);
@@ -403,9 +461,35 @@ class DataSiswaController extends Controller
     {
         // Lakukan pemrosesan jika perlu berdasarkan tahun yang diberikan
         $selectedSchool = $request->input('school_filter');
-        // dd( $selectedSchool);
         $user = auth()->user();
         $user_id = $user->user_id;
+
+        // $selectedSchool = null;
+        // // Cek apakah ada sekolah yang dipilih dalam permintaan
+        // if ($request->has('school_filter')) {
+        //     $selectedSchool = $request->input('school_filter');
+        // } else {
+        //     // Jika tidak ada sekolah yang dipilih, cek apakah pengguna memiliki akses ke sekolah apa pun
+        //     $sekolahUser = AksesSekolah::where('user_id', $user_id)->first();
+        //     if ($sekolahUser) {
+        //         $selectedSchool = $sekolahUser->id_sekolah;
+        //     } else {
+        //         // Handle jika pengguna tidak memiliki akses ke sekolah apa pun
+        //         // Misalnya, Anda dapat melakukan redirect ke halaman tertentu dengan pesan kesalahan
+        //         return redirect()->route('siswa.index')->with('error', 'Anda tidak memiliki akses ke sekolah apa pun.');
+        //     }
+        // }
+
+        // $dataSiswa = DataSiswa::when($tahun, function ($query) use ($tahun) {
+        //         $query->where('tahun_masuk', $tahun);
+        //     })
+        //     ->when($selectedSchool, function ($query) use ($selectedSchool) {
+        //         $query->where('id_sekolah', $selectedSchool);
+                
+        //     })
+        //     ->get();
+
+        $selectedSchool = null;
 
         // Cek apakah ada sekolah yang dipilih dalam permintaan
         if ($request->has('school_filter')) {
@@ -415,24 +499,21 @@ class DataSiswaController extends Controller
             $sekolahUser = AksesSekolah::where('user_id', $user_id)->first();
             if ($sekolahUser) {
                 $selectedSchool = $sekolahUser->id_sekolah;
-            } else {
-                // Handle jika pengguna tidak memiliki akses ke sekolah apa pun
-                // Misalnya, Anda dapat melakukan redirect ke halaman tertentu dengan pesan kesalahan
-                return redirect()->route('siswa.index')->with('error', 'Anda tidak memiliki akses ke sekolah apa pun.');
             }
         }
 
+        // Cetak semua data siswa
         $dataSiswa = DataSiswa::when($tahun, function ($query) use ($tahun) {
-                $query->where('tahun_masuk', $tahun);
-            })
-            ->when($selectedSchool, function ($query) use ($selectedSchool) {
-                $query->where('id_sekolah', $selectedSchool);
-                
-            })
-            ->get();
+            $query->where('tahun_masuk', $tahun);
+        })
+        ->when($selectedSchool, function ($query) use ($selectedSchool) {
+            $query->where('id_sekolah', $selectedSchool);
+        })
+        ->get();
+
 
         // Panggil kelas eksport yang telah Anda buat
-        return Excel::download(new SiswaExport($tahun, $dataSiswa, $selectedSchool), 'data-siswa.xlsx');
+        return Excel::download(new SiswaExport($tahun, $dataSiswa, $selectedSchool, $user), 'data-siswa.xlsx');
     }
 
     public function editProfilSiswa()

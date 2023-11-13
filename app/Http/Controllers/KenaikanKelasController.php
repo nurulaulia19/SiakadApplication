@@ -30,14 +30,34 @@ class KenaikanKelasController extends Controller
         $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
 
         // $dataSekolah = Sekolah::all();
-        $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
-            ->where('akses_sekolah.user_id', $user_id)
-            ->get();
+        // $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->get();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->pluck('id_sekolah');
+
+        if (count($sekolahUser) > 0) {
+            // Pengguna memiliki akses sekolah
+            $dataSekolah = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->get();
+        } else {
+            // Pengguna tidak memiliki akses sekolah, tampilkan semua sekolah
+            $dataSekolah = Sekolah::all();
+        }
 
         // $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
-        $tahunAjarans = KenaikanKelas::whereIn('id_sekolah', $sekolahUser)
-            ->distinct()
-            ->pluck('tahun_ajaran');
+        // $tahunAjarans = KenaikanKelas::whereIn('id_sekolah', $sekolahUser)
+        //     ->distinct()
+        //     ->pluck('tahun_ajaran');
+        if (count($sekolahUser) > 0) {
+            // Pengguna memiliki akses sekolah, ambil tahun ajaran sesuai akses
+            $tahunAjarans = KenaikanKelas::whereIn('id_sekolah', $sekolahUser)
+                ->distinct()
+                ->pluck('tahun_ajaran');
+        } else {
+            // Pengguna tidak memiliki akses sekolah, tampilkan semua tahun ajaran dari tabel kenaikan kelas
+            $tahunAjarans = KenaikanKelas::distinct()->pluck('tahun_ajaran');
+        }
 
     
         $search = $request->input('search');

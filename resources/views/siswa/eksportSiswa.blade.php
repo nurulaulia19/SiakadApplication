@@ -75,10 +75,66 @@
     </style>
 </head>
 <body>
-    @if ($dataSiswa->isNotEmpty() && $tahun)
+    {{-- @if ($dataSiswa->isNotEmpty() && $tahun)
     <h3 class="mb-3" style="text-align: center">
         Data Siswa dengan tahun masuk {{ $tahun }}
     </h3>
+    @else
+        <h3 class="mb-3" style="text-align: center">
+            Data Siswa
+        </h3>
+    @endif --}}
+
+    {{-- @if ($dataSiswa->isNotEmpty())
+        @if ($selectedSchool)
+            <h3 class="mb-3" style="text-align: center">
+                Data Siswa Sekolah {{ $dataSiswa[0]->sekolah->nama_sekolah }} dengan tahun masuk {{ $tahun ?? '' }}
+            </h3>
+        @elseif ($user->aksesSekolah && $user->aksesSekolah->isNotEmpty())
+            <h3 class="mb-3" style="text-align: center">
+                Data Siswa 
+                Sekolah {{ $user->aksesSekolah->first()->sekolah->nama_sekolah }} dengan tahun masuk {{ $tahun ?? '' }}
+            </h3>
+        @else
+            <h3 class="mb-3" style="text-align: center">
+                Data Siswa dengan tahun masuk {{ $tahun ?? 'tidak ada tahun' }}
+            </h3>
+        @endif
+    @else
+        <h3 class="mb-3" style="text-align: center">
+            Data Siswa
+        </h3>
+    @endif --}}
+    @if ($dataSiswa->isNotEmpty())
+        @if ($selectedSchool)
+            <h3 class="mb-3" style="text-align: center">
+                Data Siswa Sekolah {{ $dataSiswa[0]->sekolah->nama_sekolah }} 
+                @if ($tahun)
+                    dengan tahun masuk {{ $tahun }}
+                @else
+                    
+                @endif
+            </h3>
+        @elseif ($user->aksesSekolah && $user->aksesSekolah->isNotEmpty())
+            <h3 class="mb-3" style="text-align: center">
+                Data Siswa 
+                Sekolah {{ $user->aksesSekolah->first()->sekolah->nama_sekolah }} 
+                @if ($tahun)
+                    dengan tahun masuk {{ $tahun }}
+                @else
+                    
+                @endif
+            </h3>
+        @else
+            <h3 class="mb-3" style="text-align: center">
+                Data Siswa 
+                @if ($tahun)
+                    dengan tahun masuk {{ $tahun }}
+                @else
+                    
+                @endif
+            </h3>
+        @endif
     @else
         <h3 class="mb-3" style="text-align: center">
             Data Siswa
