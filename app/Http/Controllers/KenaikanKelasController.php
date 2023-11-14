@@ -151,10 +151,18 @@ class KenaikanKelasController extends Controller
         // $dataSekolah = Sekolah::all();
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
 
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
         
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
 
         
         // MENU
@@ -251,10 +259,19 @@ class KenaikanKelasController extends Controller
       
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
     
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'

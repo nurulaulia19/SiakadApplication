@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
 use App\Models\AksesSekolah;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\KategoriKuisioner;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 
 class KategoriKuisionerController extends Controller
 {
@@ -77,12 +78,19 @@ class KategoriKuisionerController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
-       
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
-        // dd($dataSekolah);
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -156,9 +164,19 @@ class KategoriKuisionerController extends Controller
     public function edit($id)
     {
         $user_id = auth()->user()->user_id; 
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
+        
         $dataKategoriKuisioner = KategoriKuisioner::where('id_kategori_kuisioner', $id)->first();
     
         // MENU

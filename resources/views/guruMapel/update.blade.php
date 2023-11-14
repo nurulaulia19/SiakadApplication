@@ -89,8 +89,12 @@
                                                         {{ $item->nama_pelajaran }}
                                                     </option>
                                                     @endforeach
-                                                    
                                                 </select>
+                                                @error('id_pelajaran')
+                                                <span class="alert text-danger">
+                                                    {{ $message }}
+                                                </span>
+                                                @enderror
                                             </div>
                                         </div>
                                         {{-- <div class="form-group d-flex mb-3">

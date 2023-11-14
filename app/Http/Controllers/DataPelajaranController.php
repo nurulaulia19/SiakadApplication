@@ -35,13 +35,13 @@ class DataPelajaranController extends Controller
         
         if (empty($cek->user_id)){
             // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-           $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('kode_pelajaran', 'DESC')->paginate(10);
+           $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('id_pelajaran', 'DESC')->paginate(10);
         } else {
             // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
             $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
             ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
             ->where('akses_sekolah.user_id', $user_id)
-            ->orderBy('data_pelajaran.kode_pelajaran', 'DESC')
+            ->orderBy('data_pelajaran.id_pelajaran', 'DESC')
             ->paginate(10);
         }
 
@@ -98,11 +98,20 @@ class DataPelajaranController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
        
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -165,11 +174,20 @@ class DataPelajaranController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
        
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
 
         $dataPelajaran = DataPelajaran::where('id_pelajaran', $id_pelajaran)->first();
     

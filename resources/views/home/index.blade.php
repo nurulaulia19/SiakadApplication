@@ -30,53 +30,58 @@
 
 							<div class="pad-all">
 								<div class="row">
+									@foreach($hasilPerhitungan as $hasil)
                                     <div class="col-lg-6">
                                         <!-- Timeline -->
                                         <!--===================================================-->
-                                        <div class="info">
-                                            <div class="panel panel-warning panel-colorful media middle pad-all">
-												<a href="{{ route('mapel.index') }}" class="text-white">
-													<div class="media-left">
-														<div class="pad-hor">
-															<i class="fas fa-book-open icon-3x"></i>
+										<div class="info">
+												<div class="panel panel-warning panel-colorful media middle pad-all">
+													<!-- Sesuaikan dengan struktur HTML dan penggunaan variabel yang sesuai -->
+													<a href="{{ route('mapel.index') }}" class="text-white">
+														<div class="media-left">
+															<div class="pad-hor">
+																<i class="fas fa-book-open icon-3x"></i>
+															</div>
 														</div>
-													</div>
-													<div class="media-body">
-														<p class="text-2x mar-no text-semibold">{{ $jumlahMapel }}</p>
-														<p class="mar-no">Mata Pelajaran</p>
-													</div>
-												</a>
-                                            </div>
-                                            <div class="panel panel-info panel-colorful media middle pad-all">
-												<a href="{{ route('siswa.index') }}" class="text-white">
-													<div class="media-left">
-														<div class="pad-hor">
-															<i class="fas fa-users icon-3x"></i>
+														<div class="media-body">
+															<p class="text-2x mar-no text-semibold">{{ $hasil['jumlahMapel'] }}</p>
+															<p class="mar-no">Mata Pelajaran {{ $hasil['sekolah'] }}</p>
 														</div>
-													</div>
-													<div class="media-body">
-														<p class="text-2x mar-no text-semibold">{{ $jumlahSiswa }}</p>
-														<p class="mar-no">Siswa</p>
-													</div>
-												</a>
-                                            </div>
-											<div class="panel panel-danger panel-colorful media middle pad-all">
-												<a href="{{ route('guruMapel.index') }}" class="text-white">
-													<div class="media-left">
-														<div class="pad-hor">
-															<i class="fas fa-chalkboard-teacher icon-3x"></i>
+													</a>
+												</div>
+												<!-- Tambahkan blok HTML untuk jumlah siswa dan guru -->
+												<div class="panel panel-info panel-colorful media middle pad-all">
+													<a href="{{ route('siswa.index') }}" class="text-white">
+														<div class="media-left">
+															<div class="pad-hor">
+																<i class="fas fa-users icon-3x"></i>
+															</div>
 														</div>
-													</div>
-													<div class="media-body">
-														<p class="text-2x mar-no text-semibold">{{ $jumlahGuru }}</p>
-														<p class="mar-no">Guru</p>
-													</div>
-												</a>
-                                            </div>
-                                        </div>
+														<div class="media-body">
+															<p class="text-2x mar-no text-semibold">{{ $hasil['jumlahSiswa'] }}</p>
+															<p class="mar-no">Siswa {{ $hasil['sekolah'] }}</p>
+														</div>
+													</a>
+												</div>
+												<div class="panel panel-danger panel-colorful media middle pad-all">
+													<a href="{{ route('guruMapel.index') }}" class="text-white">
+														<div class="media-left">
+															<div class="pad-hor">
+																<i class="fas fa-chalkboard-teacher icon-3x"></i>
+															</div>
+														</div>
+														<div class="media-body">
+															<p class="text-2x mar-no text-semibold">{{ $hasil['jumlahGuru'] }}</p>
+															<p class="mar-no">Guru {{ $hasil['sekolah'] }}</p>
+														</div>
+													</a>
+												</div>
+											
+										</div>						
                                         <!--===================================================-->
                                         <!-- End Timeline -->
                                     </div>
+									@endforeach
                                 </div>
 							</div>
 						</div>

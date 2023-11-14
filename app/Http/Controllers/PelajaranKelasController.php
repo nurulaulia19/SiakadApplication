@@ -103,11 +103,20 @@ class PelajaranKelasController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
        
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
 
         
         // MENU
@@ -243,11 +252,19 @@ class PelajaranKelasController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
        
-
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
        
         $selectedMapelId = PelajaranKelasList::where('id_pk', $id_pk)->pluck('id_pelajaran')->toArray();
         // $selectedMapelId = PelajaranKelas::where('id_pk', $id_pk)->first()->id_pelajaran;
@@ -285,84 +302,53 @@ class PelajaranKelasController extends Controller
         return view('mapelKelas.update', compact('dataPk','dataSekolah','dataKelas','dataPelajaran','menuItemsWithSubmenus','selectedMapelId'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update(Request $request, $id_pk)
-    // {
-        
-
-    //     PelajaranKelasList::where('id_pk', $id_pk)->delete();
-    //     DB::table('pelajaran_kelas')->where('id_pk', $id_pk)->update([
-    //         'id_kelas' => $request->id_kelas,
-    //         'tahun_ajaran' => $request->tahun_ajaran,
-    //         'id_sekolah' => $request->id_sekolah,
-    //         'created_at' => now(),
-    //         'updated_at' => now()
-    
-    //     ]);
-
-    //     // $id_sekolah = $request->id_sekolah;
-    //     $id_pelajaran = $request->id_pelajaran;
-
-        
-    //     foreach ($id_pelajaran as $id) {
-    //         PelajaranKelasList::create([
-    //             // 'id_sekolah' => $id_sekolah, // Ganti dengan kolom yang sesuai
-    //             'id_pelajaran' => $id, // Anda mungkin perlu menyesuaikan ini dengan loop juga
-    //             'id_pk' => $id_pk,
-    //         ]);
-    //     }
-
-    // return redirect()->route('mapelKelas.index')->with('success', 'Mata Pelajaran Perkelas edited successfully');
-    // }
 
     public function update(Request $request, $id_pk)
-{
-    $customMessages = [
-        'id_sekolah.unique' => 'Data sudah ada.',
-        // Add other custom error messages as needed
-    ];
+    {
+        $customMessages = [
+            'id_sekolah.unique' => 'Data sudah ada.',
+            // Add other custom error messages as needed
+        ];
 
-    $validatedData = $request->validate([
-        'id_sekolah' => [
-            'required',
-            Rule::unique('pelajaran_kelas')->ignore($id_pk, 'id_pk')->where(function ($query) use ($request) {
-                return $query->where('id_sekolah', $request->id_sekolah)
-                    ->where('id_kelas', $request->id_kelas)
-                    ->where('tahun_ajaran', $request->tahun_ajaran);
-            }),
-        ],
-        
+        $validatedData = $request->validate([
+            'id_sekolah' => [
+                'required',
+                Rule::unique('pelajaran_kelas')->ignore($id_pk, 'id_pk')->where(function ($query) use ($request) {
+                    return $query->where('id_sekolah', $request->id_sekolah)
+                        ->where('id_kelas', $request->id_kelas)
+                        ->where('tahun_ajaran', $request->tahun_ajaran);
+                }),
+            ],
+            
 
-    ],$customMessages);
+        ],$customMessages);
 
-    try {
-        PelajaranKelasList::where('id_pk', $id_pk)->delete();
-        DB::table('pelajaran_kelas')->where('id_pk', $id_pk)->update([
-            'id_kelas' => $request->id_kelas,
-            'tahun_ajaran' => $request->tahun_ajaran,
-            'id_sekolah' => $request->id_sekolah,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        $id_pelajaran = $request->id_pelajaran;
-
-        
-        foreach ($id_pelajaran as $id) {
-            PelajaranKelasList::create([
-                // 'id_sekolah' => $id_sekolah, // Ganti dengan kolom yang sesuai
-                'id_pelajaran' => $id, // Anda mungkin perlu menyesuaikan ini dengan loop juga
-                'id_pk' => $id_pk,
+        try {
+            PelajaranKelasList::where('id_pk', $id_pk)->delete();
+            DB::table('pelajaran_kelas')->where('id_pk', $id_pk)->update([
+                'id_kelas' => $request->id_kelas,
+                'tahun_ajaran' => $request->tahun_ajaran,
+                'id_sekolah' => $request->id_sekolah,
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
-        }
 
-        return redirect()->route('mapelKelas.index')->with('success', 'Mata Pelajaran Perkelas edited successfully');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Error updating class.');
+            $id_pelajaran = $request->id_pelajaran;
+
+            
+            foreach ($id_pelajaran as $id) {
+                PelajaranKelasList::create([
+                    // 'id_sekolah' => $id_sekolah, // Ganti dengan kolom yang sesuai
+                    'id_pelajaran' => $id, // Anda mungkin perlu menyesuaikan ini dengan loop juga
+                    'id_pk' => $id_pk,
+                ]);
+            }
+
+            return redirect()->route('mapelKelas.index')->with('success', 'Mata Pelajaran Perkelas edited successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error updating class.');
+        }
     }
-}
 
 
     /**

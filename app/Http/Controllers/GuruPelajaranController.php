@@ -132,10 +132,20 @@ class GuruPelajaranController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
 
         $dataKelas = Kelas::all();
 
@@ -192,6 +202,7 @@ class GuruPelajaranController extends Controller
             ],
             'id_kelas' => 'required',
             'tahun_ajaran' => 'required',
+            'id_pelajaran' => 'required',
         ], $customMessages);
         
         $dataGp = new GuruPelajaran;
@@ -225,11 +236,20 @@ class GuruPelajaranController extends Controller
         $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
         // dd($user_id);
 
-        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        // $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
        
 
-        // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
-        $dataSekolah = $sekolahUser->pluck('sekolah');
+        // // Kemudian, Anda dapat mengambil daftar sekolah dari relasi
+        // $dataSekolah = $sekolahUser->pluck('sekolah');
+        $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
+        $sekolahUser = AksesSekolah::where('user_id', $user_id)->get();
+        
+        if (empty($cek->user_id)){
+            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            $dataSekolah = Sekolah::all();
+        } else {
+            $dataSekolah = $sekolahUser->pluck('sekolah');
+        }
        
         $guruRoleId = Role::where('role_name', 'guru')->value('role_id'); // Mendapatkan ID peran "guru"
 
@@ -296,6 +316,7 @@ class GuruPelajaranController extends Controller
             ],
             'id_kelas' => 'required',
             'tahun_ajaran' => 'required',
+            'id_pelajaran' => 'required',
         ], $customMessages);
 
         DB::table('data_guru_pelajaran')->where('id_gp', $id_gp)->update([
