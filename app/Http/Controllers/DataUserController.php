@@ -22,10 +22,20 @@ class DataUserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $dataUser = DataUser::all();
-        $dataUser = DataUser::with('role')->orderBy('user_id', 'DESC')->paginate(10);
+        // $dataUser = DataUser::with('role')->orderBy('user_id', 'DESC')->paginate(10);
+        $searchTerm = $request->input('search_term');
+
+        $dataUser = DataUser::with('role')
+            ->when($searchTerm, function ($query) use ($searchTerm) {
+                $query->where(function ($subQuery) use ($searchTerm) {
+                    $subQuery->where('user_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('user_email', 'like', '%' . $searchTerm . '%');
+                });
+            })
+            ->orderBy('user_id', 'DESC')
+            ->paginate(10);
 
         // $user_id = auth()->user()->user_id;
         // $user = DataUser::findOrFail($user_id);
@@ -87,7 +97,7 @@ class DataUserController extends Controller
                     'subMenus' => $subMenus,
                 ];
             }
-        return view('user.index', compact('dataUser','menuItemsWithSubmenus'));
+        return view('user.index', compact('dataUser','menuItemsWithSubmenus','searchTerm'));
     }
 
     /**

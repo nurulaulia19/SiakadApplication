@@ -19,7 +19,7 @@ class DataKuisionerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index(Request $request) {
         // $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
         // $dataKuisioner = DataKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
         //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
@@ -31,18 +31,60 @@ class DataKuisionerController extends Controller
         $user_id = auth()->user()->user_id; 
         $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         
-        if (empty($cek->user_id)){
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataKuisioner = DataKuisioner::with('kategoriKuisioner')->orderBy('id_kuisioner', 'DESC')->paginate(10);
+        // if (empty($cek->user_id)){
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataKuisioner = DataKuisioner::with('kategoriKuisioner')->orderBy('id_kuisioner', 'DESC')->paginate(10);
+        // } else {
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataKuisioner = DataKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
+        //         ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
+        //         ->with('kategoriKuisioner') // Memuat data kategori kuisioner
+        //         ->where('akses_sekolah.user_id', $user_id)
+        //         ->orderBy('data_kuisioner.id_kuisioner', 'DESC')
+        //         ->paginate(10);
+        // }
+
+        $filterSekolah = $request->input('sekolah');
+        $searchNamaKategoriKuisioner = $request->input('search_nama_kategori_kuisioner');
+        $user_id = auth()->user()->user_id;
+
+        $query = DataKuisioner::query();
+
+        if (empty($cek->user_id)) {
+            $dataKuisioner = $query->with('kategoriKuisioner')
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaKategoriKuisioner), function ($query) use ($searchNamaKategoriKuisioner) {
+                    $query->whereHas('kategoriKuisioner', function ($q) use ($searchNamaKategoriKuisioner) {
+                        $q->where('nama_kategori', 'like', '%' . $searchNamaKategoriKuisioner . '%');
+                    });
+                })
+                ->orderBy('id_kuisioner', 'DESC')
+                ->paginate(10);
+
+            $sekolahOptions = Sekolah::pluck('nama_sekolah', 'id_sekolah');
         } else {
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataKuisioner = DataKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
+            $dataKuisioner = $query->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
                 ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kuisioner.id_sekolah')
                 ->with('kategoriKuisioner') // Memuat data kategori kuisioner
                 ->where('akses_sekolah.user_id', $user_id)
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('data_kuisioner.id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaKategoriKuisioner), function ($query) use ($searchNamaKategoriKuisioner) {
+                    $query->whereHas('kategoriKuisioner', function ($q) use ($searchNamaKategoriKuisioner) {
+                        $q->where('nama_kategori', 'like', '%' . $searchNamaKategoriKuisioner . '%');
+                    });
+                })
                 ->orderBy('data_kuisioner.id_kuisioner', 'DESC')
                 ->paginate(10);
+
+            $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
         }
+
 
             $user = DataUser::find($user_id);
             $role_id = $user->role_id;
@@ -69,7 +111,7 @@ class DataKuisionerController extends Controller
             }
 
 
-        return view('kuisioner.index', compact('dataKuisioner','menuItemsWithSubmenus'));
+        return view('kuisioner.index', compact('dataKuisioner','menuItemsWithSubmenus','sekolahOptions', 'filterSekolah', 'searchNamaKategoriKuisioner'));
     }
 
     /**

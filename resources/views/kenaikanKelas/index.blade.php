@@ -38,22 +38,6 @@
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a>
 					                            </div>
-                                                {{-- <div class="col-sm-2">
-                                                    <form action="{{ route('kenaikanKelas.index') }}" method="GET">
-                                                        <div class="form-group">
-                                                            <label for="sekolah_filter">Filter Sekolah</label>
-                                                            <select name="sekolah_filter" id="sekolah_filter" class="form-control">
-                                                                <option value="">Tampilkan Semua</option>
-                                                                @foreach ($dataSekolah as $sekolah)
-                                                                    <option value="{{ $sekolah->id_sekolah }}" {{ $sekolahFilter == $sekolah->id_sekolah ? 'selected' : '' }}>
-                                                                        {{ $sekolah->nama_sekolah }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                            <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
-                                                        </div>
-                                                    </form>
-                                                </div> --}}
                                                 <div class="col-sm-2">
                                                     <form action="{{ route('kenaikanKelas.index') }}" method="GET">
                                                         <div class="form-group">
@@ -78,7 +62,6 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                
                                                 <div class="col-sm-2">
                                                     <form action="{{ route('kenaikanKelas.index') }}" method="GET">
                                                         <div class="form-group">
@@ -125,51 +108,6 @@
 					                            </thead>
 					                            <tbody>
                                                     @php $iteration = 0; @endphp
-													{{-- @foreach ($groupedData as $id_sekolah => $kelasData)
-                                                        @foreach ($kelasData as $id_kelas => $tahunData)
-                                                            @foreach ($tahunData as $tahun_ajaran => $group)
-                                                                
-                                                                @php $firstItem = $group[0]; @endphp
-                                                                <tr>
-                                                                    <td style="vertical-align: middle;">{{ ++$iteration }}</td>
-                                                                    <td style="vertical-align: middle;">
-                                                                        @if ($firstItem->sekolah)
-                                                                            {{ $firstItem->sekolah->nama_sekolah }}
-                                                                        @else
-                                                                            Sekolah not assigned
-                                                                        @endif
-                                                                    </td>
-                                                                    <td style="vertical-align: middle;">
-                                                                        @if ($firstItem->kelas)
-                                                                            {{ $firstItem->kelas->nama_kelas }}
-                                                                        @else
-                                                                            Kelas not assigned
-                                                                        @endif
-                                                                    </td>
-                                                                    <td style="vertical-align: middle;">{{ $tahun_ajaran }}</td>
-                                                                    <td>
-                                                                        @foreach ($group as $item)
-                                                                            {{ $item->nis_siswa }}
-                                                                            @if (!$loop->last)
-                                                                                ,
-                                                                            @endif
-                                                                        @endforeach
-                                                                    </td>
-                                                                    <td class="table-action" style="vertical-align: middle;">
-                                                                        <div style="display:flex; align-items:center">
-                                                                            <a style="margin-right: 10px;" href="{{ route('kenaikanKelas.edit', $firstItem->id_kk) }}" class="btn btn-sm btn-warning">Edit</a>
-                                                                            <form method="POST" action="" id="delete-form-{{ $firstItem->id_kk }}">
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <a href="/admin/kenaikanKelas/destroy/{{ $firstItem->id_kk }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $firstItem->id_kk }})">Hapus</a>
-                                                                            </form>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            @endforeach
-                                                        @endforeach
-                                                    @endforeach --}}
-
 													@foreach ($dataKk as $item)
 					                                <tr>
                                                         <td style="vertical-align: middle;">{{ $loop->iteration }}</td>

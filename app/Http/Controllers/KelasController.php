@@ -16,24 +16,61 @@ class KelasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index(Request $request) {
         // $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
 
         // Mendapatkan ID pengguna yang sedang login
         $user_id = auth()->user()->user_id; 
         $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         
-        if (empty($cek->user_id)){
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
+        // if (empty($cek->user_id)){
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataKelas = Kelas::with('sekolah')->orderBy('id_kelas', 'DESC')->paginate(10);
+        // } else {
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataKelas = Kelas::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_kelas.id_kelas', 'DESC')
+        //     ->paginate(10);
+        // }
+
+        $filterSekolah = $request->input('sekolah');
+        $searchNamaKelas = $request->input('search_nama_kelas');
+        $user_id = auth()->user()->user_id;
+
+        $query = Kelas::query();
+
+        if (empty($cek->user_id)) {
+            $dataKelas = $query->with('sekolah')
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaKelas), function ($query) use ($searchNamaKelas) {
+                    $query->where('nama_kelas', 'like', '%' . $searchNamaKelas . '%');
+                })
+                ->orderBy('id_kelas', 'DESC')
+                ->paginate(10);
+
+            $sekolahOptions = Sekolah::pluck('nama_sekolah', 'id_sekolah');
         } else {
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataKelas = Kelas::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-            ->where('akses_sekolah.user_id', $user_id)
-            ->orderBy('data_kelas.id_kelas', 'DESC')
-            ->paginate(10);
+            $dataKelas = $query->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+                ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('data_kelas.id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaKelas), function ($query) use ($searchNamaKelas) {
+                    $query->where('nama_kelas', 'like', '%' . $searchNamaKelas . '%');
+                })
+                ->orderBy('data_kelas.id_kelas', 'DESC')
+                ->paginate(10);
+
+            $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
         }
+
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -71,7 +108,7 @@ class KelasController extends Controller
         }
 
 
-        return view('kelas.index', compact('dataKelas','menuItemsWithSubmenus'));
+        return view('kelas.index', compact('dataKelas','menuItemsWithSubmenus','sekolahOptions', 'filterSekolah', 'searchNamaKelas'));
     }
 
     /**

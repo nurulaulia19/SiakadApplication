@@ -17,7 +17,7 @@ class KategoriKuisionerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index(Request $request) {
         // $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
         // $dataKategoriKuisioner = KategoriKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
         //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
@@ -28,16 +28,52 @@ class KategoriKuisionerController extends Controller
             $user_id = auth()->user()->user_id; 
             $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
             
-            if (empty($cek->user_id)){
-                // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-                $dataKategoriKuisioner = KategoriKuisioner::with('sekolah')->orderBy('id_kategori_kuisioner', 'DESC')->paginate(10);
+            // if (empty($cek->user_id)){
+            //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            //     $dataKategoriKuisioner = KategoriKuisioner::with('sekolah')->orderBy('id_kategori_kuisioner', 'DESC')->paginate(10);
+            // } else {
+            //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+            //     $dataKategoriKuisioner = KategoriKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
+            //         ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
+            //         ->where('akses_sekolah.user_id', $user_id)
+            //         ->orderBy('data_kategori_kuisioner.id_kategori_kuisioner', 'DESC')
+            //         ->paginate(10);
+            // }
+
+            $filterSekolah = $request->input('sekolah');
+            $searchNamaKategoriKuisioner = $request->input('search_nama_kategori_kuisioner');
+
+            $query = Sekolah::query();
+
+            if (empty($cek->user_id)) {
+                $dataKategoriKuisioner = KategoriKuisioner::with('sekolah')
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaKategoriKuisioner), function ($query) use ($searchNamaKategoriKuisioner) {
+                    $query->where('nama_kategori', 'like', '%' . $searchNamaKategoriKuisioner . '%');
+                })
+                ->orderBy('id_kategori_kuisioner', 'DESC')
+                ->paginate(10);
+
+                $sekolahOptions = $query->pluck('nama_sekolah', 'id_sekolah');
             } else {
-                // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
                 $dataKategoriKuisioner = KategoriKuisioner::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
                     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_kategori_kuisioner.id_sekolah')
                     ->where('akses_sekolah.user_id', $user_id)
+                    ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                        $query->where('data_pelajaran.id_sekolah', $filterSekolah);
+                    })
+                    ->when(!empty($searchNamaKategoriKuisioner), function ($query) use ($searchNamaKategoriKuisioner) {
+                        $query->where('nama_kategori', 'like', '%' . $searchNamaKategoriKuisioner . '%');
+                    })
                     ->orderBy('data_kategori_kuisioner.id_kategori_kuisioner', 'DESC')
                     ->paginate(10);
+
+                $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                    ->where('akses_sekolah.user_id', $user_id)
+                    ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
+                
             }
 
             $user = DataUser::find($user_id);
@@ -65,7 +101,7 @@ class KategoriKuisionerController extends Controller
             }
 
 
-        return view('kategoriKuisioner.index', compact('dataKategoriKuisioner','menuItemsWithSubmenus'));
+        return view('kategoriKuisioner.index', compact('dataKategoriKuisioner','menuItemsWithSubmenus','sekolahOptions', 'filterSekolah', 'searchNamaKategoriKuisioner'));
     }
 
     /**

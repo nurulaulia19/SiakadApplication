@@ -33,12 +33,27 @@
 					                <div class="panel-body">
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
-					                            <div class="col-sm-6 table-toolbar-left">
+					                            <div class="col-sm-8 table-toolbar-left">
 													<a href="{{ route('user.create') }}" class="btn btn-purple">
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a>
-													
 					                            </div>
+												<div class="col-sm-4">
+                                                    <form action="{{ route('user.index') }}" method="GET">
+                                                        <div class="input-group" >
+                                                            <input type="text" name="search_term" value="{{ Request::get('search_term') }}" placeholder="Cari berdasarkan username atau email" class="form-control">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-primary" type="submit">Cari</button>
+                                                            </span>
+                                                        </div>
+                                                    </form>
+                                                </div>
+												{{-- <div class="col-sm-2">
+													<form action="{{ route('user.index') }}" method="get">
+														<input type="text" name="search_term" value="{{ Request::get('search_term') }}" placeholder="Cari berdasarkan username atau email" class="form-control">
+														<button type="submit">Cari</button>
+													</form>													
+												</div> --}}
 					                        </div>
 					                    </div>
 					                    <div class="table-responsive">
@@ -109,7 +124,8 @@
 					                            </tbody>
 					                        </table>
 					                    </div>
-                                        {{ $dataUser->links('pagination::bootstrap-4') }}
+										{{ $dataUser->appends(['search_term' => $searchTerm])->links('pagination::bootstrap-4') }}
+                                        {{-- {{ $dataUser->links('pagination::bootstrap-4') }} --}}
 					                    <hr class="new-section-xs">
 					                    
 					                </div>

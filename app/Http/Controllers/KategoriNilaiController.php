@@ -17,7 +17,7 @@ class KategoriNilaiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         
         // $dataKn = KategoriNilai::with('sekolah')->orderBy('id_kn', 'DESC')->paginate(10);
@@ -34,17 +34,53 @@ class KategoriNilaiController extends Controller
         $user_id = auth()->user()->user_id; 
         $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         
-        if (empty($cek->user_id)){
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataKn = KategoriNilai::with('sekolah')->orderBy('id_kn', 'DESC')->paginate(10);
+        // if (empty($cek->user_id)){
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataKn = KategoriNilai::with('sekolah')->orderBy('id_kn', 'DESC')->paginate(10);
+        // } else {
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataKn = KategoriNilai::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_nilai.id_sekolah')
+        //         ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+        //         ->with('sekolah') // Load relasi yang dibutuhkan
+        //         ->where('akses_sekolah.user_id', $user_id)
+        //         ->orderBy('data_kategori_nilai.id_kn', 'DESC')
+        //         ->paginate(10);
+        // }
+
+        $filterSekolah = $request->input('sekolah');
+        $searchNamaKategoriNilai = $request->input('search_nama_kategori_nilai');
+
+        $query = Sekolah::query();
+
+        if (empty($cek->user_id)) {
+            $dataKn = KategoriNilai::with('sekolah')
+            ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                $query->where('id_sekolah', $filterSekolah);
+            })
+            ->when(!empty($searchNamaKategoriNilai), function ($query) use ($searchNamaKategoriNilai) {
+                $query->where('kategori', 'like', '%' . $searchNamaKategoriNilai . '%');
+            })
+            ->orderBy('id_kn', 'DESC')
+            ->paginate(10);
+            $sekolahOptions = $query->pluck('nama_sekolah', 'id_sekolah');
         } else {
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
             $dataKn = KategoriNilai::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kategori_nilai.id_sekolah')
                 ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
                 ->with('sekolah') // Load relasi yang dibutuhkan
                 ->where('akses_sekolah.user_id', $user_id)
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('data_pelajaran.id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaKategoriNilai), function ($query) use ($searchNamaKategoriNilai) {
+                    $query->where('kategori', 'like', '%' . $searchNamaKategoriNilai . '%');
+                })
                 ->orderBy('data_kategori_nilai.id_kn', 'DESC')
                 ->paginate(10);
+
+            $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
+            
         }
 
         // menu
@@ -82,7 +118,7 @@ class KategoriNilaiController extends Controller
             ];
             
         }
-        return view('kategoriNilai.index', compact('dataKn','menuItemsWithSubmenus'));
+        return view('kategoriNilai.index', compact('dataKn','menuItemsWithSubmenus','sekolahOptions', 'filterSekolah', 'searchNamaKategoriNilai'));
     }
 
     /**

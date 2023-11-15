@@ -17,7 +17,7 @@ class DataPelajaranController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('kode_pelajaran', 'DESC')->paginate(10);
         // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
@@ -29,20 +29,57 @@ class DataPelajaranController extends Controller
         //     ->orderBy('data_pelajaran.kode_pelajaran', 'DESC')
         //     ->paginate(10);
 
-        // cek
+        // // cek
         $user_id = auth()->user()->user_id;
         $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         
-        if (empty($cek->user_id)){
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-           $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('id_pelajaran', 'DESC')->paginate(10);
+        // if (empty($cek->user_id)){
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //    $dataPelajaran = DataPelajaran::with('sekolah')->orderBy('id_pelajaran', 'DESC')->paginate(10);
+        // } else {
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+        //     ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+        //     ->where('akses_sekolah.user_id', $user_id)
+        //     ->orderBy('data_pelajaran.id_pelajaran', 'DESC')
+        //     ->paginate(10);
+        // }
+
+        $filterSekolah = $request->input('sekolah');
+        $searchNamaPelajaran = $request->input('search_nama_pelajaran');
+
+        $query = Sekolah::query();
+
+        if (empty($cek->user_id)) {
+            $dataPelajaran = DataPelajaran::with('sekolah')
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaPelajaran), function ($query) use ($searchNamaPelajaran) {
+                    $query->where('nama_pelajaran', 'like', '%' . $searchNamaPelajaran . '%');
+                })
+                ->orderBy('id_pelajaran', 'DESC')
+                ->paginate(10);
+
+            $sekolahOptions = $query->pluck('nama_sekolah', 'id_sekolah');
         } else {
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
             $dataPelajaran = DataPelajaran::join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
-            ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
-            ->where('akses_sekolah.user_id', $user_id)
-            ->orderBy('data_pelajaran.id_pelajaran', 'DESC')
-            ->paginate(10);
+                ->join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_pelajaran.id_sekolah')
+                ->with('sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                    $query->where('data_pelajaran.id_sekolah', $filterSekolah);
+                })
+                ->when(!empty($searchNamaPelajaran), function ($query) use ($searchNamaPelajaran) {
+                    $query->where('nama_pelajaran', 'like', '%' . $searchNamaPelajaran . '%');
+                })
+                ->orderBy('data_pelajaran.id_pelajaran', 'DESC')
+                ->paginate(10);
+
+            $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
+            
         }
 
 
@@ -81,7 +118,7 @@ class DataPelajaranController extends Controller
             ];
             
     }
-    return view('mapel.index', compact('dataPelajaran','menuItemsWithSubmenus'));
+    return view('mapel.index', compact('dataPelajaran','menuItemsWithSubmenus','sekolahOptions', 'filterSekolah', 'searchNamaPelajaran'));
 }
 
     

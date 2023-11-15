@@ -33,12 +33,45 @@
 					                <div class="panel-body">
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
-					                            <div class="col-sm-6 table-toolbar-left">
+					                            <div class="col-sm-7 table-toolbar-left">
 													<a href="{{ route('mapel.create') }}" class="btn btn-purple">
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a>
-													
 					                            </div>
+												<div class="col-sm-2">
+                                                    <form action="{{ route('mapel.index') }}" method="GET">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <label for="sekolah">Filter Sekolah</label>
+                                                                </div>
+                                                                <div class="col-5">
+                                                                    <select name="sekolah" id="sekolah" class="form-control">
+																		<option value="">Pilih Sekolah</option>
+																		@foreach($sekolahOptions as $sekolahId => $sekolahNama)
+																			<option value="{{ $sekolahId }}" {{ $filterSekolah == $sekolahId ? 'selected' : '' }}>{{ $sekolahNama }}</option>
+																		@endforeach
+																	</select>
+                                                                </div>
+                                                                <div class="col-2" style="margin-left: 10px">
+                                                                    <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+												<div class="col-sm-2">
+                                                    <form action="{{ route('mapel.index') }}" method="GET">
+                                                        <label for="search_nama_pelajaran">Cari Nama Pelajaran:</label>
+                                                        <div class="input-group" >
+                                                            <input type="hidden" name="sekolah" value="{{ $filterSekolah }}">
+                                                            <input type="text" name="search_nama_pelajaran" id="search_nama_pelajaran" class="form-control" placeholder="Nama Pelajaran..." value="{{ $searchNamaPelajaran }}">
+                                                            <span class="input-group-btn">
+                                                                <button class="btn btn-primary" type="submit">Cari</button>
+                                                            </span>
+                                                        </div>
+                                                    </form>
+                                                </div>
 					                        </div>
 					                    </div>
 					                    <div class="table-responsive">
@@ -99,7 +132,8 @@
 					                            </tbody>
 					                        </table>
 					                    </div>
-                                        {{ $dataPelajaran->links('pagination::bootstrap-4') }}
+										{{ $dataPelajaran->appends(['sekolah' => $filterSekolah , 'search_nama_pelajaran' => $searchNamaPelajaran])->links('pagination::bootstrap-4') }}
+                                        {{-- {{ $dataPelajaran->links('pagination::bootstrap-4') }} --}}
 					                    <hr class="new-section-xs">
 					                    
 					                </div>

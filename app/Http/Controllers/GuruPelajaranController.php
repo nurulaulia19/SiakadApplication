@@ -39,7 +39,7 @@ class GuruPelajaranController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
         // $user_id = auth()->user()->user_id; // Mendapatkan ID pengguna yang sedang login
@@ -58,23 +58,63 @@ class GuruPelajaranController extends Controller
         $user_id = auth()->user()->user_id; 
         $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         
-        if (empty($cek->user_id)){
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
-        } else {
-            // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
-            $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
-            ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-            ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
-            ->whereExists(function ($query) use ($user_id) {
-                $query->select(DB::raw(1))
-                    ->from('akses_sekolah')
-                    ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
-                    ->where('akses_sekolah.user_id', $user_id);
+        // if (empty($cek->user_id)){
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','guruMapelJadwal')->orderBy('id_gp', 'DESC')->paginate(10);
+        // } else {
+        //     // Menggunakan Eloquent untuk mengambil kelas yang berhubungan dengan sekolah yang terkait dengan pengguna
+        //     $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //     ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //     ->with('user', 'kelas', 'sekolah', 'mapel', 'guruMapelJadwal')
+        //     ->whereExists(function ($query) use ($user_id) {
+        //         $query->select(DB::raw(1))
+        //             ->from('akses_sekolah')
+        //             ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+        //             ->where('akses_sekolah.user_id', $user_id);
+        //     })
+        //     ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //     ->paginate(10);
+        // }
+
+        $filterSekolah = $request->input('sekolah');
+        $searchNamaPelajaran = $request->input('search_nama_pelajaran');
+        $user_id = auth()->user()->user_id;
+
+        $query = GuruPelajaran::with('kelas.sekolah')
+            ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                $query->whereHas('kelas.sekolah', function ($q) use ($filterSekolah) {
+                    $q->where('id_sekolah', $filterSekolah);
+                });
             })
-            ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
-            ->paginate(10);
+            ->when(!empty($searchNamaPelajaran), function ($query) use ($searchNamaPelajaran) {
+                $query->whereHas('mapel', function ($q) use ($searchNamaPelajaran) {
+                    $q->where('nama_pelajaran', 'like', '%' . $searchNamaPelajaran . '%');
+                });
+            });
+
+        if (empty($cek->user_id)) {
+            // Jika user_id kosong, tampilkan semua sekolah
+            $dataGp = $query->orderBy('id_gp', 'DESC')->paginate(10);
+            
+            $sekolahOptions = Sekolah::pluck('nama_sekolah', 'id_sekolah');
+        } else {
+            // Jika user_id tidak kosong, tampilkan sekolah berdasarkan user_id
+            $dataGp = $query->join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+                ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+                ->whereExists(function ($query) use ($user_id) {
+                    $query->select(DB::raw(1))
+                        ->from('akses_sekolah')
+                        ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+                        ->where('akses_sekolah.user_id', $user_id);
+                })
+                ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+                ->paginate(10);
+
+            $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
         }
+
 
         // menu
         $user_id = auth()->user()->user_id;
@@ -111,7 +151,7 @@ class GuruPelajaranController extends Controller
             ];
             
     }
-    return view('guruMapel.index', compact('dataGp','menuItemsWithSubmenus'));
+    return view('guruMapel.index', compact('dataGp','menuItemsWithSubmenus','sekolahOptions', 'filterSekolah', 'searchNamaPelajaran'));
     }
 
     /**
@@ -373,12 +413,48 @@ class GuruPelajaranController extends Controller
         $user_id = auth()->user()->user_id;
         $cek = AksesSekolah::where('akses_sekolah.user_id', $user_id)->first();
         
-        if (empty($cek->user_id)){
-            $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        // if (empty($cek->user_id)){
+        //     $dataGp = GuruPelajaran::with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+        // } else {
+        //     $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+        //         ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
+        //         ->with('user', 'kelas', 'sekolah', 'mapel', 'kategoriNilai')
+        //         ->whereExists(function ($query) use ($user_id) {
+        //             $query->select(DB::raw(1))
+        //                 ->from('akses_sekolah')
+        //                 ->whereColumn('akses_sekolah.id_sekolah', 'data_sekolah.id_sekolah')
+        //                 ->where('akses_sekolah.user_id', $user_id);
+        //         })
+        //         ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
+        //         ->paginate(10);
+        // }
+
+        $filterSekolah = $request->input('sekolah');
+        $searchNamaPelajaran = $request->input('search_nama_pelajaran');
+        $user_id = auth()->user()->user_id;
+
+        $query = GuruPelajaran::with('kelas.sekolah')
+            ->when(!empty($filterSekolah), function ($query) use ($filterSekolah) {
+                $query->whereHas('kelas.sekolah', function ($q) use ($filterSekolah) {
+                    $q->where('id_sekolah', $filterSekolah);
+                });
+            })
+            ->when(!empty($searchNamaPelajaran), function ($query) use ($searchNamaPelajaran) {
+                $query->whereHas('mapel', function ($q) use ($searchNamaPelajaran) {
+                    $q->where('nama_pelajaran', 'like', '%' . $searchNamaPelajaran . '%');
+                });
+            });
+
+        if (empty($cek->user_id)) {
+            // Jika user_id kosong, tampilkan semua sekolah
+            $dataGp = $query->with('user','kelas','sekolah','mapel','kategoriNilai')->orderBy('id_gp', 'DESC')->paginate(10);
+            
+            $sekolahOptions = Sekolah::pluck('nama_sekolah', 'id_sekolah');
         } else {
-            $dataGp = GuruPelajaran::join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
+            // Jika user_id tidak kosong, tampilkan sekolah berdasarkan user_id
+            $dataGp = $query->join('data_kelas', 'data_kelas.id_kelas', '=', 'data_guru_pelajaran.id_kelas')
                 ->join('data_sekolah', 'data_sekolah.id_sekolah', '=', 'data_kelas.id_sekolah')
-                ->with('user', 'kelas', 'sekolah', 'mapel', 'kategoriNilai')
+                ->with('user','kelas','sekolah','mapel','kategoriNilai')
                 ->whereExists(function ($query) use ($user_id) {
                     $query->select(DB::raw(1))
                         ->from('akses_sekolah')
@@ -387,6 +463,10 @@ class GuruPelajaranController extends Controller
                 })
                 ->orderBy('data_guru_pelajaran.id_gp', 'DESC')
                 ->paginate(10);
+
+            $sekolahOptions = Sekolah::join('akses_sekolah', 'akses_sekolah.id_sekolah', '=', 'data_sekolah.id_sekolah')
+                ->where('akses_sekolah.user_id', $user_id)
+                ->pluck('data_sekolah.nama_sekolah', 'data_sekolah.id_sekolah');
         }
 
         $id_kn = $request->input('id_kn');
@@ -418,7 +498,7 @@ class GuruPelajaranController extends Controller
                     ];
                 }
 
-        return view('dataNilai.nilai', compact('dataGp','menuItemsWithSubmenus','id_kn'));
+        return view('dataNilai.nilai', compact('dataGp','menuItemsWithSubmenus','id_kn','sekolahOptions', 'filterSekolah', 'searchNamaPelajaran'));
     }
 
 
