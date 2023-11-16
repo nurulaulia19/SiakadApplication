@@ -45,15 +45,15 @@
                                                                 <div class="col-12">
                                                                     <label for="sekolah">Filter Sekolah</label>
                                                                 </div>
-                                                                <div class="col-5">
+                                                                <div class="col-7">
                                                                     <select name="sekolah" id="sekolah" class="form-control">
-																		<option value="">Pilih Sekolah</option>
+																		<option value="">Tampilkan semua</option>
 																		@foreach($sekolahOptions as $sekolahId => $sekolahNama)
 																			<option value="{{ $sekolahId }}" {{ $filterSekolah == $sekolahId ? 'selected' : '' }}>{{ $sekolahNama }}</option>
 																		@endforeach
 																	</select>
                                                                 </div>
-                                                                <div class="col-2" style="margin-left: 10px">
+                                                                <div class="col-3">
                                                                     <button type="submit" class="btn btn-sm btn-primary mt-1">Filter</button>
                                                                 </div>
                                                             </div>

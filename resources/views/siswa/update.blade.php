@@ -100,9 +100,6 @@
                                                         }
                                                     @endphp
                                                 </select>
-                                                @error('tahun_masuk')
-                                                    <span class="invalid-feedback">{{ $message }}</span>
-                                                @enderror
                                             </div>
                                         </div>
                                         
@@ -122,6 +119,20 @@
                                                 @endif
                                             </div>                                       
                                         </div> --}}
+                                        <div class="form-group d-flex mb-3">
+                                            <label class="col-sm-3 control-label" for="status">Status</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-control" name="status" id="status">
+                                                    <option selected >Pilih Status</option>
+                                                    <option value="aktif" {{ $dataSiswa->status === 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                                    <option value="lulus" {{ $dataSiswa->status === 'lulus' ? 'selected' : '' }}>Lulus</option>
+                                                    <option value="keluar" {{ $dataSiswa->status === 'keluar' ? 'selected' : '' }}>Keluar</option>
+                                                </select>
+                                                @if ($errors->has('status'))
+                                                <span class="text-danger">{{ $errors->first('status') }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                         <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="foto_siswa">Foto</label>
                                             <div class="col-sm-9">

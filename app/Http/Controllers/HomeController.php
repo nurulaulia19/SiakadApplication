@@ -59,7 +59,11 @@ class HomeController extends Controller
                 $jumlahMapel = DataPelajaran::where('id_sekolah', $sekolah->id_sekolah)->count();
 
                 // Hitung jumlah siswa untuk sekolah saat ini
-                $jumlahSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                // $jumlahSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                $totalSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                $jumlahAktif = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'aktif')->count();
+                $jumlahLulus = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'lulus')->count();
+                $jumlahKeluar = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'keluar')->count();
 
                 // Hitung jumlah guru untuk sekolah saat ini
                 $jumlahGuru = GuruPelajaran::join('data_user', 'data_guru_pelajaran.user_id', '=', 'data_user.user_id')
@@ -70,10 +74,15 @@ class HomeController extends Controller
 
                 // Simpan hasil perhitungan ke dalam array
                 $hasilPerhitungan[] = [
+                    'totalSiswa' => $totalSiswa,
+                    'jumlahAktif' => $jumlahAktif,
+                    'jumlahLulus' => $jumlahLulus,
+                    'jumlahKeluar' => $jumlahKeluar,
                     'sekolah' => $sekolah->nama_sekolah, // Ganti dengan nama kolom yang sesuai
                     'jumlahMapel' => $jumlahMapel,
-                    'jumlahSiswa' => $jumlahSiswa,
+                    // 'jumlahSiswa' => $jumlahSiswa,
                     'jumlahGuru' => $jumlahGuru,
+                    
                 ];
             }
             // dd($hasilPerhitungan);
@@ -90,7 +99,11 @@ class HomeController extends Controller
                 $jumlahMapel = DataPelajaran::where('id_sekolah', $sekolah->id_sekolah)->count();
 
                 // Hitung jumlah siswa untuk sekolah saat ini
-                $jumlahSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                // $jumlahSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                $totalSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                $jumlahAktif = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'aktif')->count();
+                $jumlahLulus = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'lulus')->count();
+                $jumlahKeluar = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'keluar')->count();
 
                 // Hitung jumlah guru untuk sekolah saat ini
                 $jumlahGuru = GuruPelajaran::join('data_user', 'data_guru_pelajaran.user_id', '=', 'data_user.user_id')
@@ -101,11 +114,20 @@ class HomeController extends Controller
 
                 // Simpan hasil perhitungan ke dalam array
                 $hasilPerhitungan[] = [
+                    'totalSiswa' => $totalSiswa,
+                    'jumlahAktif' => $jumlahAktif,
+                    'jumlahLulus' => $jumlahLulus,
+                    'jumlahKeluar' => $jumlahKeluar,
                     'sekolah' => $sekolah->nama_sekolah, // Ganti dengan nama kolom yang sesuai
                     'jumlahMapel' => $jumlahMapel,
-                    'jumlahSiswa' => $jumlahSiswa,
+                    // 'jumlahSiswa' => $jumlahSiswa,
                     'jumlahGuru' => $jumlahGuru,
                 ];
+
+                $totalSiswa = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->count();
+                $jumlahAktif = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'aktif')->count();
+                $jumlahLulus = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'lulus')->count();
+                $jumlahKeluar = DataSiswa::where('id_sekolah', $sekolah->id_sekolah)->where('status', 'keluar')->count();
             }
             // dd($hasilPerhitungan);
         }
@@ -162,7 +184,7 @@ class HomeController extends Controller
              ];
          }
 
-        return view('home.index', compact('menuItemsWithSubmenus','hasilPerhitungan'));
+        return view('home.index', compact('menuItemsWithSubmenus','hasilPerhitungan','jumlahAktif','jumlahLulus','jumlahKeluar','totalSiswa'));
     
 
     //     $get_user = User::where('email',auth()->user()->email)->first();

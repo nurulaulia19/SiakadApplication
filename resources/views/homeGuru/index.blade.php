@@ -25,7 +25,7 @@
 					<div class="row">
 						<div class="panel">
 							<div class="panel-heading">
-								<h3 class="panel-title">Dashboard Guru</h3>
+								<h3 class="panel-title text-center">Dashboard Guru</h3>
 							</div>
 							<div class="pad-all">
                                 <div class="row">

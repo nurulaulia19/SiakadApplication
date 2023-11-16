@@ -23,6 +23,7 @@ class DataSiswa extends Model implements Authenticatable
             'jenis_kelamin',
             'tahun_masuk',
             'password',
+            'status',
             'foto_siswa',
     ];
 

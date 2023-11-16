@@ -137,6 +137,20 @@
                                             </div>
                                         </div> --}}
                                         <div class="form-group d-flex mb-3">
+                                            <label class="col-sm-3 control-label" for="status">Status</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-control" name="status" id="status" required>
+                                                    <option disabled selected>Pilih Status</option>
+                                                    <option value="aktif">Aktif</option>
+                                                    <option value="lulus">Lulus</option>
+                                                    <option value="keluar">Keluar</option>
+                                                </select>
+                                                @if ($errors->has('status'))
+                                                <span class="text-danger">{{ $errors->first('status') }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="foto_siswa">Foto</label>
                                             <div class="col-sm-9">
                                                 <input type="file" name="foto_siswa" id="foto_siswa" class="form-control">

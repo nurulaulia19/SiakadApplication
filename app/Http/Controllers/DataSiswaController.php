@@ -236,6 +236,7 @@ class DataSiswaController extends Controller
             'tanggal_lahir' => 'required',
             'jenis_kelamin' => 'required',
             'tahun_masuk' => 'required',
+            'status' => 'required',
             // Tambahkan aturan validasi lainnya sesuai kebutuhan
         ]);
     
@@ -267,6 +268,7 @@ class DataSiswaController extends Controller
         $dataSiswa->tahun_masuk = $request->tahun_masuk;
         $dataSiswa->foto_siswa = $fileName;
         $dataSiswa->password =$hashedPassword;
+        $dataSiswa->status = $request->status;
         $dataSiswa->save();
     
         return redirect()->route('siswa.index')->with('success', 'Siswa inserted successfully');
@@ -344,6 +346,7 @@ class DataSiswaController extends Controller
                 Rule::unique('data_siswa', 'nis_siswa')->ignore($id_siswa, 'id_siswa'),
             ],
             'foto_siswa' => 'file|mimes:jpeg,jpg,png',
+            'status' => 'required',
             // Tambahkan aturan validasi lainnya sesuai kebutuhan
             
         ]);
@@ -377,6 +380,7 @@ class DataSiswaController extends Controller
     $dataSiswa->jenis_kelamin = $request->jenis_kelamin;
     $dataSiswa->tahun_masuk = $request->tahun_masuk;
     $dataSiswa->password = $hashedPassword;
+    $dataSiswa->status = $request->status;
 
     if ($request->hasFile('foto_siswa')) {
         $file = $request->file('foto_siswa');
@@ -471,7 +475,7 @@ class DataSiswaController extends Controller
         $pdf->render();
 
         // Kembalikan PDF untuk diunduh
-        return $pdf->stream('data-siswa.pdf');
+        return $pdf->stream('Data Siswa.pdf');
     }
 
     public function exportExcel(Request $request, $tahun = null)
@@ -530,7 +534,7 @@ class DataSiswaController extends Controller
 
 
         // Panggil kelas eksport yang telah Anda buat
-        return Excel::download(new SiswaExport($tahun, $dataSiswa, $selectedSchool, $user), 'data-siswa.xlsx');
+        return Excel::download(new SiswaExport($tahun, $dataSiswa, $selectedSchool, $user), 'Data Siswa.xlsx');
     }
 
     public function editProfilSiswa()

@@ -718,7 +718,7 @@ class GuruPelajaranController extends Controller
 
         $pdf->render();
 
-        return $pdf->stream('data-nilai.pdf');
+        return $pdf->stream('Data Nilai.pdf');
     }
 
     public function exportToExcel(Request $request, $id_gp, $id_kn)
@@ -756,7 +756,7 @@ class GuruPelajaranController extends Controller
                 return redirect()->back();
             }
 
-        return Excel::download(new NilaiExport($dataKn, $dataGp, $dataSekolah, $tab, $dataKk), 'data-nilai.xlsx');
+        return Excel::download(new NilaiExport($dataKn, $dataGp, $dataSekolah, $tab, $dataKk), 'Data Nilai.xlsx');
     }
 
     public function absensi(Request $request) {

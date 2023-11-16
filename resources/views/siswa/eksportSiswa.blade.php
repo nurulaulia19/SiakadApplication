@@ -153,7 +153,7 @@
                 <th>Tanggal Lahir</th>
                 <th>Jenis Kelamin</th>
                 <th>Tahun Masuk</th>
-                {{-- <th>Foto</th> --}}
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -173,7 +173,8 @@
                 <td style="vertical-align: middle;">{{ $item->tempat_lahir }}</td>  
                 <td style="vertical-align: middle;">{{ $item->tanggal_lahir }}</td> 
                 <td style="vertical-align: middle;">{{ $item->jenis_kelamin }}</td>  
-                <td style="vertical-align: middle;">{{ $item->tahun_masuk }}</td>  
+                <td style="vertical-align: middle;">{{ $item->tahun_masuk }}</td> 
+                <td style="vertical-align: middle;">{{ $item->status }}</td>  
             </tr>
             @endforeach
         </tbody>

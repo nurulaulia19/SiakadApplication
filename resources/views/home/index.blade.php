@@ -25,17 +25,42 @@
 					<div class="row">
 						<div class="panel">
 							<div class="panel-heading">
-								<h3 class="panel-title">Dashboard Admin Super</h3>
+								<h3 class="panel-title text-center">Dashboard Admin</h3>
 							</div>
 
 							<div class="pad-all">
-								<div class="row">
-									@foreach($hasilPerhitungan as $hasil)
-                                    <div class="col-lg-6">
-                                        <!-- Timeline -->
-                                        <!--===================================================-->
+								@foreach($hasilPerhitungan as $hasil)
+									<div class="col-lg-6">
+										<!-- Timeline -->
+										<!--===================================================-->
 										<div class="info">
-												<div class="panel panel-warning panel-colorful media middle pad-all">
+												<div class="panel-body text-center clearfix">
+													<div class="col-sm-4 pad-top">
+														<div class="text-lg">
+															<p class="text-5x text-thin text-main">{{ $hasil['totalSiswa'] }}</p>
+														</div>
+														<p class="text-sm text-bold text-uppercase">Total Siswa {{ $hasil['sekolah'] }}</p>
+													</div>
+													<div class="col-sm-8">
+														<a href="{{ route('siswa.index') }}" class="btn btn-pink mar-ver">View Detail</a>
+														<p class="text-xs">Hasil perhitungan siswa berdasarkan status</p>
+														<ul class="list-unstyled text-center bord-top pad-top mar-no row">
+															<li class="col-xs-4">
+																<span class="text-lg text-semibold text-main">{{ $hasil ['jumlahAktif'] }}</span>
+																<p class="text-sm text-muted mar-no">Aktif</p>
+															</li>
+															<li class="col-xs-4">
+																<span class="text-lg text-semibold text-main">{{ $hasil ['jumlahLulus'] }}</span>
+																<p class="text-sm text-muted mar-no">Lulus</p>
+															</li>
+															<li class="col-xs-4">
+																<span class="text-lg text-semibold text-main">{{ $hasil ['jumlahKeluar'] }}</span>
+																<p class="text-sm text-muted mar-no">Keluar</p>
+															</li>
+														</ul>
+													</div>
+												</div>
+												<div class="panel panel-danger panel-colorful media middle pad-all">
 													<!-- Sesuaikan dengan struktur HTML dan penggunaan variabel yang sesuai -->
 													<a href="{{ route('mapel.index') }}" class="text-white">
 														<div class="media-left">
@@ -50,7 +75,7 @@
 													</a>
 												</div>
 												<!-- Tambahkan blok HTML untuk jumlah siswa dan guru -->
-												<div class="panel panel-info panel-colorful media middle pad-all">
+												{{-- <div class="panel panel-info panel-colorful media middle pad-all">
 													<a href="{{ route('siswa.index') }}" class="text-white">
 														<div class="media-left">
 															<div class="pad-hor">
@@ -62,8 +87,8 @@
 															<p class="mar-no">Siswa {{ $hasil['sekolah'] }}</p>
 														</div>
 													</a>
-												</div>
-												<div class="panel panel-danger panel-colorful media middle pad-all">
+												</div> --}}
+												<div class="panel panel-info panel-colorful media middle pad-all">
 													<a href="{{ route('guruMapel.index') }}" class="text-white">
 														<div class="media-left">
 															<div class="pad-hor">
@@ -78,11 +103,10 @@
 												</div>
 											
 										</div>						
-                                        <!--===================================================-->
-                                        <!-- End Timeline -->
-                                    </div>
-									@endforeach
-                                </div>
+										<!--===================================================-->
+										<!-- End Timeline -->
+									</div>
+								@endforeach
 							</div>
 						</div>
 					</div>					

@@ -108,6 +108,7 @@
 					                                    <th>Tanggal Lahir</th>
                                                         <th>Jenis Kelamin</th>
                                                         <th>Tahun Masuk</th>
+                                                        <th>Status</th>
                                                         <th>Foto</th>
 					                                </tr>
 					                            </thead>
@@ -129,6 +130,7 @@
                                                         <td style="vertical-align: middle;">{{ $item->tanggal_lahir }}</td> 
                                                         <td style="vertical-align: middle;">{{ $item->jenis_kelamin }}</td>  
                                                         <td style="vertical-align: middle;">{{ $item->tahun_masuk }}</td>  
+                                                        <td style="vertical-align: middle;">{{ $item->status }}</td> 
                                                         <td style="vertical-align: middle;">
                                                             <div style="display: flex; justify-content: center; align-items: flex-center; flex-direction: column;">
                                                                 @if($item->foto_siswa)
@@ -167,7 +169,7 @@
 					                            </tbody>
 					                        </table>
 					                    </div>
-                                        {{ $dataSiswaList->appends(['search' => $searchTerm, 'tahun_filter' => $selectedYear,])->links('pagination::bootstrap-4') }}
+                                        {{ $dataSiswaList->appends(['search' => $searchTerm, 'tahun_filter' => $selectedYear, 'school_filter' => $selectedSchool ])->links('pagination::bootstrap-4') }}
                                         
                                         {{-- {{ $dataSiswaList->links('pagination::bootstrap-4') }} --}}
 					                    <hr class="new-section-xs">
