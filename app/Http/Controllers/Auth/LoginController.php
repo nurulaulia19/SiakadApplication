@@ -156,7 +156,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect()->route('home'); // Menggunakan nama rute 'login'.
+        return redirect()->route('landingpage'); // Menggunakan nama rute 'login'.
     }
 
 

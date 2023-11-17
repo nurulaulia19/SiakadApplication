@@ -48,6 +48,7 @@ use App\Http\Controllers\GuruPelajaranJadwalController;
 use App\Http\Controllers\JadwalGuruController;
 use App\Http\Controllers\KuisionerGuruController;
 use App\Http\Controllers\KuisionerSiswaController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NilaiGuruController;
 
 /*
@@ -61,9 +62,10 @@ use App\Http\Controllers\NilaiGuruController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('home');
+Route::get('/', [LandingPageController::class, 'index'])->name('landingpage');
 
 // Route::get('/admin/dashboard', function () {
 //     return view('dashboard');
