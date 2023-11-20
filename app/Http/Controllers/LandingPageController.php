@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataSlider;
 use App\Models\Sekolah;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,9 @@ class LandingPageController extends Controller
     public function index()
     {
         $sekolah = Sekolah::all();
+        $dataSlider = DataSlider::all();
         
-        return view('welcome', compact('sekolah'));
+        return view('welcome', compact('sekolah','dataSlider'));
     }
 
     /**

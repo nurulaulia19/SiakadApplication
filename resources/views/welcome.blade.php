@@ -1,12 +1,13 @@
 @extends('layoutsLandingPage.main')
 @section('content')
 <div class="parallax filter filter-color-red">
+    
     <!-- first section -->
     {{-- <div class="first-section d-flex align-items-center justify-content-center" style="background-image: url('{{ asset('assets/landingpage/img/graduated.jpg') }}'); background-size: cover; height: 500px;">
         <!-- Your content goes here -->
     </div> --}}
     <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
+        {{-- <div class="carousel-inner">
             <div class="carousel-item active">
                 <img src="{{ asset('assets/landingpage/img/graduated.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="Slide 1">
             </div>            
@@ -17,8 +18,15 @@
                 <img src="{{ asset('assets/landingpage/img/student.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="Slide 2">
             </div>
             <!-- Add more slides as needed -->
+        </div> --}}
+        <!-- resources/views/your-view.blade.php -->
+        <div class="carousel-inner">
+            @foreach($dataSlider as $key => $item)
+                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                    <img src="{{ asset('storage/photos/'.basename($item->gambar)) }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="Slide {{ $key + 1 }}">
+                </div>
+            @endforeach
         </div>
-    
         <!-- Carousel controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -30,8 +38,6 @@
         </button>
     </div>
     
-    
-
      <!-- services section -->
     <div class="section-service">
         <div class="container ">
@@ -71,7 +77,7 @@
         </div>
     </div>
 
-    <!-- who are we ? section  -->
+    <!-- school section  -->
     <div class="who-we-are bg-light">
         <div class="container">
             <div class="d-flex justify-content-center mb-4">
@@ -101,6 +107,98 @@
             </div>
         </div>
     </div>
+
+    <!-- news section -->
+    <div class="section-service">
+        <div class="container ">
+            <div class="d-flex justify-content-center mb-4">
+                <div class="header">
+                    <h1>PRODUCT & SOLUTIONS</h1>
+                </div>
+            </div>
+            <div class="row">
+                {{-- <div class="col-lg-6 col-sm-6 wow slideInUp">
+                    <div class="service-card">
+                        <div class="about-image">
+                            <img src="{{ asset('assets/landingpage/img/news.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
+                        </div>
+                        <h3 style="margin-top: 20px">Proyek</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore.</p>
+                    </div>
+                </div>                 --}}
+                <div class="col-lg-6 col-sm-6 animate-slide-up">
+                    <div class="service-card">
+                        <div class="about-image">
+                            <img src="{{ asset('assets/landingpage/img/news.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
+                        </div>
+                        <h3 style="margin-top: 20px">Proyek</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                    </div>
+                </div>                
+                {{-- <div class="col-lg-6 col-sm-6 wow slideInUp">
+                    <div class="service-card">
+                        <div class="about-image">
+                            <img src="{{ asset('assets/landingpage/img/tari dayak.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
+                        </div>
+                        <h3 style="margin-top: 20px">Tari</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore.</p>
+                    </div>
+                </div>  --}}
+                <div class="col-lg-6 col-sm-6 animate-slide-up">
+                    <div class="service-card">
+                        <div class="about-image">
+                            <img src="{{ asset('assets/landingpage/img/tari dayak.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
+                        </div>
+                        <h3 style="margin-top: 20px">Tari</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@yield('css')
+<style>
+    /* CSS Anda */
+    .animate-slide-up {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .animate-slide-up.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+
+@yield('script')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Sebelum penutup tag </body> -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var elements = document.querySelectorAll('.animate-slide-up');
+  
+      function handleScroll() {
+        elements.forEach(function (element) {
+          var bounding = element.getBoundingClientRect();
+          if (bounding.top < window.innerHeight - 100) {
+            element.classList.add('active');
+          }
+        });
+      }
+  
+      // Pertama kali panggil untuk menangani elemen yang terlihat saat halaman dimuat
+      handleScroll();
+  
+      // Tambahkan event listener scroll
+      window.addEventListener('scroll', handleScroll);
+    });
+  </script>
+  
+ 
 @endsection
 

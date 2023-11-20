@@ -37,6 +37,7 @@ use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DataKuisionerController;
 use App\Http\Controllers\DataPelajaranController;
+use App\Http\Controllers\DataSliderController;
 use App\Http\Controllers\GuruPelajaranController;
 use App\Http\Controllers\KategoriNilaiController;
 use App\Http\Controllers\KenaikanKelasController;
@@ -374,3 +375,11 @@ Route::get('/admin/kuisionerGuru/detail/{id_gp}', [KuisionerGuruController::clas
 
 // home guru
 Route::get('/admin/homeGuru', [App\Http\Controllers\HomeGuruController::class, 'index'])->name('guru.home');
+
+// data slider admin
+Route::put('/admin/slider/update/{id}', [DataSliderController::class, 'update'])->name('slider.update');
+Route::get('/admin/slider/create', [DataSliderController::class, 'create'])->name('slider.create');
+Route::get('/admin/slider', [DataSliderController::class,'index'])->name('slider.index');
+Route::get('/admin/slider/edit/{id}', [DataSliderController::class, 'edit'])->name('slider.edit');
+Route::post('/slider/store', [DataSliderController::class, 'store']);
+Route::get('/admin/slider/destroy/{id}', [DataSliderController::class,'destroy'])->name('slider.destroy');
