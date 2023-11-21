@@ -35,6 +35,7 @@ use App\Http\Controllers\JadwalSiswaController;
 use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DataBeritaController;
 use App\Http\Controllers\DataKuisionerController;
 use App\Http\Controllers\DataPelajaranController;
 use App\Http\Controllers\DataSliderController;
@@ -383,3 +384,15 @@ Route::get('/admin/slider', [DataSliderController::class,'index'])->name('slider
 Route::get('/admin/slider/edit/{id}', [DataSliderController::class, 'edit'])->name('slider.edit');
 Route::post('/slider/store', [DataSliderController::class, 'store']);
 Route::get('/admin/slider/destroy/{id}', [DataSliderController::class,'destroy'])->name('slider.destroy');
+
+// data berita admin
+Route::put('/admin/berita/update/{id}', [DataBeritaController::class, 'update'])->name('berita.update');
+Route::get('/admin/berita/create', [DataBeritaController::class, 'create'])->name('berita.create');
+Route::get('/admin/berita', [DataBeritaController::class,'index'])->name('berita.index');
+Route::get('/admin/berita/edit/{id}', [DataBeritaController::class, 'edit'])->name('berita.edit');
+Route::post('/berita/store', [DataBeritaController::class, 'store']);
+Route::get('/admin/berita/destroy/{id}', [DataBeritaController::class,'destroy'])->name('berita.destroy');
+
+// berita landing page
+Route::get('/home/berita/tari', [LandingPageController::class,'beritaTari'])->name('berita.tari');
+Route::get('/home/berita/proyek', [LandingPageController::class,'beritaProyek'])->name('berita.proyek');

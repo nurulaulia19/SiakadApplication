@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
+use App\Models\DataBerita;
+use App\Models\DataSiswa;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\DataSlider;
 
-class DataSliderController extends Controller
+class DataBeritaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $dataSlider = DataSlider::orderBy('id_slider', 'DESC')->paginate(10);
+        $dataBerita = DataBerita::orderBy('id_berita', 'DESC')->paginate(10);
 
         // sidebar menu
         $user_id = auth()->user()->user_id;
@@ -53,7 +54,7 @@ class DataSliderController extends Controller
                 'subMenus' => $subMenus,
             ];
         }
-        return view('dataSlider.index', compact('menuItemsWithSubmenus','dataSlider'));
+        return view('dataBerita.index', compact('menuItemsWithSubmenus','dataBerita'));
     }
 
     /**
@@ -61,7 +62,7 @@ class DataSliderController extends Controller
      */
     public function create()
     {
-        $dataSlider = DataSlider::all();
+        $dataBerita = DataBerita::all();
 
         // sidebar menu
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -90,7 +91,7 @@ class DataSliderController extends Controller
                 ];
             }
 
-            return view('dataSlider.create', compact('dataSlider','menuItemsWithSubmenus'));
+            return view('dataBerita.create', compact('dataBerita','menuItemsWithSubmenus'));
     }
 
     /**
@@ -118,15 +119,15 @@ class DataSliderController extends Controller
             $fileName = null;
         }
 
-        $dataSlider = new DataSlider();
-        $dataSlider->id_slider = $request->id_slider;
-        $dataSlider->judul = $request->judul;
-        $dataSlider->gambar = $fileName;
-        $dataSlider->save();
+        $dataBerita = new DataBerita();
+        $dataBerita->judul = $request->judul;
+        $dataBerita->gambar = $fileName;
+        $dataBerita->deskripsi = $request->deskripsi;
+        $dataBerita->status = $request->status;
+        $dataBerita->save();
     
-        return redirect()->route('slider.index')->with('success', 'Slider inserted successfully');
+        return redirect()->route('berita.index')->with('success', 'News inserted successfully');
 
-       
     }
 
     /**
@@ -140,9 +141,9 @@ class DataSliderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id_slider)
+    public function edit($id_berita)
     {
-        $dataSlider = DataSlider::where('id_slider', $id_slider)->first();
+        $dataBerita = DataBerita::where('id_berita', $id_berita)->first();
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -170,13 +171,13 @@ class DataSliderController extends Controller
                     'subMenus' => $subMenus,
                 ];
             }
-        return view('dataSlider.update', compact('dataSlider','menuItemsWithSubmenus'));
+        return view('dataBerita.update', compact('dataBerita','menuItemsWithSubmenus'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id_slider)
+    public function update(Request $request, $id_berita)
     {
         
         $validator = Validator::make($request->all(), [
@@ -189,8 +190,10 @@ class DataSliderController extends Controller
         }
 
        
-        $dataSlider = DataSlider::find($id_slider);
-        $dataSlider->judul = $request->judul;
+        $dataBerita = DataBerita::find($id_berita);
+        $dataBerita->judul = $request->judul;
+        $dataBerita->deskripsi = $request->deskripsi;
+        $dataBerita->status = $request->status;
     
         if ($request->hasFile('gambar')) {
             $file = $request->file('gambar');
@@ -198,21 +201,21 @@ class DataSliderController extends Controller
             $extension = $file->getClientOriginalExtension();
             $fileName = Str::random(40) . '.' . $extension;
             $file->storeAs('public/photos', $fileName);
-            $dataSlider->gambar = $fileName;
+            $dataBerita->gambar = $fileName;
         }
     
-        $dataSlider->save();
+        $dataBerita->save();
     
-        return redirect()->route('slider.index')->with('success', 'Slider edited successfully');
+        return redirect()->route('berita.index')->with('success', 'News edited successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id_slider)
+    public function destroy($id_berita)
     {
-        $dataSlider = DataSlider::where('id_slider', $id_slider);
-        $dataSlider->delete();
-        return redirect()->route('slider.index')->with('success', 'Terdelet');
+        $dataBerita = DataBerita::where('id_berita', $id_berita);
+        $dataBerita->delete();
+        return redirect()->route('berita.index')->with('success', 'Terdelet');
     }
 }

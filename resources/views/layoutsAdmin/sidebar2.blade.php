@@ -214,7 +214,8 @@
 									'Data Absensi' => 'fas fa-clock',
 									'Kuisioner' => 'fas fa-pencil-alt',
 									'Laporan Kuisioner' => 'fas fa-poll',
-									'Data Slider' => 'fas fa-star'
+									'Data Slider' => 'fas fa-star',
+									'Data Berita' => 'fas fa-newspaper'
 								];
 
 							@endphp

@@ -91,7 +91,7 @@
                 <div class="col-md-10">
                     <div class="row">
                         @foreach($sekolah as $item)
-                            <div class="col-md-6">
+                            <div class="col-md-6 mb-4">
                                 <div class="card shadow-sm">
                                     <div class="card-body">
                                         <img src="{{ asset('storage/photos/'.basename($item->logo)) }}" class="img-fluid rounded-circle" alt="{{ $item->nama_sekolah }}" style="width:100px">
@@ -117,44 +117,37 @@
                 </div>
             </div>
             <div class="row">
-                {{-- <div class="col-lg-6 col-sm-6 wow slideInUp">
+                {{-- <div class="col-lg-6 col-sm-6 animate-slide-up">
                     <div class="service-card">
                         <div class="about-image">
                             <img src="{{ asset('assets/landingpage/img/news.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
                         </div>
                         <h3 style="margin-top: 20px">Proyek</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                        tempor incididunt ut labore.</p>
-                    </div>
-                </div>                 --}}
-                <div class="col-lg-6 col-sm-6 animate-slide-up">
-                    <div class="service-card">
-                        <div class="about-image">
-                            <img src="{{ asset('assets/landingpage/img/news.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
-                        </div>
-                        <h3 style="margin-top: 20px">Proyek</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
-                    </div>
-                </div>                
-                {{-- <div class="col-lg-6 col-sm-6 wow slideInUp">
-                    <div class="service-card">
-                        <div class="about-image">
-                            <img src="{{ asset('assets/landingpage/img/tari dayak.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
-                        </div>
-                        <h3 style="margin-top: 20px">Tari</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                        tempor incididunt ut labore.</p>
-                    </div>
-                </div>  --}}
-                <div class="col-lg-6 col-sm-6 animate-slide-up">
-                    <div class="service-card">
-                        <div class="about-image">
-                            <img src="{{ asset('assets/landingpage/img/tari dayak.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
-                        </div>
-                        <h3 style="margin-top: 20px">Tari</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
                     </div>
                 </div>
+                <div class="col-lg-6 col-sm-6 animate-slide-up">
+                    <div class="service-card">
+                        <div class="about-image">
+                            <img src="{{ asset('assets/landingpage/img/tari dayak.jpg') }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="news 1">
+                        </div>
+                        <h3 style="margin-top: 20px">Tari</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore.</p>
+                    </div>
+                </div> --}}
+                <div class="row">
+                    @foreach($dataBerita as $item)
+                        <div class="col-lg-6 col-sm-6 animate-slide-up">
+                            <div class="service-card">
+                                <div class="about-image">
+                                    <img src="{{ asset('storage/photos/'.basename($item->gambar)) }}" class="d-block w-100 h-auto" style="max-height: 80vh;" alt="{{ $item->judul }}">
+                                </div>
+                                <h3 style="margin-top: 20px">{{ $item->judul }}</h3>
+                                <p>{{ $item->deskripsi }}</p>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>                
             </div>
         </div>
     </div>

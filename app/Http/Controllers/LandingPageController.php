@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DataSlider;
 use App\Models\Sekolah;
+use App\Models\DataBerita;
+use App\Models\DataSlider;
 use Illuminate\Http\Request;
 
 class LandingPageController extends Controller
@@ -15,8 +16,27 @@ class LandingPageController extends Controller
     {
         $sekolah = Sekolah::all();
         $dataSlider = DataSlider::all();
+        $dataBerita = DataBerita::where('status', 'ditampilkan')->orderBy('id_berita', 'desc')->get();
         
-        return view('welcome', compact('sekolah','dataSlider'));
+        return view('landingPage.index', compact('sekolah','dataSlider','dataBerita'));
+    }
+
+    public function beritaTari()
+    {
+        $sekolah = Sekolah::all();
+        $dataSlider = DataSlider::all();
+        $dataBerita = DataBerita::where('status', 'ditampilkan')->orderBy('id_berita', 'desc')->get();
+        
+        return view('landingPage.berita.tari', compact('sekolah','dataSlider','dataBerita'));
+    }
+
+    public function beritaProyek()
+    {
+        $sekolah = Sekolah::all();
+        $dataSlider = DataSlider::all();
+        $dataBerita = DataBerita::where('status', 'ditampilkan')->orderBy('id_berita', 'desc')->get();
+        
+        return view('landingPage.berita.proyek', compact('sekolah','dataSlider','dataBerita'));
     }
 
     /**
