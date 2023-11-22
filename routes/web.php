@@ -36,6 +36,7 @@ use App\Http\Controllers\AbsensiSiswaController;
 use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DataBeritaController;
+use App\Http\Controllers\DataBrosurController;
 use App\Http\Controllers\DataKuisionerController;
 use App\Http\Controllers\DataPelajaranController;
 use App\Http\Controllers\DataSliderController;
@@ -394,5 +395,17 @@ Route::post('/berita/store', [DataBeritaController::class, 'store']);
 Route::get('/admin/berita/destroy/{id}', [DataBeritaController::class,'destroy'])->name('berita.destroy');
 
 // berita landing page
-Route::get('/home/berita/tari', [LandingPageController::class,'beritaTari'])->name('berita.tari');
-Route::get('/home/berita/proyek', [LandingPageController::class,'beritaProyek'])->name('berita.proyek');
+Route::get('/berita/detail/{id}', [DataBeritaController::class,'detail'])->name('berita.detail');
+Route::get('/home/berita', [LandingPageController::class,'berita'])->name('landingpage.berita');
+
+// data brosur admin
+Route::put('/admin/brosur/update/{id}', [DataBrosurController::class, 'update'])->name('brosur.update');
+Route::get('/admin/brosur/create', [DataBrosurController::class, 'create'])->name('brosur.create');
+Route::get('/admin/brosur', [DataBrosurController::class,'index'])->name('brosur.index');
+Route::get('/admin/brosur/edit/{id}', [DataBrosurController::class, 'edit'])->name('brosur.edit');
+Route::post('/brosur/store', [DataBrosurController::class, 'store']);
+Route::get('/admin/brosur/destroy/{id}', [DataBrosurController::class,'destroy'])->name('brosur.destroy');
+
+// brosur landing page
+Route::get('/home/brosur', [LandingPageController::class,'brosur'])->name('landingpage.brosur');
+Route::get('/unduh-brosur/{id_brosur}', [DataBrosurController::class, 'unduhBrosur'])->name('unduh.brosur');

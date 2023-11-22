@@ -215,7 +215,9 @@
 									'Kuisioner' => 'fas fa-pencil-alt',
 									'Laporan Kuisioner' => 'fas fa-poll',
 									'Data Slider' => 'fas fa-star',
-									'Data Berita' => 'fas fa-newspaper'
+									'Data Berita' => 'fas fa-newspaper',
+									'Data Brosur' => 'fas fa-image'
+									
 								];
 
 							@endphp

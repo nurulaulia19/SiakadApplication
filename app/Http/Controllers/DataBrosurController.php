@@ -2,25 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sekolah;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
-use App\Models\DataSiswa;
-use App\Models\DataBerita;
-use App\Models\DataSlider;
-use Illuminate\Support\Str;
+use App\Models\DataBrosur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
-class DataBeritaController extends Controller
+class DataBrosurController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $dataBerita = DataBerita::orderBy('id_berita', 'DESC')->paginate(10);
+        $dataBrosur = DataBrosur::orderBy('id_brosur', 'DESC')->paginate(10);
 
         // sidebar menu
         $user_id = auth()->user()->user_id;
@@ -56,7 +53,7 @@ class DataBeritaController extends Controller
                 'subMenus' => $subMenus,
             ];
         }
-        return view('dataBerita.index', compact('menuItemsWithSubmenus','dataBerita'));
+        return view('dataBrosur.index', compact('menuItemsWithSubmenus','dataBrosur'));
     }
 
     /**
@@ -64,7 +61,7 @@ class DataBeritaController extends Controller
      */
     public function create()
     {
-        $dataBerita = DataBerita::all();
+        $dataBrosur = DataBrosur::all();
 
         // sidebar menu
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -93,7 +90,7 @@ class DataBeritaController extends Controller
                 ];
             }
 
-            return view('dataBerita.create', compact('dataBerita','menuItemsWithSubmenus'));
+            return view('dataBrosur.create', compact('dataBrosur','menuItemsWithSubmenus'));
     }
 
     /**
@@ -103,7 +100,7 @@ class DataBeritaController extends Controller
     {
         
         $validator = Validator::make($request->all(), [
-            'gambar' => 'required|file|mimes:jpeg,jpg,png',
+            'file' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx',
             // Tambahkan aturan validasi lainnya sesuai kebutuhan
         ]);
     
@@ -111,8 +108,8 @@ class DataBeritaController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
     
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
             $extension = $file->getClientOriginalExtension();
             $fileName = Str::random(40) . '.' . $extension;
             // $fileName = $file->getClientOriginalName();
@@ -121,14 +118,13 @@ class DataBeritaController extends Controller
             $fileName = null;
         }
 
-        $dataBerita = new DataBerita();
-        $dataBerita->judul = $request->judul;
-        $dataBerita->gambar = $fileName;
-        $dataBerita->deskripsi = $request->deskripsi;
-        $dataBerita->status = $request->status;
-        $dataBerita->save();
+        $dataBrosur = new DataBrosur();
+        $dataBrosur->judul = $request->judul;
+        $dataBrosur->file = $fileName;
+        $dataBrosur->status = $request->status;
+        $dataBrosur->save();
     
-        return redirect()->route('berita.index')->with('success', 'News inserted successfully');
+        return redirect()->route('brosur.index')->with('success', 'Brosur inserted successfully');
 
     }
 
@@ -143,9 +139,9 @@ class DataBeritaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id_berita)
+    public function edit($id_brosur)
     {
-        $dataBerita = DataBerita::where('id_berita', $id_berita)->first();
+        $dataBrosur = DataBrosur::where('id_brosur', $id_brosur)->first();
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -173,17 +169,17 @@ class DataBeritaController extends Controller
                     'subMenus' => $subMenus,
                 ];
             }
-        return view('dataBerita.update', compact('dataBerita','menuItemsWithSubmenus'));
+        return view('dataBrosur.update', compact('dataBrosur','menuItemsWithSubmenus'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id_berita)
+    public function update(Request $request, $id_brosur)
     {
         
         $validator = Validator::make($request->all(), [
-            'gambar' => 'file|mimes:jpeg,jpg,png'
+            'file' => 'file|mimes:jpeg,jpg,png,pdf,doc,docx'
             // Tambahkan aturan validasi lainnya sesuai kebutuhan
         ]);
     
@@ -192,39 +188,53 @@ class DataBeritaController extends Controller
         }
 
        
-        $dataBerita = DataBerita::find($id_berita);
-        $dataBerita->judul = $request->judul;
-        $dataBerita->deskripsi = $request->deskripsi;
-        $dataBerita->status = $request->status;
+        $dataBrosur = DataBrosur::find($id_brosur);
+        $dataBrosur->judul = $request->judul;
+        $dataBrosur->status = $request->status;
     
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
             // $fileName = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
             $fileName = Str::random(40) . '.' . $extension;
             $file->storeAs('public/photos', $fileName);
-            $dataBerita->gambar = $fileName;
+            $dataBrosur->file = $fileName;
         }
     
-        $dataBerita->save();
+        $dataBrosur->save();
     
-        return redirect()->route('berita.index')->with('success', 'News edited successfully');
+        return redirect()->route('brosur.index')->with('success', 'Brosur edited successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id_berita)
+    public function destroy($id_brosur)
     {
-        $dataBerita = DataBerita::where('id_berita', $id_berita);
-        $dataBerita->delete();
-        return redirect()->route('berita.index')->with('success', 'Terdelet');
+        $dataBrosur = DataBrosur::where('id_brosur', $id_brosur);
+        $dataBrosur->delete();
+        return redirect()->route('brosur.index')->with('success', 'Terdelet');
     }
 
-    public function detail($id_berita)
+    public function unduhBrosur($id_brosur)
     {
-        $dataBerita = DataBerita::where('status', 'ditampilkan')->where('id_berita', $id_berita)->orderBy('id_berita', 'desc')->first();
-        
-        return view('dataBerita.detail', compact('dataBerita'));
+        // Ambil data brosur berdasarkan ID
+        $brosur = DataBrosur::find($id_brosur);
+
+        // Pastikan brosur ditemukan
+        if (!$brosur) {
+            abort(404);
+        }
+
+        // Path ke file brosur di storage
+        $filePath = storage_path('app/public/photos/' . $brosur->file);
+
+        // Nama file untuk diunduh (opsional, bisa disesuaikan)
+        $fileName = pathinfo($brosur->file, PATHINFO_BASENAME);
+
+        // Unduh file
+        return response()->download($filePath, $fileName);
     }
+
+
 }

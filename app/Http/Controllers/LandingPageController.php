@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sekolah;
 use App\Models\DataBerita;
+use App\Models\DataBrosur;
 use App\Models\DataSlider;
 use Illuminate\Http\Request;
 
@@ -40,19 +41,24 @@ class LandingPageController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for news.
      */
-    public function create()
+    public function berita()
     {
-        //
+        $dataBerita = DataBerita::where('status', 'ditampilkan')->orderBy('id_berita', 'desc')->get();
+        
+        return view('landingPage.berita', compact('dataBerita'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function brosur()
     {
-        //
+        // $databrosur = DataBrosur::all();
+        $dataBrosur = DataBrosur::where('status', 'ditampilkan')->orderBy('id_brosur', 'desc')->get();
+        
+        return view('landingPage.brosur', compact('dataBrosur'));
     }
 
     /**
