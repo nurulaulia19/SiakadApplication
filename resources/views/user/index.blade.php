@@ -100,19 +100,18 @@
 														<td class="table-action" style="vertical-align: middle;">
                                                             <div style="display:flex; align-items:center">
                                                                 <a style="margin-right: 10px;" href="{{ route( 'user.edit', $item->user_id) }}" class="btn btn-sm btn-warning">Edit</a>
-															<form method="POST" action="" id="delete-form-{{ $item->user_id }}">
-																@csrf
-                												@method('DELETE')
-																<a href="/admin/user/destroy/{{ $item->user_id }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->user_id }})">Hapus</a>				
-															</form>	
+																<form method="GET" action="/admin/user/destroy/{{ $item->user_id }}" id="delete-form-{{ $item->user_id }}">
+																	@csrf
+																	<button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->user_id }})">Hapus</button>
+																</form>
                                                             </div>													
 														</td>
 					                                </tr>
 													@endforeach
 													<script>
-														function confirmDelete(menuId) {
+														function confirmDelete(userId) {
 															if (confirm('Are you sure you want to delete this item?')) {
-																document.getElementById('delete-form-' + menuId).submit();
+																document.getElementById('delete-form-' + userId).submit();
 															}
 														}
 													</script>

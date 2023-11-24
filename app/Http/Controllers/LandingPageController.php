@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Sekolah;
 use App\Models\DataBerita;
 use App\Models\DataBrosur;
+use App\Models\DataGaleri;
 use App\Models\DataSlider;
 use Illuminate\Http\Request;
 
@@ -59,6 +60,14 @@ class LandingPageController extends Controller
         $dataBrosur = DataBrosur::where('status', 'ditampilkan')->orderBy('id_brosur', 'desc')->get();
         
         return view('landingPage.brosur', compact('dataBrosur'));
+    }
+
+    public function galeri()
+    {
+        // $databrosur = DataBrosur::all();
+        $dataGaleri = DataGaleri::where('status', 'ditampilkan')->orderBy('id_galeri', 'desc')->get();
+        
+        return view('landingPage.galeri', compact('dataGaleri'));
     }
 
     /**

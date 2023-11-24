@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\DataUser;
 use App\Models\RoleMenu;
 use App\Models\Data_Menu;
-use App\Models\DataBrosur;
+use App\Models\DataGaleri;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
-class DataBrosurController extends Controller
+class DataGaleriController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $dataBrosur = DataBrosur::orderBy('id_brosur', 'DESC')->paginate(10);
+        $dataGaleri = DataGaleri::orderBy('id_galeri', 'DESC')->paginate(10);
 
         // sidebar menu
         $user_id = auth()->user()->user_id;
@@ -53,7 +53,7 @@ class DataBrosurController extends Controller
                 'subMenus' => $subMenus,
             ];
         }
-        return view('dataBrosur.index', compact('menuItemsWithSubmenus','dataBrosur'));
+        return view('dataGaleri.index', compact('menuItemsWithSubmenus','dataGaleri'));
     }
 
     /**
@@ -61,7 +61,7 @@ class DataBrosurController extends Controller
      */
     public function create()
     {
-        $dataBrosur = DataBrosur::all();
+        $dataGaleri = DataGaleri::all();
 
         // sidebar menu
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -90,7 +90,7 @@ class DataBrosurController extends Controller
                 ];
             }
 
-            return view('dataBrosur.create', compact('dataBrosur','menuItemsWithSubmenus'));
+            return view('dataGaleri.create', compact('dataGaleri','menuItemsWithSubmenus'));
     }
 
     /**
@@ -100,7 +100,7 @@ class DataBrosurController extends Controller
     {
         
         $validator = Validator::make($request->all(), [
-            'file' => 'required|file|mimes:jpeg,jpg,png,pdf,doc,docx',
+            'gambar' => 'required|file|mimes:jpeg,jpg,png',
             // Tambahkan aturan validasi lainnya sesuai kebutuhan
         ]);
     
@@ -108,8 +108,8 @@ class DataBrosurController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
     
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
             $extension = $file->getClientOriginalExtension();
             $fileName = Str::random(40) . '.' . $extension;
             // $fileName = $file->getClientOriginalName();
@@ -118,13 +118,13 @@ class DataBrosurController extends Controller
             $fileName = null;
         }
 
-        $dataBrosur = new DataBrosur();
-        $dataBrosur->judul = $request->judul;
-        $dataBrosur->file = $fileName;
-        $dataBrosur->status = $request->status;
-        $dataBrosur->save();
+        $dataGaleri = new DataGaleri();
+        $dataGaleri->judul = $request->judul;
+        $dataGaleri->gambar = $fileName;
+        $dataGaleri->status = $request->status;
+        $dataGaleri->save();
     
-        return redirect()->route('brosur.index')->with('success', 'Brosur inserted successfully');
+        return redirect()->route('galeri.index')->with('success', 'Galeri inserted successfully');
 
     }
 
@@ -139,9 +139,9 @@ class DataBrosurController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id_brosur)
+    public function edit($id_galeri)
     {
-        $dataBrosur = DataBrosur::where('id_brosur', $id_brosur)->first();
+        $dataGaleri = DataGaleri::where('id_galeri', $id_galeri)->first();
 
         // MENU
         $user_id = auth()->user()->user_id; // Use 'user_id' instead of 'id'
@@ -169,17 +169,17 @@ class DataBrosurController extends Controller
                     'subMenus' => $subMenus,
                 ];
             }
-        return view('dataBrosur.update', compact('dataBrosur','menuItemsWithSubmenus'));
+        return view('dataGaleri.update', compact('dataGaleri','menuItemsWithSubmenus'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id_brosur)
+    public function update(Request $request, $id_galeri)
     {
         
         $validator = Validator::make($request->all(), [
-            'file' => 'file|mimes:jpeg,jpg,png,pdf,doc,docx'
+            'gamber' => 'file|mimes:jpeg,jpg,png,pdf,doc,docx'
             // Tambahkan aturan validasi lainnya sesuai kebutuhan
         ]);
     
@@ -188,77 +188,31 @@ class DataBrosurController extends Controller
         }
 
        
-        $dataBrosur = DataBrosur::find($id_brosur);
-        $dataBrosur->judul = $request->judul;
-        $dataBrosur->status = $request->status;
+        $dataGaleri = DataGaleri::find($id_galeri);
+        $dataGaleri->judul = $request->judul;
+        $dataGaleri->status = $request->status;
     
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
             // $fileName = $file->getClientOriginalName();
             $extension = $file->getClientOriginalExtension();
             $fileName = Str::random(40) . '.' . $extension;
             $file->storeAs('public/photos', $fileName);
-            $dataBrosur->file = $fileName;
+            $dataGaleri->gambar = $fileName;
         }
     
-        $dataBrosur->save();
+        $dataGaleri->save();
     
-        return redirect()->route('brosur.index')->with('success', 'Brosur edited successfully');
+        return redirect()->route('galeri.index')->with('success', 'Galeri edited successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id_brosur)
+    public function destroy($id_galeri)
     {
-        $dataBrosur = DataBrosur::where('id_brosur', $id_brosur);
-        $dataBrosur->delete();
-        return redirect()->route('brosur.index')->with('success', 'Terdelet');
+        $dataGaleri = DataGaleri::where('id_galeri', $id_galeri);
+        $dataGaleri->delete();
+        return redirect()->route('galeri.index')->with('success', 'Terdelet');
     }
-
-    // public function unduhBrosur($id_brosur)
-    // {
-    //     // Ambil data brosur berdasarkan ID
-    //     $brosur = DataBrosur::find($id_brosur);
-
-    //     // Pastikan brosur ditemukan
-    //     if (!$brosur) {
-    //         abort(404);
-    //     }
-
-    //     // Path ke file brosur di storage
-    //     $filePath = storage_path('app/public/photos/' . $brosur->file);
-
-    //     // Nama file untuk diunduh (opsional, bisa disesuaikan)
-    //     $fileName = pathinfo($brosur->file, PATHINFO_BASENAME);
-
-    //     // Unduh file
-    //     return response()->download($filePath, $fileName);
-    // }
-
-    public function unduhBrosur($id_brosur)
-    {
-        // Ambil data brosur berdasarkan ID
-        $brosur = DataBrosur::find($id_brosur);
-
-        // Pastikan brosur ditemukan
-        if (!$brosur) {
-            abort(404);
-        }
-
-        // Pastikan status brosur sesuai yang diinginkan (misalnya, "ditampilkan")
-        if ($brosur->status !== 'ditampilkan') {
-            abort(404);
-        }
-
-        // Path ke file brosur di storage
-        $filePath = storage_path('app/public/photos/' . $brosur->file);
-
-        // Nama file untuk diunduh (opsional, bisa disesuaikan)
-        $fileName = pathinfo($brosur->file, PATHINFO_BASENAME);
-
-        // Unduh file
-        return response()->download($filePath, $fileName);
-    }
-
 }

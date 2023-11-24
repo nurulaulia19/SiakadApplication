@@ -3,7 +3,7 @@
 <div class="parallax filter filter-color-red">
     <!-- news section -->
     <div class="section-service mt-5">
-        <div class="container ">
+        <div class="container main-content" style="min-height: calc(100vh - 100px); position: relative;">
             <div class="d-flex justify-content-center mb-4">
                 <div class="header">
                     <h1>BERITA</h1>
@@ -19,7 +19,7 @@
                                 </div>
                                 <a href="{{ route ('berita.detail' , $item->id_berita) }}" >
                                 <h3 style="margin-top: 20px">{{ $item->judul }}</h3> </a>
-                                <p>{{ $item->deskripsi }}</p>
+                                <p class="deskripsi">{{ $item->deskripsi }}</p>
                             </div>
                         </div>
                     @endforeach
@@ -41,6 +41,18 @@
     .animate-slide-up.active {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .deskripsi {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Menentukan jumlah baris yang ingin ditampilkan */
+        -webkit-box-orient: vertical;
+    }
+
+    .main-content {
+        flex: 1;
     }
   </style>
 

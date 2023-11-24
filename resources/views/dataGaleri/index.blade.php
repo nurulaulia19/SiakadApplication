@@ -25,7 +25,7 @@
 					        <div class="col-xs-12">
 					            <div class="panel">
 					                <div class="panel-heading">
-					                    <h3 class="panel-title">Data Brosur</h3>
+					                    <h3 class="panel-title">Data Galeri</h3>
 					                </div>
 					
 					                <!--Data Table-->
@@ -34,7 +34,7 @@
 					                    <div class="pad-btm form-inline">
 					                        <div class="row">
 					                            <div class="col-sm-6 table-toolbar-left">
-													<a href="{{ route('brosur.create') }}" class="btn btn-purple">
+													<a href="{{ route('galeri.create') }}" class="btn btn-purple">
 														<i class="demo-pli-add icon-fw"></i>Add
 													</a>
 					                            </div>
@@ -46,22 +46,32 @@
 					                                <tr>
                                                         <th>No</th>
                                                         <th>Judul</th>
+                                                        <th>Gambar</th>
                                                         <th>Status</th>
 					                                </tr>
 					                            </thead>
 					                            <tbody>
 													
-													@foreach ($dataBrosur as $item)
+													@foreach ($dataGaleri as $item)
 					                                <tr>
                                                         <td style="vertical-align: middle;">{{ $loop->iteration }}</td>
-                                                        <td style="vertical-align: middle;">{{ $item->judul }}</td>    
+                                                        <td style="vertical-align: middle;">{{ $item->judul }}</td>   
+                                                        <td style="vertical-align: middle;">
+                                                            <div style="display: flex; justify-content: center; align-items: flex-center; flex-direction: column;">
+                                                                @if($item->gambar)
+                                                                <img style="width: 50px; height: 50px; margin-bottom: 5px;" src="{{ asset('storage/photos/'.basename($item->gambar)) }}" alt="Gambar">
+                                                            @else
+                                                                No Photo
+                                                            @endif
+                                                            </div>
+                                                        </td> 
                                                         <td style="vertical-align: middle;">{{ $item->status }}</td>                                                          
 														<td class="table-action" style="vertical-align: middle;">
                                                             <div style="display:flex; align-items:center">
-                                                                <a style="margin-right: 10px;" href="{{ route( 'brosur.edit', $item->id_brosur) }}" class="btn btn-sm btn-warning">Edit</a>
-                                                                <form method="GET" action="/admin/brosur/destroy/{{ $item->id_brosur }}" id="delete-form-{{ $item->id_brosur }}">
+                                                                <a style="margin-right: 10px;" href="{{ route( 'galeri.edit', $item->id_galeri) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                                <form method="GET" action="/admin/galeri/destroy/{{ $item->id_galeri }}" id="delete-form-{{ $item->id_galeri }}">
                                                                     @csrf
-                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_brosur }})">Hapus</button>
+                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_galeri }})">Hapus</button>
                                                                 </form>
                                                             </div>											
 														</td>
@@ -85,7 +95,7 @@
 					                        </table>
 					                    </div>
                                         {{-- {{ $dataSlider->appends(['sekolah' => $filterSekolah , 'search_nama_pelajaran' => $searchNamaPelajaran])->links('pagination::bootstrap-4') }} --}}
-                                        {{ $dataBrosur->links('pagination::bootstrap-4') }}
+                                        {{ $dataGaleri->links('pagination::bootstrap-4') }}
 					                    <hr class="new-section-xs">
 					                    
 					                </div>

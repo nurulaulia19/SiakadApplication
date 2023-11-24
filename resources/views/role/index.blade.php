@@ -69,18 +69,17 @@
 														
 														<td class="table-action" style="justify-content:center; display:flex;">
 															<a style="margin-right: 10px" href="{{ route( 'role.edit', $item->role_id) }}" class="btn btn-sm btn-warning">Edit</a>
-															<form method="POST" action="" id="delete-form-{{ $item->role_id }}">
+															<form method="GET" action="/admin/role/destroy/{{ $item->role_id }}" id="delete-form-{{ $item->role_id }}">
 																@csrf
-                												@method('DELETE')
-																<a href="/admin/role/destroy/{{ $item->role_id }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->role_id }})">Hapus</a>
-															</form>											
+																<button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->role_id }})">Hapus</button>
+															</form>
 														</td>
 					                                </tr>
 													@endforeach
 													<script>
-														function confirmDelete(menuId) {
+														function confirmDelete(roleId) {
 															if (confirm('Are you sure you want to delete this item?')) {
-																document.getElementById('delete-form-' + menuId).submit();
+																document.getElementById('delete-form-' + roleId).submit();
 															}
 														}
 													</script>

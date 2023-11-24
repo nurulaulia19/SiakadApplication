@@ -28,7 +28,10 @@
         </li>
         <li class="nav-item {{ request()->routeIs('landingpage.brosur') ? 'active' : '' }}">
           <a class="nav-link" href="{{ route('landingpage.brosur') }}">Brosur</a>
-      </li>
+        </li>
+        <li class="nav-item {{ request()->routeIs('landingpage.galeri') ? 'active' : '' }}">
+          <a class="nav-link" href="{{ route('landingpage.galeri') }}">Galeri</a>
+        </li>
         <li class="nav-item">
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>

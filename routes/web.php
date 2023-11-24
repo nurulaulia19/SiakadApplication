@@ -37,6 +37,7 @@ use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DataBeritaController;
 use App\Http\Controllers\DataBrosurController;
+use App\Http\Controllers\DataGaleriController;
 use App\Http\Controllers\DataKuisionerController;
 use App\Http\Controllers\DataPelajaranController;
 use App\Http\Controllers\DataSliderController;
@@ -409,3 +410,14 @@ Route::get('/admin/brosur/destroy/{id}', [DataBrosurController::class,'destroy']
 // brosur landing page
 Route::get('/home/brosur', [LandingPageController::class,'brosur'])->name('landingpage.brosur');
 Route::get('/unduh-brosur/{id_brosur}', [DataBrosurController::class, 'unduhBrosur'])->name('unduh.brosur');
+
+// data galeri admin
+Route::put('/admin/galeri/update/{id}', [DataGaleriController::class, 'update'])->name('galeri.update');
+Route::get('/admin/galeri/create', [DataGaleriController::class, 'create'])->name('galeri.create');
+Route::get('/admin/galeri', [DataGaleriController::class,'index'])->name('galeri.index');
+Route::get('/admin/galeri/edit/{id}', [DataGaleriController::class, 'edit'])->name('galeri.edit');
+Route::post('/galeri/store', [DataGaleriController::class, 'store']);
+Route::get('/admin/galeri/destroy/{id}', [DataGaleriController::class,'destroy'])->name('galeri.destroy');
+
+// galeri landing page
+Route::get('/home/galeri', [LandingPageController::class,'galeri'])->name('landingpage.galeri');

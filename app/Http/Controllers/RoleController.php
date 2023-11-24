@@ -16,7 +16,7 @@ class RoleController extends Controller
     public function index()
     {
         $dataRole = Role::orderBy('role_id', 'DESC')->paginate(10);
-        $roles = Role::with('roleMenus')->get();
+        $roles = Role::with('roleMenus')->orderBy('role_id', 'DESC')->get();
 
         // menu
         // $user_id = auth()->user()->user_id;

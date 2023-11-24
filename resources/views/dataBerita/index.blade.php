@@ -65,7 +65,6 @@
                                                                 No Photo
                                                             @endif
                                                             </div>
-                                                            
                                                         </td>
                                                         <td style="vertical-align: middle;">{{ $item->deskripsi }}</td> 
                                                         <td style="vertical-align: middle;">{{ $item->status }}</td>                                                          

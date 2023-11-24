@@ -65,16 +65,11 @@
 					                                    <td class="text-center">{{ $item->submenu_name }}</td>
 					                                    <td class="text-center">{{ $item->menu_position }}</td>
 														<td class="table-action" style="justify-content:center; display:flex">
-															<a style="margin-right: 10px" href="{{ route( 'menu.edit', $item->menu_id) }}" class="btn btn-sm btn-warning">Edit</a>
-															<form method="POST" action="" id="delete-form-{{ $item->menu_id }}">
-																@csrf
-                												@method('DELETE')
-																<a href="/admin/menu/destroy/{{ $item->menu_id }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->menu_id }})">Hapus</a>
-																{{-- <a href="/menu/destroy/{{ $item->menu_id }}" class="btn btn-sm btn-danger">Hapus</a> --}}
-																
-															</form>
-															
-																										
+															<a style="margin-right: 10px" href="{{ route( 'menu.edit', $item->menu_id) }}" class="btn btn-sm btn-warning">Edit</a>	
+																<form method="GET" action="/admin/menu/destroy/{{ $item->menu_id }}" id="delete-form-{{ $item->menu_id }}">
+																	@csrf
+																	<button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->menu_id }})">Hapus</button>
+																</form>									
 														</td>
 					                                </tr>
 													@endforeach

@@ -60,19 +60,18 @@
 														<td class="table-action" style="vertical-align: middle;">
                                                             <div style="display:flex; align-items:center">
                                                                 <a style="margin-right: 10px;" href="{{ route( 'aksessekolah.edit', $item->id_as) }}" class="btn btn-sm btn-warning">Edit</a>
-															<form method="POST" action="" id="delete-form-{{ $item->id_as }}">
-																@csrf
-                												@method('DELETE')
-																<a href="/admin/aksessekolah/destroy/{{ $item->id_as }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_as }})">Hapus</a>				
-															</form>	
+																<form method="GET" action="/admin/aksessekolah/destroy/{{ $item->id_as }}" id="delete-form-{{ $item->id_as }}">
+																	@csrf
+																	<button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_as }})">Hapus</button>
+																</form>
                                                             </div>													
 														</td>
 					                                </tr>
 													@endforeach
 													<script>
-														function confirmDelete(menuId) {
+														function confirmDelete(itemId) {
 															if (confirm('Are you sure you want to delete this item?')) {
-																document.getElementById('delete-form-' + menuId).submit();
+																document.getElementById('delete-form-' + itemId).submit();
 															}
 														}
 													</script>

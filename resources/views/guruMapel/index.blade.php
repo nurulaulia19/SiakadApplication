@@ -122,12 +122,6 @@
                                                                 Nama Guru not assigned
                                                             @endif
                                                         </td>
-                                                        {{-- <td style="vertical-align: middle;">
-                                                            @foreach ($item->guruMapelJadwal as $guruMapel)
-                                                                {{ $guruMapel->hari }} - {{ $guruMapel->jam_mulai }} to {{ $guruMapel->jam_selesai }}
-                                                                <br>
-                                                            @endforeach
-                                                        </td>                                        --}}
                                                         <td style="vertical-align: middle;">
                                                             @foreach ($item->guruMapelJadwal as $guruMapel)
                                                                 <a style="color: blue" href="{{ route('guruMapelJadwal.destroy', ['id_gpj' => $guruMapel->id_gpj]) }}" class="guru-mapel-link" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
@@ -139,14 +133,10 @@
 														<td class="table-action" style="vertical-align: middle;">
                                                             <div style="display:flex; align-items:center">
                                                                 <a style="margin-right: 10px;" href="{{ route( 'guruMapel.edit', $item->id_gp) }}" class="btn btn-sm btn-warning">Edit</a>
-															<form method="POST" action="" id="delete-form-{{ $item->id_gp }}">
-																@csrf
-                												@method('DELETE')
-																<a href="/admin/guruMapel/destroy/{{ $item->id_gp }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_pk }})">Hapus</a>				
-															</form>	
-                                                            {{-- <a style="margin-left: 10px;" href="{{ route('guruMapel.jadwal') }}" class="btn btn-sm btn-success">Add Jadwal</a> --}}
-                                                            {{-- <button style="margin-left: 10px;" type="button" data-toggle="modal" data-id="{{ $item->id_gp }}" data-target="#modalJadwal" class="btn btn-sm btn-primary add-jadwal">Add Jadwal</button> --}}
-
+                                                                <form method="GET" action="/admin/guruMapel/destroy/{{ $item->id_gp }}" id="delete-form-{{ $item->id_gp }}">
+                                                                    @csrf
+                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_gp }})">Hapus</button>
+                                                                </form>
                                                             <button style="margin-left: 10px;" type="button" data-toggle="modal" data-id="{{ $item->id_gp }}" data-target="#modalJadwal" class="btn btn-sm btn-primary add-jadwal">Add Jadwal</button>
                                                             </div>	
                                                             @include('guruMapel.modalJadwal')												
@@ -156,9 +146,9 @@
                                                     
 
 													<script>
-														function confirmDelete(menuId) {
+														function confirmDelete(itemId) {
 															if (confirm('Are you sure you want to delete this item?')) {
-																document.getElementById('delete-form-' + menuId).submit();
+																document.getElementById('delete-form-' + itemId).submit();
 															}
 														}
 													</script>

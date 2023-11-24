@@ -216,7 +216,8 @@
 									'Laporan Kuisioner' => 'fas fa-poll',
 									'Data Slider' => 'fas fa-star',
 									'Data Berita' => 'fas fa-newspaper',
-									'Data Brosur' => 'fas fa-image'
+									'Data Brosur' => 'fas fa-file',
+									'Data Galeri' => 'fas fa-image'
 									
 								];
 

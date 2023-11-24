@@ -153,7 +153,7 @@
                                     <a href="{{ route ('berita.detail' , $item->id_berita) }}" >
                                         <h3 style="margin-top: 20px">{{ $item->judul }}</h3>
                                     </a>
-                                    <p>{{ $item->deskripsi }}</p>
+                                    <p class="deskripsi">{{ $item->deskripsi }}</p>
                                 </div>
                             </div>
                             @php $counter++ @endphp
@@ -179,6 +179,14 @@
     .animate-slide-up.active {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .deskripsi {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Menentukan jumlah baris yang ingin ditampilkan */
+        -webkit-box-orient: vertical;
     }
   </style>
 

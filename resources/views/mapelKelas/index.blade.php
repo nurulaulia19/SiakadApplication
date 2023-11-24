@@ -103,14 +103,7 @@
                                                             @else
                                                                 Nama Sekolah not assigned
                                                             @endif
-                                                        </td>    
-                                                        {{-- <td> @foreach ($item->mapelList as $mapelList)
-															{{ $mapelList->sekolah->nama_sekolah }}
-															@if (!$loop->last)
-																,
-															@endif
-															@endforeach
-														</td>  --}}
+                                                        </td>   
                                                         <td style="vertical-align: middle;">{{ $item->tahun_ajaran }}</td>    
                                                         <td> @foreach ($item->mapelList as $mapelList)
 															{{ $mapelList->mapel->nama_pelajaran }}
@@ -122,19 +115,18 @@
 														<td class="table-action" style="vertical-align: middle;">
                                                             <div style="display:flex; align-items:center">
                                                                 <a style="margin-right: 10px;" href="{{ route( 'mapelKelas.edit', $item->id_pk) }}" class="btn btn-sm btn-warning">Edit</a>
-															<form method="POST" action="" id="delete-form-{{ $item->id_pk }}">
-																@csrf
-                												@method('DELETE')
-																<a href="/admin/mapelKelas/destroy/{{ $item->id_pk }}" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_pk }})">Hapus</a>				
-															</form>	
+                                                                <form method="GET" action="/admin/mapelKelas/destroy/{{ $item->id_pk }}" id="delete-form-{{ $item->id_pk }}">
+                                                                    @csrf
+                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete({{ $item->id_pk }})">Hapus</button>
+                                                                </form>
                                                             </div>													
 														</td>
 					                                </tr>
 													@endforeach
 													<script>
-														function confirmDelete(menuId) {
+														function confirmDelete(itemId) {
 															if (confirm('Are you sure you want to delete this item?')) {
-																document.getElementById('delete-form-' + menuId).submit();
+																document.getElementById('delete-form-' + itemId).submit();
 															}
 														}
 													</script>

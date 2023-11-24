@@ -3,7 +3,7 @@
 <div class="parallax filter filter-color-red">
     <!-- news section -->
     <div class="section-service mt-5">
-        <div class="container ">
+        <div class="container main-content" style="min-height: calc(100vh - 100px); position: relative;">
             <div class="d-flex justify-content-center mb-4">
                 <div class="header">
                     <h1>BROSUR</h1>
@@ -49,6 +49,9 @@
     .animate-slide-up.active {
       opacity: 1;
       transform: translateY(0);
+    }
+    .main-content {
+        flex: 1;
     }
   </style>
 
