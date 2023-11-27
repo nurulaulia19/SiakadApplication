@@ -103,7 +103,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <!-- JavaScript -->
-<script>
+{{-- <script>
     $(document).ready(function() {
         // Ketika tombol "open-modal" diklik
         $(".open-modal").click(function () {
@@ -118,8 +118,31 @@
             $('#modalGambar').modal('show');
         });
     });
-</script>
+</script> --}}
+<script>
+    $(document).ready(function() {
+    // Ketika tombol "open-modal" diklik
+    $(".open-modal").click(function () {
+        var id_galeri = $(this).data('id'); // Mengambil nilai data-id dari elemen yang diklik
+        var imageUrl = $(this).data('src'); // Mengambil nilai data-src dari elemen yang diklik
+        var judul = $(this).find('img').attr('alt'); // Mengambil judul gambar dari atribut alt
 
+        // Memasukkan id_galeri, imageUrl, dan judul ke dalam modal
+        $("#id_galeri_modal").val(id_galeri);
+        $("#gambarModal").attr('src', imageUrl);
+        $("#judulModal").text(judul);
+
+        // Menampilkan modal
+        $('#modalGambar').modal('show');
+    });
+});
+
+// Tutup modal dengan ID "modalGambar" secara manual
+function closeCustomModal() {
+    $('#modalGambar').modal('hide');
+}
+
+</script>
 
 @endsection
 

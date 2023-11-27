@@ -71,4 +71,9 @@ class Sekolah extends Model
     {
         return $this->hasMany(DataKuisioner::class, 'id_kuisioner', 'id_kuisioner');
     }
+
+    public function Eskul()
+    {
+        return $this->hasMany(DataEkstrakulikuler::class, 'id_sekolah', 'id_sekolah');
+    }
 }

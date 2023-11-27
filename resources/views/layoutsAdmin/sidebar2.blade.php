@@ -217,8 +217,8 @@
 									'Data Slider' => 'fas fa-star',
 									'Data Berita' => 'fas fa-newspaper',
 									'Data Brosur' => 'fas fa-file',
-									'Data Galeri' => 'fas fa-image'
-									
+									'Data Galeri' => 'fas fa-image',
+									'Data Ekstrakulikuler' => 'fas fa-futbol'
 								];
 
 							@endphp

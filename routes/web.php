@@ -37,6 +37,7 @@ use App\Http\Controllers\AksesSekolahController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DataBeritaController;
 use App\Http\Controllers\DataBrosurController;
+use App\Http\Controllers\DataEkstrakulikulerController;
 use App\Http\Controllers\DataGaleriController;
 use App\Http\Controllers\DataKuisionerController;
 use App\Http\Controllers\DataPelajaranController;
@@ -421,3 +422,17 @@ Route::get('/admin/galeri/destroy/{id}', [DataGaleriController::class,'destroy']
 
 // galeri landing page
 Route::get('/home/galeri', [LandingPageController::class,'galeri'])->name('landingpage.galeri');
+
+// data ekstrakulikuler admin
+Route::put('/admin/ekstrakulikuler/update/{id}', [DataEkstrakulikulerController::class, 'update'])->name('ekstrakulikuler.update');
+Route::get('/admin/ekstrakulikuler/create', [DataEkstrakulikulerController::class, 'create'])->name('ekstrakulikuler.create');
+Route::get('/admin/ekstrakulikuler', [DataEkstrakulikulerController::class,'index'])->name('ekstrakulikuler.index');
+Route::get('/admin/ekstrakulikuler/edit/{id}', [DataEkstrakulikulerController::class, 'edit'])->name('ekstrakulikuler.edit');
+Route::post('/ekstrakulikuler/store', [DataEkstrakulikulerController::class, 'store']);
+Route::get('/admin/ekstrakulikuler/destroy/{id}', [DataEkstrakulikulerController::class,'destroy'])->name('ekstrakulikuler.destroy');
+Route::get('/ekstrakulikuler/detail/{id}', [DataEkstrakulikulerController::class,'detail'])->name('ekstrakulikuler.detail');
+
+// ekstrakulikuler landing page
+Route::get('/home/ekstrakulikuler', [LandingPageController::class,'ekstrakulikuler'])->name('landingpage.ekstrakulikuler');
+Route::get('/get-ekstrakulikuler/{id_sekolah}', [LandingPageController::class, 'getEkstrakulikulerBySekolah']);
+Route::get('/get-sekolah', [LandingPageController::class, 'getSekolah']);
