@@ -11,6 +11,7 @@ use App\Models\DataBerita;
 use App\Models\DataSlider;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\DataEkstrakulikuler;
 use Illuminate\Support\Facades\Validator;
 
 class DataBeritaController extends Controller
@@ -221,10 +222,34 @@ class DataBeritaController extends Controller
         return redirect()->route('berita.index')->with('success', 'Terdelet');
     }
 
-    public function detail($id_berita)
+    public function detail(Request $request, $id_berita)
     {
         $dataBerita = DataBerita::where('status', 'ditampilkan')->where('id_berita', $id_berita)->orderBy('id_berita', 'desc')->first();
+        if (!$dataBerita) {
+            abort(404);
+        }
+
+        // Pastikan status dataEskul sesuai yang diinginkan (misalnya, "ditampilkan")
+        if ($dataBerita->status !== 'ditampilkan') {
+            abort(404);
+        }
+        $sekolahOptions = Sekolah::pluck('nama_sekolah', 'id_sekolah');
+        $ekstrakulikulerOptions = [];
+        $selectedSekolahId = $request->input('sekolah');
+        if ($selectedSekolahId) {
+            $ekstrakulikulerOptions = DataEkstrakulikuler::where('id_sekolah', $selectedSekolahId)->pluck('judul', 'id_ekstrakulikuler');
+        }
         
-        return view('dataBerita.detail', compact('dataBerita'));
+        $dataEskul = null; 
+
+        $id_ekstrakulikuler = $request->input('id_ekstrakulikuler');
+        if ($id_ekstrakulikuler) {
+            $dataEskul = DataEkstrakulikuler::where('status', 'ditampilkan')
+                ->where('id_ekstrakulikuler', $id_ekstrakulikuler)
+                ->orderBy('id_ekstrakulikuler', 'desc')
+                ->first();
+        }
+        
+        return view('dataBerita.detail', compact('dataBerita','sekolahOptions','ekstrakulikulerOptions', 'selectedSekolahId','dataEskul'));
     }
 }

@@ -227,6 +227,15 @@ class DataEkstrakulikulerController extends Controller
     public function detail(Request $request, $id_ekstrakulikuler)
     {
         $dataEskul = DataEkstrakulikuler::where('status', 'ditampilkan')->where('id_ekstrakulikuler', $id_ekstrakulikuler)->orderBy('id_ekstrakulikuler', 'desc')->first();
+        if (!$dataEskul) {
+            abort(404);
+        }
+
+        // Pastikan status dataEskul sesuai yang diinginkan (misalnya, "ditampilkan")
+        if ($dataEskul->status !== 'ditampilkan') {
+            abort(404);
+        }
+    
         $sekolahOptions = Sekolah::pluck('nama_sekolah', 'id_sekolah');
         $selectedSekolahId = $request->input('sekolah');
 
