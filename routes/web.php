@@ -436,3 +436,5 @@ Route::get('/ekstrakulikuler/detail/{id}', [DataEkstrakulikulerController::class
 Route::get('/home/ekstrakulikuler', [LandingPageController::class,'ekstrakulikuler'])->name('landingpage.ekstrakulikuler');
 Route::get('/get-ekstrakulikuler/{id_sekolah}', [LandingPageController::class, 'getEkstrakulikulerBySekolah']);
 Route::get('/get-sekolah', [LandingPageController::class, 'getSekolah']);
+
+

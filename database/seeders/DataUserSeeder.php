@@ -17,7 +17,7 @@ class DataUserSeeder extends Seeder
     public function run(): void
     {
         
-        $curut = Role::create([
+        $dataRole = Role::create([
             'role_name' => 'admin'
         ]);
 
@@ -27,7 +27,7 @@ class DataUserSeeder extends Seeder
             'menu_category' => 'master menu',
             'menu_position' => 1
         ]);
-        $ayamgeprek = Data_Menu::create([
+        $dataMenu = Data_Menu::create([
             'menu_name' => 'Home',
             'menu_link' => 'admin.home',
             'menu_category' => 'sub menu',
@@ -35,8 +35,8 @@ class DataUserSeeder extends Seeder
             'menu_position' => 1
         ]);
         RoleMenu::create([
-            'role_id' => $curut->id,
-            'menu_id' => $ayamgeprek->id,
+            'role_id' => $dataRole->id,
+            'menu_id' => $dataMenu->id,
         ]);
         
 
@@ -79,7 +79,7 @@ class DataUserSeeder extends Seeder
         ]);
 
         RoleMenu::create([
-            'role_id' => $curut->id,
+            'role_id' => $dataRole->id,
             'menu_id' => $menu->id,
         ]);
 
@@ -90,7 +90,7 @@ class DataUserSeeder extends Seeder
             'user_password' => bcrypt('@Nurulauliaseptiani9@gmail.com'),
             'user_gender' => 'female',
             'user_photo' => 'nurul.jpg',
-            'role_id' => $curut->id,
+            'role_id' => $dataRole->id,
             'user_token' => 123
             
         ]);
@@ -102,7 +102,7 @@ class DataUserSeeder extends Seeder
         //     'user_password' => bcrypt('@Nurulauliaseptiani9@gmail.com'),
         //     'user_gender' => 'male',
         //     'user_photo' => 'agat.jpg',
-        //     'role_id' => $curut->id,
+        //     'role_id' => $dataRole->id,
         //     'user_token' => 123
             
         // ]);
