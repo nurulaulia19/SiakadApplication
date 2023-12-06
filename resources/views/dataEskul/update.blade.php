@@ -78,7 +78,8 @@
                                         <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="deskripsi">Deskripsi</label>
                                             <div class="col-sm-9">
-                                                <input type="text" placeholder="deskripsi" name="deskripsi" id="deskripsi" class="form-control" value="{{ $dataEskul->deskripsi }}">
+                                                <textarea class="form-control" id="deskripsi" name="deskripsi">{{ $dataEskul->deskripsi }}</textarea>
+                                                {{-- <input type="text" placeholder="deskripsi" name="deskripsi" id="deskripsi" class="form-control" value="{{ $dataEskul->deskripsi }}"> --}}
                                             </div>
                                         </div>
                                         <div class="form-group d-flex mb-3">

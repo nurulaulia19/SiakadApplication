@@ -84,7 +84,7 @@
                 <div class="header">
                     <h1>Daftar Sekolah</h1>
                     <div class="separator">♦ ♦ ♦ ♦ ♦</div>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rerum vitae voluptatem tempora ipsam, voluptatum, porro enim assumenda, illum quod quidem quia error. Repellendus similique rerum, dolor dolores doloremque voluptatum dicta!</p>
+                    <p>Aplikasi sistem informasi akademik sekolah membantu menyusun daftar siswa, mempermudah proses administrasi, dan memberikan laporan data dengan efisien</p>
                 </div>
             </div>
             <div class="row justify-content-center">

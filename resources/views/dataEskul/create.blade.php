@@ -65,7 +65,8 @@
                                         <div class="form-group d-flex mb-3">
                                             <label class="col-sm-3 control-label" for="deskripsi">Deskripsi</label>
                                             <div class="col-sm-9">
-                                                <input type="text" placeholder="Deskripsi" name="deskripsi" id="deskripsi" class="form-control">
+                                                <textarea class="form-control" placeholder="Deskripsi" id="deskripsi" name="deskripsi"></textarea>
+                                                {{-- <input type="text" placeholder="Deskripsi" name="deskripsi" id="deskripsi" class="form-control"> --}}
                                             </div>
                                         </div>
                                         <div class="form-group d-flex mb-3">
