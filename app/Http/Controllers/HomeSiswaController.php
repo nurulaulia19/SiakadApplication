@@ -120,8 +120,17 @@ class HomeSiswaController extends Controller
         }
         
 
-        $idKelas = $kenaikanKelas->id_kelas;
+        // $idKelas = $kenaikanKelas->id_kelas;
         // dd($idKelas);
+
+        // perubahan
+        if ($kenaikanKelas) {
+            // Get the id_kelas property from $kenaikanKelas
+            $idKelas = $kenaikanKelas->id_kelas;
+        } else {
+            // Abort with a 404 error if KenaikanKelas data is not found
+            abort(404);
+        }
 
         if ($siswa) {
             $idSekolah = $siswa->id_sekolah;

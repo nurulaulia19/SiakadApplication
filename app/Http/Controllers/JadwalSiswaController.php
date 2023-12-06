@@ -82,6 +82,7 @@ class JadwalSiswaController extends Controller
 
         $idKelas = $kenaikanKelas->id_kelas;
         // dd($idKelas);
+        
 
         if ($siswa) {
             $idSekolah = $siswa->id_sekolah;
